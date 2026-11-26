@@ -1,0 +1,108 @@
+{
+  "generated_at_utc": "2026-11-26T10:51:37.727295+00:00",
+  "host": {
+    "ssh_alias": "macmini",
+    "user": "harpaz",
+    "hostname": "Itais-Mac-Mini.local",
+    "arch": "arm64",
+    "macos_product_version": "27.2.1",
+    "macos_build_version": "26B131",
+    "hardware": {
+      "model_name": "Mac mini",
+      "model_identifier": "Mac17,16",
+      "model_number": "Z1UD0018HHB/A",
+      "chip": "Apple M5 Pro",
+      "total_number_of_cores": "15 (5 Super and 10 Performance)",
+      "memory": "48 GB",
+      "system_firmware_version": "20457.41.3",
+      "os_loader_version": "20457.41.3"
+    }
+  },
+  "tools": {
+    "uv": {
+      "path": "/Users/harpaz/.local/bin/uv",
+      "version": "uv 0.13.10 (e3e7c1eac 2026-11-24 aarch64-apple-darwin)"
+    },
+    "python3_13": {
+      "path": "/Users/harpaz/.local/share/uv/python/cpython-3.13-macos-aarch64-none/bin/python3.13",
+      "version": "Python 3.13.18"
+    },
+    "ollama": {
+      "bin_path": "/Users/harpaz/.local/bin/ollama",
+      "resolved_path": "/Users/harpaz/Applications/Ollama.app/Contents/Resources/ollama",
+      "app_bundle_path": "/Users/harpaz/Applications/Ollama.app",
+      "install_mode": "Ollama.app fallback symlink (tgz lacked llama-server/Metal dylibs in ~/.local/bin)",
+      "cli_version": "ollama version is 0.40.18",
+      "api_version": "0.40.18",
+      "endpoint": "http://127.0.0.1:11434",
+      "serve_env": {
+        "OLLAMA_NUM_PARALLEL": 4,
+        "OLLAMA_MAX_LOADED_MODELS": 2,
+        "OLLAMA_KEEP_ALIVE": "30m"
+      },
+      "serve_log": "/Users/harpaz/.ollama/serve.log"
+    }
+  },
+  "models": [
+    {
+      "name": "qwen2.5:7b",
+      "model": "qwen2.5:7b",
+      "modified_at": "2026-11-26T12:51:11.067462929+02:00",
+      "size": 4683087332,
+      "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "qwen2",
+        "families": [
+          "qwen2"
+        ],
+        "parameter_size": "7.6B",
+        "quantization_level": "Q4_K_M",
+        "context_length": 32768,
+        "embedding_length": 3584,
+        "runner": "ggml"
+      },
+      "capabilities": [
+        "completion",
+        "tools"
+      ]
+    },
+    {
+      "name": "llama3.2:3b",
+      "model": "llama3.2:3b",
+      "modified_at": "2026-11-26T12:20:52.898581416+02:00",
+      "size": 2019393189,
+      "digest": "a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72",
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "llama",
+        "families": [
+          "llama"
+        ],
+        "parameter_size": "3.2B",
+        "quantization_level": "Q4_K_M",
+        "context_length": 131072,
+        "embedding_length": 3072,
+        "runner": "ggml"
+      },
+      "capabilities": [
+        "completion",
+        "tools"
+      ]
+    }
+  ],
+  "smoke_tests": {
+    "llama3.2:3b": {
+      "status": "ok",
+      "response": "OK_LLAMA",
+      "processor": "100% GPU"
+    },
+    "qwen2.5:7b": {
+      "status": "ok",
+      "response": "OK_QWEN",
+      "processor": "100% GPU"
+    }
+  }
+}
