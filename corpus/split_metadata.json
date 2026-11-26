@@ -1,0 +1,42 @@
+{
+  "cutoff_T": "2025-01-01",
+  "base_model": "Llama-3.2-3B-Instruct (ollama: llama3.2:3b)",
+  "base_model_training_cutoff": "2023-12",
+  "base_model_release_date": "2024-09-25",
+  "cutoff_source_url": "https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct",
+  "category": "cs.CL",
+  "static_count": 300,
+  "live_count": 200,
+  "id_overlap_count": 0,
+  "static_date_range": [
+    "2020-05-22",
+    "2024-01-06"
+  ],
+  "live_date_range": [
+    "2025-01-01",
+    "2026-07-01"
+  ],
+  "landmark_ids_included": [
+    "2104.09864",
+    "2307.03172",
+    "2309.17453",
+    "2201.11903",
+    "2203.11171",
+    "2308.10792",
+    "2307.09288",
+    "2210.03629",
+    "2211.17192",
+    "2310.06825",
+    "2109.07958",
+    "2302.04761",
+    "2305.10601",
+    "2305.18290",
+    "2306.00978",
+    "2305.13245",
+    "2310.11511",
+    "2005.11401",
+    "2302.13971",
+    "2009.03300",
+    "2106.09685"
+  ]
+}
