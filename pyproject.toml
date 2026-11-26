@@ -1,0 +1,21 @@
+[project]
+name = "arxiv-qlora-rag"
+version = "0.1.0"
+description = "Temporal RAG and QLoRA evaluation pipeline over arXiv cs.CL papers"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "sentence-transformers>=3.0.0",
+    "faiss-cpu>=1.8.0",
+    "httpx>=0.27.0",
+    "pydantic>=2.7.0",
+    "numpy>=1.26.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
