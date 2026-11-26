@@ -1,4 +1,4 @@
-# arXiv Hybrid LLM — Evening 1: Date-Split Corpus, Golden Set & Baselines
+# arXiv Hybrid LLM: Date-Split Corpus, Golden Set & Baselines
 
 Leakage-safe temporal RAG benchmark on arXiv `cs.CL` running locally on an **Apple Mac mini (M5 Pro, 48 GB)** via **Ollama** (`llama3.2:3b` base model + `qwen2.5:7b` LLM-as-a-Judge) and **FAISS + `BAAI/bge-small-en-v1.5`**.
 
@@ -8,7 +8,7 @@ Leakage-safe temporal RAG benchmark on arXiv `cs.CL` running locally on an **App
 
 > [!IMPORTANT]
 > **Best way to review this experiment and all results:** open **[`experiment_book.html`](experiment_book.html)**.
-> It compiles the full methodology, multi-agent orchestration, slice definitions with real positive/negative failure transcripts, all 18 interactive Plotly charts, judge-vs-human audit tables, and 3 QLoRA Evening 2+ research continuations into a single self-contained, Tailwind + shadcn styled book.
+> It compiles the full methodology, multi-agent orchestration, slice definitions with real positive/negative failure transcripts, all 18 interactive Plotly charts, judge-vs-human audit tables, and 3 QLoRA & RAG research continuations into a single self-contained, Tailwind + shadcn styled book.
 
 ### Ways to Open
 
@@ -33,7 +33,7 @@ Leakage-safe temporal RAG benchmark on arXiv `cs.CL` running locally on an **App
 | **Page 5** | **Ch. 4: 60-Prompt Golden Benchmark** | Slice composition, temporal override pairs, unanswerable trap construction |
 | **Page 6** | **Ch. 5: Evaluation Rubric & Calibration** | Cross-family `qwen2.5:7b` judge schema and calibration rules |
 | **Page 7** | **Ch. 6: Baselines & Judge Agreement** | Zero-shot vs RAG (`k=4`) scores, latency breakdown, 20-sample blind human agreement (`95.0%`) |
-| **Page 8** | **Ch. 7: Failure Modes & Evening 2 QLoRA** | Citation leakage, override resistance, and QLoRA mitigation targets |
+| **Page 8** | **Ch. 7: Failure Modes & QLoRA Outlook** | Citation leakage, override resistance, and QLoRA mitigation targets |
 | **Page 9** | **Appendix A: Hardware & Sub-Agent Trace** | Mac mini M5 Pro runtime telemetry, Ollama throughput, and 9-agent execution trace |
 | **Page 10** | **Appendix B: 3 Future Research Directions** | Temporal DPO/ORPO, Abstention-Calibrated QLoRA, and Cross-Family Judge Distillation |
 
@@ -124,7 +124,7 @@ tests/
   test_pipeline.py      # Corpus, retrieval, golden-set, blind-sample, agreement tests
 main.py                 # Unified CLI entrypoint
 experiment_book.html    # Self-contained 10-page interactive book (Chapters 1-7 + Appendices A-B)
-notes.md                # Error analysis & Evening 2 QLoRA expectations
+notes.md                # Error analysis & QLoRA fine-tuning expectations
 ```
 
 ## Quickstart (on Mac mini with `uv` + Ollama)

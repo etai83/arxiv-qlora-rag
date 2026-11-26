@@ -247,7 +247,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       document.querySelector('meta[name="color-scheme"]').content = localStorage.getItem("color-scheme") ?? "light dark";
     } catch {}
   </script>
-  <title>arXiv Hybrid LLM — Evening 1 Experiment Book</title>
+  <title>arXiv Hybrid LLM — Interactive Experiment Book</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
@@ -584,7 +584,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     <aside id="book-spine" class="hidden lg:block sticky top-20 rounded-xl border border-border bg-card p-4 shadow-sm">
       <div class="pb-3 mb-3 border-b border-border">
         <p class="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">Monograph Index</p>
-        <h2 class="font-serif text-lg font-semibold mt-0.5">Evening 1 Lab Book</h2>
+        <h2 class="font-serif text-lg font-semibold mt-0.5">Experiment Lab Book</h2>
       </div>
       <nav aria-label="Book chapters" id="chapter-nav" class="space-y-1">
         <a href="#page-1" data-nav-link="0" aria-current="page" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-semibold bg-primary text-primary-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Prologue</div><div class="truncate">Abstract &amp; Agenda</div></a>
@@ -614,7 +614,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         <section id="page-1" data-page="0" class="book-page space-y-8">
           <div class="border-b border-border pb-6 space-y-4">
             <div class="flex flex-wrap items-center gap-2">
-              <span class="inline-flex items-center rounded-full border border-border bg-secondary px-3 py-0.5 font-mono text-xs">Evening 1 · Baseline Monograph</span>
+              <span class="inline-flex items-center rounded-full border border-border bg-secondary px-3 py-0.5 font-mono text-xs">Baseline Monograph</span>
               <span class="inline-flex items-center rounded-full border border-border bg-muted px-3 py-0.5 font-mono text-xs">Mac mini M5 Pro · 48 GB</span>
               <span class="inline-flex items-center rounded-full border border-border bg-muted px-3 py-0.5 font-mono text-xs">Ollama 0.40.18 + FAISS</span>
             </div>
@@ -677,7 +677,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
               </a>
               <a href="#page-8" data-nav-link="7" class="group cursor-pointer text-left rounded-xl border border-border bg-card p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
                 <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Chapter 7</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 8 →</span></div>
-                <div><p class="font-serif text-base font-semibold group-hover:underline">Failure Analysis &amp; QLoRA</p><p class="text-xs text-muted-foreground mt-0.5">Master results table, 3 failure modes, and Evening 2 QLoRA hybrid roadmap.</p></div>
+                <div><p class="font-serif text-base font-semibold group-hover:underline">Failure Analysis &amp; QLoRA</p><p class="text-xs text-muted-foreground mt-0.5">Master results table, 3 failure modes, and QLoRA hybrid roadmap.</p></div>
               </a>
               <a href="#page-9" data-nav-link="8" class="group cursor-pointer text-left rounded-xl border border-dashed border-border bg-secondary/40 p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
                 <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Appendix A</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 9 →</span></div>
@@ -770,7 +770,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                 </div>
                 <div class="rounded-lg border border-border bg-card p-3 space-y-1">
                   <div class="flex items-center justify-between font-mono text-[11px]"><span class="font-semibold text-foreground">&#10007; Negative Example (Distractor Hallucination Archetype)</span><span class="rounded bg-muted px-1.5 py-0.5">C=1 F=1 Cit=2</span></div>
-                  <p class="text-muted-foreground">Observed 0/20 times in Evening 1; would occur if the model fabricates Swahili accuracy/annotator counts and cites top-4 distractor <code class="font-mono">[2607.00724]</code>.</p>
+                  <p class="text-muted-foreground">Observed 0/20 times in baseline runs; would occur if the model fabricates Swahili accuracy/annotator counts and cites top-4 distractor <code class="font-mono">[2607.00724]</code>.</p>
                 </div>
               </div>
             </div>
@@ -1245,11 +1245,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           </div>
         </section>
 
-        <!-- Page 8: Chapter 7 - Failure Analysis & Evening 2 Roadmap -->
+        <!-- Page 8: Chapter 7 - Failure Analysis & QLoRA Roadmap -->
         <section id="page-8" data-page="7" class="book-page hidden space-y-6">
           <div class="border-b border-border pb-4">
-            <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Chapter 7 · Synthesis &amp; Next Evening</p>
-            <h1 class="font-serif text-3xl font-bold mt-1">Failure Analysis &amp; Evening 2 QLoRA Outlook</h1>
+            <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Chapter 7 · Synthesis &amp; Hybrid Roadmap</p>
+            <h1 class="font-serif text-3xl font-bold mt-1">Failure Analysis &amp; QLoRA Fine-Tuning Outlook</h1>
             <p class="text-sm text-muted-foreground mt-1">Master comparison table, empirical failure modes, and concrete hypotheses for QLoRA fine-tuning on pre-T weights + live RAG.</p>
           </div>
 
@@ -1294,7 +1294,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
             <div class="rounded-xl border border-border bg-card p-4 space-y-2">
-              <h3 class="font-serif text-lg font-semibold">Evening 1 Baselines vs. Evening 2 Hybrid Target</h3>
+              <h3 class="font-serif text-lg font-semibold">Measured Baselines vs. QLoRA Hybrid Target</h3>
               <p class="text-xs text-muted-foreground">What QLoRA fine-tuning changes (static recall + routing + formatting) vs. what stays dependent on RAG (live freshness).</p>
               <div id="chart-p8-roadmap" class="w-full h-72"></div>
             </div>
@@ -1364,8 +1364,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         <section id="page-10" data-page="9" class="book-page hidden space-y-6">
           <div class="border-b border-border pb-4">
             <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Appendix B · Future Research Agenda</p>
-            <h1 class="font-serif text-3xl font-bold mt-1">Three Research Continuations Beyond Evening 1</h1>
-            <p class="text-sm text-muted-foreground mt-1">Concrete experimental extensions targeting the three empirical bottlenecks measured in Evening 1: live-only static collapse (<code class="font-mono text-xs">1.80</code>), residual temporal override misses (<code class="font-mono text-xs">3/10</code>), and abstract-only truncation (<code class="font-mono text-xs">3.85</code> live).</p>
+            <h1 class="font-serif text-3xl font-bold mt-1">Three Research Continuations Beyond Baselines</h1>
+            <p class="text-sm text-muted-foreground mt-1">Concrete experimental extensions targeting the three empirical bottlenecks measured in baseline evaluation: live-only static collapse (<code class="font-mono text-xs">1.80</code>), residual temporal override misses (<code class="font-mono text-xs">3/10</code>), and abstract-only truncation (<code class="font-mono text-xs">3.85</code> live).</p>
           </div>
 
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 text-xs">
@@ -1376,7 +1376,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                   <span class="rounded bg-muted px-2 py-0.5 font-mono text-[10px]">Static 1.80 &rarr; &ge;4.20</span>
                 </div>
                 <h2 class="font-serif text-lg font-semibold">Confidence-Gated Hybrid Routing + Pre-T QLoRA</h2>
-                <p class="text-muted-foreground"><strong>Evening 1 Bottleneck:</strong> Live-only RAG abstained 20/20 on <code class="font-mono">static</code> (<code class="font-mono">1.80</code>), while Zero-Shot refused 18/20 (<code class="font-mono">1.45</code>).</p>
+                <p class="text-muted-foreground"><strong>Baseline Bottleneck:</strong> Live-only RAG abstained 20/20 on <code class="font-mono">static</code> (<code class="font-mono">1.80</code>), while Zero-Shot refused 18/20 (<code class="font-mono">1.45</code>).</p>
                 <p><strong>Proposed Method:</strong> Train 4-bit <code class="font-mono">NF4</code> QLoRA adapters on <code class="font-mono">corpus/static.jsonl</code> QA pairs, then gate inference via a calibrated <code class="font-mono">bge-reranker-v2-m3</code> score <code class="font-mono">&tau;</code>: high <code class="font-mono">&tau;</code> enforces grounded post-T RAG; mid-band near-miss distractors (<code class="font-mono">u07–u10</code>) abstain; low <code class="font-mono">&tau;</code> routes to <code class="font-mono">[parametric &lt; T]</code> QLoRA weights.</p>
               </div>
               <div class="pt-2 border-t border-border font-mono text-[11px] text-muted-foreground">Hypothesis: Eliminates live-only blindspot without breaking unanswerable precision.</div>
@@ -1389,7 +1389,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                   <span class="rounded bg-muted px-2 py-0.5 font-mono text-[10px]">Override 70% &rarr; &ge;95%</span>
                 </div>
                 <h2 class="font-serif text-lg font-semibold">Temporal Reranking &amp; Counterfactual Conflict DPO</h2>
-                <p class="text-muted-foreground"><strong>Evening 1 Bottleneck:</strong> 3/10 <code class="font-mono">temporal_override</code> misses (<code class="font-mono">g44</code>, <code class="font-mono">g46</code>, <code class="font-mono">g48</code>) even at 10/10 rank-1 FAISS recall; static + live mixed indices lack date-aware ranking.</p>
+                <p class="text-muted-foreground"><strong>Baseline Bottleneck:</strong> 3/10 <code class="font-mono">temporal_override</code> misses (<code class="font-mono">g44</code>, <code class="font-mono">g46</code>, <code class="font-mono">g48</code>) even at 10/10 rank-1 FAISS recall; static + live mixed indices lack date-aware ranking.</p>
                 <p><strong>Proposed Method:</strong> Pair hybrid BM25+dense RRF and date-decay reranking (<code class="font-mono">exp(&lambda; &middot; &Delta;t)</code> on current-state queries) with Direct Preference Optimization on synthetic conflict pairs (<code class="font-mono">pre-T chunk + post-T chunk</code>), preferring explicit post-T updates over hedging or abstention.</p>
               </div>
               <div class="pt-2 border-t border-border font-mono text-[11px] text-muted-foreground">Hypothesis: Resolves contradictory multi-era evidence deterministically.</div>
@@ -1402,7 +1402,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                   <span class="rounded bg-muted px-2 py-0.5 font-mono text-[10px]">Live 3.85 &rarr; &ge;4.50</span>
                 </div>
                 <h2 class="font-serif text-lg font-semibold">Section-Aware Full-Paper Ingestion &amp; Submodular Packing</h2>
-                <p class="text-muted-foreground"><strong>Evening 1 Bottleneck:</strong> Abstract-only chunks (175-word median) omit hyperparameter &amp; ablation tables probed by near-miss prompts (<code class="font-mono">u07–u10</code>) and cause partial omissions (<code class="font-mono">g27</code>).</p>
+                <p class="text-muted-foreground"><strong>Baseline Bottleneck:</strong> Abstract-only chunks (175-word median) omit hyperparameter &amp; ablation tables probed by near-miss prompts (<code class="font-mono">u07–u10</code>) and cause partial omissions (<code class="font-mono">g27</code>).</p>
                 <p><strong>Proposed Method:</strong> Parse <code class="font-mono">ar5iv</code> HTML/LaTeX full papers into hierarchical section + table chunks, retrieve via <code class="font-mono">bge-m3</code> multi-vector scoring, and pack context via budgeted submodular maximization (cf. <code class="font-mono">2607.00725</code>) at fixed 1,500-token reader budgets.</p>
               </div>
               <div class="pt-2 border-t border-border font-mono text-[11px] text-muted-foreground">Hypothesis: Unlocks table/ablation QA while curbing token-budget truncation.</div>
@@ -1452,7 +1452,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div class="rounded-xl border border-border bg-card p-4 space-y-2">
               <h3 class="font-serif text-lg font-semibold">Projected Cumulative Slice Trajectory</h3>
-              <p class="text-xs text-muted-foreground">Expected slice correctness progression as each continuation stacks onto Evening 1 RAG.</p>
+              <p class="text-xs text-muted-foreground">Expected slice correctness progression as each continuation stacks onto Baseline RAG.</p>
               <div id="chart-appb-impact" class="w-full h-72"></div>
             </div>
             <div class="rounded-xl border border-border bg-card p-4 space-y-2">
@@ -1489,7 +1489,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       { idx: 4, label: "Chapter 4", title: "60-Prompt Golden Set", desc: "Interactive explorer across Static, Live, Temporal Override, and Unanswerable." },
       { idx: 5, label: "Chapter 5", title: "Rubric & Judge Calibration", desc: "48.3% -> 80.0% exact agreement lift via CoT ordering and abstention rules." },
       { idx: 6, label: "Chapter 6", title: "Baselines & Run Inspector", desc: "120 Zero-Shot vs. RAG runs, latency distributions, and prompt-level drilldown." },
-      { idx: 7, label: "Chapter 7", title: "Failure Analysis & QLoRA", desc: "Master results table, 3 failure modes, and Evening 2 QLoRA hybrid roadmap." },
+      { idx: 7, label: "Chapter 7", title: "Failure Analysis & QLoRA", desc: "Master results table, 3 failure modes, and QLoRA hybrid roadmap." },
       { idx: 8, label: "Appendix A", title: "Compute & Orchestration", desc: "Mac mini M5 Pro user-space Ollama setup, 3-wave agents, and 60 tok/s judge tuning." },
       { idx: 9, label: "Appendix B", title: "3 Research Continuations", desc: "Confidence-gated QLoRA routing, temporal conflict DPO, and full-paper submodular RAG." },
     ];
@@ -1793,9 +1793,9 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       if (idx === 7) {
         const axes = ["Static Recall", "Live Freshness", "Temporal Override", "Abstention Safety", "Citation Discipline"];
         Plotly.newPlot("chart-p8-roadmap", [
-          { x: axes, y: [1.45, 1.00, 0.0, 5.00, 1.00], name: "Zero-Shot (E1)", type: "scatter", mode: "lines+markers", line: { color: t.zsColor, width: 2.5 } },
-          { x: axes, y: [1.80, 3.85, 3.50, 5.00, 4.98], name: "RAG Live-Only (E1)", type: "scatter", mode: "lines+markers", line: { color: t.ragColor, width: 2.5 } },
-          { x: axes, y: [4.30, 4.30, 4.50, 4.90, 4.98], name: "Target: QLoRA + Live RAG (E2)", type: "scatter", mode: "lines+markers", line: { color: t.greenColor, width: 3, dash: "dot" } },
+          { x: axes, y: [1.45, 1.00, 0.0, 5.00, 1.00], name: "Zero-Shot (Baseline)", type: "scatter", mode: "lines+markers", line: { color: t.zsColor, width: 2.5 } },
+          { x: axes, y: [1.80, 3.85, 3.50, 5.00, 4.98], name: "RAG Live-Only (Baseline)", type: "scatter", mode: "lines+markers", line: { color: t.ragColor, width: 2.5 } },
+          { x: axes, y: [4.30, 4.30, 4.50, 4.90, 4.98], name: "Target: QLoRA + Live RAG", type: "scatter", mode: "lines+markers", line: { color: t.greenColor, width: 3, dash: "dot" } },
         ], baseLayout({
           yaxis: { title: "Capability (0–5)", range: [0, 5.5], gridcolor: t.gridColor },
           margin: { t: 24, r: 18, b: 64, l: 48 },
@@ -1837,7 +1837,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       if (idx === 9) {
         const axes = ["Static (20)", "Live (20)", "Override (10)", "Unansw. (10)", "Deep Table QA"];
         Plotly.newPlot("chart-appb-impact", [
-          { x: axes, y: [1.80, 3.85, 4.20, 5.00, 1.50], name: "Evening 1 RAG (Measured)", type: "bar", marker: { color: t.zsColor } },
+          { x: axes, y: [1.80, 3.85, 4.20, 5.00, 1.50], name: "Baseline RAG (Measured)", type: "bar", marker: { color: t.zsColor } },
           { x: axes, y: [4.25, 3.85, 4.20, 4.90, 1.50], name: "+Cont. 1: QLoRA Router (Target)", type: "bar", marker: { color: t.ragColor } },
           { x: axes, y: [4.25, 3.95, 4.70, 4.90, 1.50], name: "+Cont. 2: Conflict DPO (Target)", type: "bar", marker: { color: t.accentColor } },
           { x: axes, y: [4.30, 4.55, 4.75, 4.95, 4.20], name: "+Cont. 3: Full-Paper Pack (Target)", type: "bar", marker: { color: t.greenColor } },
