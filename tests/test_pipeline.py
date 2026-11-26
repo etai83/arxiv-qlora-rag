@@ -249,7 +249,7 @@ def test_helpers_and_verdict_normalization() -> None:
 
 
 def test_build_experiment_book(tmp_path: Path) -> None:
-    """Verify experiment_book.html builds cleanly with all 8 book pages and embedded payload."""
+    """Verify experiment_book.html builds cleanly with all 9 book pages and embedded payload."""
     from src.build_book import build_book
 
     if not (ROOT / "eval" / "judge_scores.jsonl").exists():
@@ -260,7 +260,9 @@ def test_build_experiment_book(tmp_path: Path) -> None:
     assert '<meta name="color-scheme" content="light dark">' in html
     assert "document.startViewTransition" in html
     assert "plotly-2.35.2.min.js" in html
-    for page_idx in range(8):
+    for cid in ("chart-p2-taxonomy", "chart-p2-archetypes", "chart-app-memory", "chart-app-throughput"):
+        assert cid in html
+    for page_idx in range(9):
         assert f'data-page="{page_idx}"' in html
         page_num = page_idx + 1
         assert f'id="page-{page_num}"' in html

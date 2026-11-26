@@ -554,7 +554,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
       <div class="flex items-center gap-3">
         <a href="#page-1" data-nav-link="0" class="rounded-md border border-border bg-secondary px-2 py-1 font-mono text-xs hover:bg-accent transition-colors">↑ Agenda</a>
-        <span id="header-folio" class="font-mono text-xs text-muted-foreground hidden sm:inline">Page 1 / 8</span>
+        <span id="header-folio" class="font-mono text-xs text-muted-foreground hidden sm:inline">Page 1 / 9</span>
         <!-- Appearance Settings Disclosure (tri-state System / Light / Dark) -->
         <details id="appearance-popover" class="relative">
           <summary class="list-none cursor-pointer inline-flex items-center gap-1.5 rounded-md border border-border bg-secondary px-2.5 py-1.5 text-xs font-medium hover:bg-accent">
@@ -574,7 +574,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       </div>
     </div>
     <div class="h-0.5 bg-muted w-full">
-      <div id="reading-progress" class="h-full bg-primary transition-all duration-300" style="width: 12.5%"></div>
+      <div id="reading-progress" class="h-full bg-primary transition-all duration-300" style="width: 11.1%"></div>
     </div>
   </header>
 
@@ -588,13 +588,15 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       </div>
       <nav aria-label="Book chapters" id="chapter-nav" class="space-y-1">
         <a href="#page-1" data-nav-link="0" aria-current="page" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-semibold bg-primary text-primary-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Prologue</div><div class="truncate">Abstract &amp; Agenda</div></a>
-        <a href="#page-2" data-nav-link="1" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 1</div><div class="truncate">Mac mini &amp; Subagent Fan-Out</div></a>
+        <a href="#page-2" data-nav-link="1" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 1</div><div class="truncate">Slices &amp; Eval Metrics</div></a>
         <a href="#page-3" data-nav-link="2" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 2</div><div class="truncate">Leakage-Safe Date Split</div></a>
         <a href="#page-4" data-nav-link="3" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 3</div><div class="truncate">Ingestion &amp; FAISS Retrieval</div></a>
         <a href="#page-5" data-nav-link="4" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 4</div><div class="truncate">60-Prompt Golden Set</div></a>
         <a href="#page-6" data-nav-link="5" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 5</div><div class="truncate">Rubric &amp; Judge Calibration</div></a>
         <a href="#page-7" data-nav-link="6" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 6</div><div class="truncate">Baselines &amp; Run Inspector</div></a>
-        <a href="#page-8" data-nav-link="7" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Epilogue</div><div class="truncate">Failure Analysis &amp; QLoRA</div></a>
+        <a href="#page-8" data-nav-link="7" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 7</div><div class="truncate">Failure Analysis &amp; QLoRA</div></a>
+        <div class="pt-2 mt-2 border-t border-border"></div>
+        <a href="#page-9" data-nav-link="8" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Appendix A</div><div class="truncate">Compute &amp; Orchestration</div></a>
       </nav>
       <div class="mt-4 pt-3 border-t border-border text-xs text-muted-foreground space-y-1">
         <div class="flex justify-between"><span>Cutoff T</span><span class="font-mono text-foreground">2025-01-01</span></div>
@@ -650,7 +652,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
               </a>
               <a href="#page-2" data-nav-link="1" class="group cursor-pointer text-left rounded-xl border border-border bg-card p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
                 <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Chapter 1</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 2 →</span></div>
-                <div><p class="font-serif text-base font-semibold group-hover:underline">Mac mini &amp; Subagent Fan-Out</p><p class="text-xs text-muted-foreground mt-0.5">User-space Ollama Metal GPU setup, 3-wave agents, and 60 tok/s judge tuning.</p></div>
+                <div><p class="font-serif text-base font-semibold group-hover:underline">Slices &amp; Eval Metrics</p><p class="text-xs text-muted-foreground mt-0.5">Formal definitions of the 4 golden slices, 1–5 scoring anchors, override flag &amp; agreement gate.</p></div>
               </a>
               <a href="#page-3" data-nav-link="2" class="group cursor-pointer text-left rounded-xl border border-border bg-card p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
                 <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Chapter 2</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 3 →</span></div>
@@ -673,8 +675,12 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                 <div><p class="font-serif text-base font-semibold group-hover:underline">Baselines &amp; Run Inspector</p><p class="text-xs text-muted-foreground mt-0.5">120 Zero-Shot vs. RAG runs, latency distributions, and prompt-level drilldown.</p></div>
               </a>
               <a href="#page-8" data-nav-link="7" class="group cursor-pointer text-left rounded-xl border border-border bg-card p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
-                <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Epilogue</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 8 →</span></div>
+                <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Chapter 7</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 8 →</span></div>
                 <div><p class="font-serif text-base font-semibold group-hover:underline">Failure Analysis &amp; QLoRA</p><p class="text-xs text-muted-foreground mt-0.5">Master results table, 3 failure modes, and Evening 2 QLoRA hybrid roadmap.</p></div>
+              </a>
+              <a href="#page-9" data-nav-link="8" class="group cursor-pointer sm:col-span-2 text-left rounded-xl border border-dashed border-border bg-secondary/40 p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
+                <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Appendix A</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 9 →</span></div>
+                <div><p class="font-serif text-base font-semibold group-hover:underline">Compute &amp; Subagent Orchestration</p><p class="text-xs text-muted-foreground mt-0.5">Mac mini M5 Pro (48 GB) user-space Ollama setup, 3-wave parallel fan-out, and 60 tok/s judge tuning.</p></div>
               </a>
             </div>
           </div>
@@ -687,51 +693,125 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           </div>
         </section>
 
-        <!-- Page 2: Step 0 - Mac mini & Subagent Infra -->
+        <!-- Page 2: Chapter 1 - Slices & Evaluation Metrics Definitions -->
         <section id="page-2" data-page="1" class="book-page hidden space-y-6">
           <div class="border-b border-border pb-4">
-            <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Chapter 1 · Compute &amp; Orchestration</p>
-            <h1 class="font-serif text-3xl font-bold mt-1">Mac mini M5 Pro Setup &amp; Parallel Subagent Fan-Out</h1>
-            <p class="text-sm text-muted-foreground mt-1">Zero-sudo user-space provisioning of <code class="font-mono text-xs">uv</code>, Python 3.13, and <code class="font-mono text-xs">Ollama 0.40.18</code> over SSH, plus multi-wave subagent parallelization.</p>
+            <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Chapter 1 · Evaluation Design</p>
+            <h1 class="font-serif text-3xl font-bold mt-1">Slice Taxonomy &amp; Evaluation Metrics</h1>
+            <p class="text-sm text-muted-foreground mt-1">Formal definitions of the 4 leakage-safe benchmark slices, 1–5 ordinal scoring scales, temporal override flag, latency decomposition, and the &ge;70% human-judge trust gate.</p>
           </div>
 
-          <div id="p2-hw-cards" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+          <!-- 4 Slice Definitions -->
+          <div class="space-y-2.5">
+            <h2 class="font-serif text-xl font-semibold">1. Four Golden Slice Types (<code class="font-mono text-base">N = 60</code>)</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <span class="font-mono font-semibold text-primary">static · n = 20 (g01–g20)</span>
+                  <span class="rounded bg-muted px-2 py-0.5 font-mono text-[10px]">Published &lt; T</span>
+                </div>
+                <p><strong>What it tests:</strong> Pre-cutoff <code class="font-mono">cs.CL</code> facts (15 landmark pre-Dec-2023 papers + 5 early-2024 papers) absent from the post-T RAG index.</p>
+                <p class="text-muted-foreground"><strong>Signal isolated:</strong> Parametric retention in zero-shot vs. over-abstention penalty when live-only RAG finds no matching post-T source.</p>
+              </div>
+              <div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <span class="font-mono font-semibold text-primary">live · n = 20 (g21–g40)</span>
+                  <span class="rounded bg-muted px-2 py-0.5 font-mono text-[10px]">Published &gt;= T</span>
+                </div>
+                <p><strong>What it tests:</strong> Post-cutoff (2025–2026) methods, datasets, and quantitative findings guaranteed unseen during <code class="font-mono">llama3.2:3b</code> pretraining.</p>
+                <p class="text-muted-foreground"><strong>Signal isolated:</strong> Dense <code class="font-mono">bge-small</code> retrieval recall + grounded synthesis + <code class="font-mono">[arxiv_id]</code> citation discipline.</p>
+              </div>
+              <div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <span class="font-mono font-semibold text-primary">temporal_override · n = 10 (g41–g50)</span>
+                  <span class="rounded bg-muted px-2 py-0.5 font-mono text-[10px]">Post-T Beats Pre-T</span>
+                </div>
+                <p><strong>What it tests:</strong> Current-state queries (<em>"What is the current best approach to X?"</em>) where post-T evidence overturns or outperforms earlier paradigms.</p>
+                <p class="text-muted-foreground"><strong>Signal isolated:</strong> Conflict resolution—whether RAG adopts <code class="font-mono">newer_paper_id</code> instead of clinging to pretraining priors or hedging.</p>
+              </div>
+              <div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <span class="font-mono font-semibold text-primary">unanswerable · n = 10 (g51–g60)</span>
+                  <span class="rounded bg-muted px-2 py-0.5 font-mono text-[10px]">Not in Sources</span>
+                </div>
+                <p><strong>What it tests:</strong> 6 out-of-corpus prompts + 4 near-miss distractors targeting indexed papers (<code class="font-mono">BaseRT</code>, <code class="font-mono">MSQA</code>, etc.) while asking unstated metrics.</p>
+                <p class="text-muted-foreground"><strong>Signal isolated:</strong> Precision abstention (<code class="font-mono">"Not in the sources."</code>) without hallucinating numbers from top-4 semantic distractors.</p>
+              </div>
+            </div>
+          </div>
 
-          <div class="rounded-xl border border-border bg-secondary/50 p-5 space-y-3">
-            <h2 class="font-serif text-xl font-semibold">3-Wave Subagent Fan-Out Architecture</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-              <div class="rounded-lg border border-border bg-card p-4 space-y-1.5">
-                <span class="font-mono font-semibold text-primary">Wave 1 · 3 Agents (Parallel)</span>
-                <p class="text-muted-foreground">1A: Mac mini user-space uv + Ollama.app Metal setup &amp; model pulls.</p>
-                <p class="text-muted-foreground">1B: arXiv <code class="font-mono">cs.CL</code> API scraper + date-split verification.</p>
-                <p class="text-muted-foreground">1C: Rubric, FAISS ingest/retriever, baselines, judge, metrics, pytest.</p>
-              </div>
-              <div class="rounded-lg border border-border bg-card p-4 space-y-1.5">
-                <span class="font-mono font-semibold text-primary">Wave 2 · 4 Agents (Parallel)</span>
-                <p class="text-muted-foreground">2A: 20 <code class="font-mono">static</code> prompts (15 landmark + 5 early-2024).</p>
-                <p class="text-muted-foreground">2B: 20 <code class="font-mono">live</code> prompts (20/20 rank-1 FAISS verified).</p>
-                <p class="text-muted-foreground">2C: 10 <code class="font-mono">temporal_override</code> prompts (10/10 rank-1 verified).</p>
-                <p class="text-muted-foreground">2D: 10 <code class="font-mono">unanswerable</code> prompts (6 OOC + 4 near-miss distractors).</p>
-              </div>
-              <div class="rounded-lg border border-border bg-card p-4 space-y-1.5">
-                <span class="font-mono font-semibold text-primary">Wave 3 · Sequential + 2 Parallel</span>
-                <p class="text-muted-foreground">Sequential <code class="font-mono">llama3.2:3b</code> baselines for clean uncontended latency.</p>
-                <p class="text-muted-foreground">3A: <code class="font-mono">qwen2.5:7b</code> judge runner on Mac mini.</p>
-                <p class="text-muted-foreground">3B: Blinded Human Grader on 20 stratified samples (zero judge leakage).</p>
-              </div>
+          <!-- Evaluation Metrics Table -->
+          <div class="space-y-2.5">
+            <h2 id="metrics-def-caption" class="font-serif text-xl font-semibold">2. Evaluation Metrics, Anchors &amp; Agreement Gate</h2>
+            <div tabindex="0" role="region" aria-labelledby="metrics-def-caption" class="table-wrapper book-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Metric</th>
+                    <th>Scale / Scope</th>
+                    <th>Score 5 (or 1 / Pass)</th>
+                    <th>Score 1 (or 0 / Fail)</th>
+                    <th>Design Rationale</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th class="font-mono text-xs">correctness</th>
+                    <td data-label="Scale / Scope" class="font-mono text-xs">1–5 int · All slices</td>
+                    <td data-label="Best" class="text-xs">Accurate core claim vs. reference; or clean abstention on <code class="font-mono">unanswerable</code>.</td>
+                    <td data-label="Worst" class="text-xs">Wrong/contradictory, hallucinated answer on <code class="font-mono">unanswerable</code>, or false abstention on answerable slice.</td>
+                    <td data-label="Rationale" class="text-xs text-muted-foreground">Measures end-task utility while enforcing slice-appropriate abstention.</td>
+                  </tr>
+                  <tr>
+                    <th class="font-mono text-xs">faithfulness</th>
+                    <td data-label="Scale / Scope" class="font-mono text-xs">1–5 int · All slices</td>
+                    <td data-label="Best" class="text-xs">Every claim supported by <code class="font-mono">retrieved_context</code>, or pure abstention (including zero-shot <code class="font-mono">NONE</code>).</td>
+                    <td data-label="Worst" class="text-xs">Asserts ungrounded factual claims not in <code class="font-mono">retrieved_context</code> (incl. zero-shot factual answers).</td>
+                    <td data-label="Rationale" class="text-xs text-muted-foreground">Decouples context grounding from parametric correctness.</td>
+                  </tr>
+                  <tr>
+                    <th class="font-mono text-xs">citation_accuracy</th>
+                    <td data-label="Scale / Scope" class="font-mono text-xs">1–5 int · All slices</td>
+                    <td data-label="Best" class="text-xs">Every key claim cites valid supporting <code class="font-mono">[arxiv_id]</code> from context, or clean abstention with <code class="font-mono">[]</code>.</td>
+                    <td data-label="Worst" class="text-xs">Uncited factual claims, hallucinated IDs outside <code class="font-mono">valid_context_ids</code>, or abstaining with unrelated citations.</td>
+                    <td data-label="Rationale" class="text-xs text-muted-foreground">Audits verifiability and catches fabricated or mismatched IDs.</td>
+                  </tr>
+                  <tr>
+                    <th class="font-mono text-xs">override_obedience</th>
+                    <td data-label="Scale / Scope" class="font-mono text-xs">{0, 1} · Override only</td>
+                    <td data-label="Best" class="text-xs">1 iff response adopts/reports newer post-T finding (<code class="font-mono">newer_paper_id</code>) as current best.</td>
+                    <td data-label="Worst" class="text-xs">0 when reverting to older pre-T baseline, hedging inconclusively, or abstaining.</td>
+                    <td data-label="Rationale" class="text-xs text-muted-foreground">Isolates temporal authority over stale model priors.</td>
+                  </tr>
+                  <tr>
+                    <th class="font-mono text-xs">latency_ms</th>
+                    <td data-label="Scale / Scope" class="font-mono text-xs">ms · Mean &amp; Median</td>
+                    <td data-label="Best" class="text-xs">Sequential warm-model wall time (<code class="font-mono">retrieval_ms + generation_ms</code> in RAG).</td>
+                    <td data-label="Worst" class="text-xs">Measured without concurrency contention; cold model-load excluded via warmup.</td>
+                    <td data-label="Rationale" class="text-xs text-muted-foreground">Quantifies real-time retrieval vs. generation cost trade-off.</td>
+                  </tr>
+                  <tr>
+                    <th class="font-mono text-xs">judge_agreement</th>
+                    <td data-label="Scale / Scope" class="font-mono text-xs">% · N=20 (60 pairs)</td>
+                    <td data-label="Best" class="text-xs"><code class="font-mono">exact_match_pct</code> &ge; 70% (<code class="font-mono">J == H</code>), plus <code class="font-mono">within_1_pct</code> (<code class="font-mono">|J-H| &le; 1</code>) &amp; 3-bucket match.</td>
+                    <td data-label="Worst" class="text-xs">Below 70% triggers mandatory rubric/judge calibration before trusting results.</td>
+                    <td data-label="Rationale" class="text-xs text-muted-foreground">Prevents uncalibrated LLM-as-a-Judge bias from skewing findings.</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div class="rounded-xl border border-border bg-card p-4 space-y-2">
-              <h3 class="font-serif text-lg font-semibold">48 GB Unified Memory Footprint</h3>
-              <p class="text-xs text-muted-foreground">Model weights + embeddings vs. available Metal headroom on M5 Pro.</p>
-              <div id="chart-p2-memory" class="w-full h-72"></div>
+              <h3 class="font-serif text-lg font-semibold">Slice × Capability Diagnostic Matrix</h3>
+              <p class="text-xs text-muted-foreground">How the 4 slices cleanly isolate orthogonal RAG and parametric failure modes.</p>
+              <div id="chart-p2-taxonomy" class="w-full h-72"></div>
             </div>
             <div class="rounded-xl border border-border bg-card p-4 space-y-2">
-              <h3 class="font-serif text-lg font-semibold">Judge Decoding Throughput Engineering</h3>
-              <p class="text-xs text-muted-foreground">Removing 152k-vocab GBNF schema mask &amp; multi-slot contention accelerated Qwen2.5-7B.</p>
-              <div id="chart-p2-throughput" class="w-full h-72"></div>
+              <h3 class="font-serif text-lg font-semibold">Canonical Response Score Archetypes</h3>
+              <p class="text-xs text-muted-foreground">Illustrative <code class="font-mono">Correctness / Faithfulness / Citation</code> vectors under the calibrated rubric.</p>
+              <div id="chart-p2-archetypes" class="w-full h-72"></div>
             </div>
           </div>
         </section>
@@ -1018,10 +1098,10 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           </div>
         </section>
 
-        <!-- Page 8: Epilogue - Failure Analysis & Evening 2 Roadmap -->
+        <!-- Page 8: Chapter 7 - Failure Analysis & Evening 2 Roadmap -->
         <section id="page-8" data-page="7" class="book-page hidden space-y-6">
           <div class="border-b border-border pb-4">
-            <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Epilogue · Synthesis &amp; Next Evening</p>
+            <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Chapter 7 · Synthesis &amp; Next Evening</p>
             <h1 class="font-serif text-3xl font-bold mt-1">Failure Analysis &amp; Evening 2 QLoRA Outlook</h1>
             <p class="text-sm text-muted-foreground mt-1">Master comparison table, empirical failure modes, and concrete hypotheses for QLoRA fine-tuning on pre-T weights + live RAG.</p>
           </div>
@@ -1084,12 +1164,61 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           </div>
         </section>
 
+        <!-- Page 9: Appendix A - Compute & Subagent Orchestration -->
+        <section id="page-9" data-page="8" class="book-page hidden space-y-6">
+          <div class="border-b border-border pb-4">
+            <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Appendix A · Compute &amp; Orchestration</p>
+            <h1 class="font-serif text-3xl font-bold mt-1">Mac mini M5 Pro Setup &amp; Parallel Subagent Fan-Out</h1>
+            <p class="text-sm text-muted-foreground mt-1">Zero-sudo user-space provisioning of <code class="font-mono text-xs">uv</code>, Python 3.13, and <code class="font-mono text-xs">Ollama 0.40.18</code> over SSH, plus multi-wave subagent parallelization.</p>
+          </div>
+
+          <div id="app-hw-cards" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+
+          <div class="rounded-xl border border-border bg-secondary/50 p-5 space-y-3">
+            <h2 class="font-serif text-xl font-semibold">3-Wave Subagent Fan-Out Architecture</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div class="rounded-lg border border-border bg-card p-4 space-y-1.5">
+                <span class="font-mono font-semibold text-primary">Wave 1 · 3 Agents (Parallel)</span>
+                <p class="text-muted-foreground">1A: Mac mini user-space uv + Ollama.app Metal setup &amp; model pulls.</p>
+                <p class="text-muted-foreground">1B: arXiv <code class="font-mono">cs.CL</code> API scraper + date-split verification.</p>
+                <p class="text-muted-foreground">1C: Rubric, FAISS ingest/retriever, baselines, judge, metrics, pytest.</p>
+              </div>
+              <div class="rounded-lg border border-border bg-card p-4 space-y-1.5">
+                <span class="font-mono font-semibold text-primary">Wave 2 · 4 Agents (Parallel)</span>
+                <p class="text-muted-foreground">2A: 20 <code class="font-mono">static</code> prompts (15 landmark + 5 early-2024).</p>
+                <p class="text-muted-foreground">2B: 20 <code class="font-mono">live</code> prompts (20/20 rank-1 FAISS verified).</p>
+                <p class="text-muted-foreground">2C: 10 <code class="font-mono">temporal_override</code> prompts (10/10 rank-1 verified).</p>
+                <p class="text-muted-foreground">2D: 10 <code class="font-mono">unanswerable</code> prompts (6 OOC + 4 near-miss distractors).</p>
+              </div>
+              <div class="rounded-lg border border-border bg-card p-4 space-y-1.5">
+                <span class="font-mono font-semibold text-primary">Wave 3 · Sequential + 2 Parallel</span>
+                <p class="text-muted-foreground">Sequential <code class="font-mono">llama3.2:3b</code> baselines for clean uncontended latency.</p>
+                <p class="text-muted-foreground">3A: <code class="font-mono">qwen2.5:7b</code> judge runner on Mac mini.</p>
+                <p class="text-muted-foreground">3B: Blinded Human Grader on 20 stratified samples (zero judge leakage).</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="rounded-xl border border-border bg-card p-4 space-y-2">
+              <h3 class="font-serif text-lg font-semibold">48 GB Unified Memory Footprint</h3>
+              <p class="text-xs text-muted-foreground">Model weights + embeddings vs. available Metal headroom on M5 Pro.</p>
+              <div id="chart-app-memory" class="w-full h-72"></div>
+            </div>
+            <div class="rounded-xl border border-border bg-card p-4 space-y-2">
+              <h3 class="font-serif text-lg font-semibold">Judge Decoding Throughput Engineering</h3>
+              <p class="text-xs text-muted-foreground">Removing 152k-vocab GBNF schema mask &amp; multi-slot contention accelerated Qwen2.5-7B.</p>
+              <div id="chart-app-throughput" class="w-full h-72"></div>
+            </div>
+          </div>
+        </section>
+
         <!-- Bottom Book Page Navigation Footer -->
         <footer class="mt-8 pt-5 border-t border-border flex items-center justify-between gap-4">
           <button id="btn-prev-page" type="button" class="inline-flex items-center gap-2 rounded-lg border border-border bg-secondary px-4 py-2 text-sm font-medium hover:bg-accent disabled:opacity-40 disabled:pointer-events-none">
             ← Previous Page
           </button>
-          <span id="footer-folio" class="font-serif italic text-sm text-muted-foreground">Page 1 of 8</span>
+          <span id="footer-folio" class="font-serif italic text-sm text-muted-foreground">Page 1 of 9</span>
           <button id="btn-next-page" type="button" class="inline-flex items-center gap-2 rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:opacity-90 disabled:opacity-40 disabled:pointer-events-none">
             Next Page →
           </button>
@@ -1104,13 +1233,14 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
     const CHAPTERS = [
       { idx: 0, label: "Prologue", title: "Abstract & Agenda", desc: "Motivation, temporal cutoff T=2025-01-01, executive KPIs, and full comparison." },
-      { idx: 1, label: "Chapter 1", title: "Mac mini & Subagent Fan-Out", desc: "User-space Ollama Metal GPU setup, 3-wave agents, and 60 tok/s judge tuning." },
+      { idx: 1, label: "Chapter 1", title: "Slices & Eval Metrics", desc: "Formal definitions of the 4 golden slices, 1–5 scoring anchors, override flag & agreement gate." },
       { idx: 2, label: "Chapter 2", title: "Leakage-Safe Date Split", desc: "300 static (<T) vs. 200 live (>=T) cs.CL abstracts with 0 ID overlap." },
       { idx: 3, label: "Chapter 3", title: "Ingestion & FAISS Retrieval", desc: "bge-small-en-v1.5 384-d embeddings, IndexFlatIP, and after=T filtering." },
       { idx: 4, label: "Chapter 4", title: "60-Prompt Golden Set", desc: "Interactive explorer across Static, Live, Temporal Override, and Unanswerable." },
       { idx: 5, label: "Chapter 5", title: "Rubric & Judge Calibration", desc: "48.3% -> 80.0% exact agreement lift via CoT ordering and abstention rules." },
       { idx: 6, label: "Chapter 6", title: "Baselines & Run Inspector", desc: "120 Zero-Shot vs. RAG runs, latency distributions, and prompt-level drilldown." },
-      { idx: 7, label: "Epilogue", title: "Failure Analysis & QLoRA", desc: "Master results table, 3 failure modes, and Evening 2 QLoRA hybrid roadmap." },
+      { idx: 7, label: "Chapter 7", title: "Failure Analysis & QLoRA", desc: "Master results table, 3 failure modes, and Evening 2 QLoRA hybrid roadmap." },
+      { idx: 8, label: "Appendix A", title: "Compute & Orchestration", desc: "Mac mini M5 Pro user-space Ollama setup, 3-wave agents, and 60 tok/s judge tuning." },
     ];
 
     let currentPage = 0;
@@ -1205,32 +1335,48 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       }
 
       if (idx === 1) {
-        const models = DATA.env.models;
-        const llamaGb = models.find((m) => m.name.includes("llama3.2"))?.size_gb ?? 2.02;
-        const qwenGb = models.find((m) => m.name.includes("qwen2.5"))?.size_gb ?? 4.68;
-        const bgeGb = 0.13;
-        const freeGb = Number((48 - llamaGb - qwenGb - bgeGb).toFixed(2));
-        Plotly.newPlot("chart-p2-memory", [
-          { y: ["48 GB Unified"], x: [llamaGb], name: `llama3.2:3b (${llamaGb} GB)`, type: "bar", orientation: "h", marker: { color: t.ragColor } },
-          { y: ["48 GB Unified"], x: [qwenGb], name: `qwen2.5:7b (${qwenGb} GB)`, type: "bar", orientation: "h", marker: { color: t.accentColor } },
-          { y: ["48 GB Unified"], x: [bgeGb], name: `bge-small (${bgeGb} GB)`, type: "bar", orientation: "h", marker: { color: t.greenColor } },
-          { y: ["48 GB Unified"], x: [freeGb], name: `OS & KV Headroom (${freeGb} GB)`, type: "bar", orientation: "h", marker: { color: t.gridColor } },
-        ], baseLayout({
-          barmode: "stack",
-          margin: { t: 24, r: 18, b: 44, l: 110 },
-          xaxis: { range: [0, 48], title: "Gigabytes (GB)", gridcolor: t.gridColor },
-          legend: { orientation: "h", y: 1.18 },
+        const caps = ["Parametric Recall", "Post-T Freshness", "Prior Override", "Abstention Safety", "Citation Grounding"];
+        const sliceNames = ["static (20)", "live (20)", "temporal_override (10)", "unanswerable (10)"];
+        const matrix = [
+          [2, 0, 0, 1, 1],
+          [0, 2, 0, 1, 2],
+          [1, 2, 2, 1, 2],
+          [0, 1, 0, 2, 2],
+        ];
+        const labels = matrix.map((row) => row.map((v) => (v === 2 ? "Primary" : v === 1 ? "Secondary" : "—")));
+        Plotly.newPlot("chart-p2-taxonomy", [{
+          x: caps,
+          y: sliceNames,
+          z: matrix,
+          type: "heatmap",
+          colorscale: resolvedDarkMode()
+            ? [[0, "#18181b"], [0.5, "#1e3a8a"], [1, "#0284c7"]]
+            : [[0, "#f4f4f5"], [0.5, "#bae6fd"], [1, "#0284c7"]],
+          text: labels,
+          texttemplate: "%{text}",
+          showscale: false,
+        }], baseLayout({
+          margin: { t: 24, r: 18, b: 68, l: 148 },
+          xaxis: { tickangle: -20, type: "category" },
+          yaxis: { type: "category", autorange: "reversed" },
         }), PLOT_CONFIG);
 
-        Plotly.newPlot("chart-p2-throughput", [{
-          x: ["GBNF Schema (4-slot)", "GBNF Schema (1-slot)", 'format="json" (Peak)'],
-          y: [1.08, 2.53, 59.7],
-          type: "bar",
-          marker: { color: [t.roseColor, t.accentColor, t.greenColor] },
-          text: ["1.08 tok/s", "2.53 tok/s", "59.7 tok/s"],
-          textposition: "outside",
-        }], baseLayout({
-          yaxis: { title: "Tokens / sec", range: [0, 68], gridcolor: t.gridColor },
+        const arch = [
+          "Grounded Cited<br>(Live RAG)",
+          "Zero-Shot<br>Parametric",
+          "False Abstention<br>(Static RAG)",
+          "Clean Abstention<br>(Unanswerable)",
+          "Hallucinated<br>Distractor",
+        ];
+        Plotly.newPlot("chart-p2-archetypes", [
+          { x: arch, y: [5, 4, 1, 5, 1], name: "Correctness", type: "bar", marker: { color: t.ragColor } },
+          { x: arch, y: [5, 1, 5, 5, 1], name: "Faithfulness", type: "bar", marker: { color: t.greenColor } },
+          { x: arch, y: [5, 1, 5, 5, 2], name: "Citation Acc", type: "bar", marker: { color: t.accentColor } },
+        ], baseLayout({
+          barmode: "group",
+          margin: { t: 24, r: 16, b: 64, l: 44 },
+          yaxis: { title: "Rubric Score (1–5)", range: [0, 5.6], gridcolor: t.gridColor },
+          legend: { orientation: "h", y: 1.15 },
         }), PLOT_CONFIG);
       }
 
@@ -1406,6 +1552,36 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           legend: { orientation: "h", y: 1.16 },
         }), PLOT_CONFIG);
       }
+
+      if (idx === 8) {
+        const models = DATA.env.models;
+        const llamaGb = models.find((m) => m.name.includes("llama3.2"))?.size_gb ?? 2.02;
+        const qwenGb = models.find((m) => m.name.includes("qwen2.5"))?.size_gb ?? 4.68;
+        const bgeGb = 0.13;
+        const freeGb = Number((48 - llamaGb - qwenGb - bgeGb).toFixed(2));
+        Plotly.newPlot("chart-app-memory", [
+          { y: ["48 GB Unified"], x: [llamaGb], name: `llama3.2:3b (${llamaGb} GB)`, type: "bar", orientation: "h", marker: { color: t.ragColor } },
+          { y: ["48 GB Unified"], x: [qwenGb], name: `qwen2.5:7b (${qwenGb} GB)`, type: "bar", orientation: "h", marker: { color: t.accentColor } },
+          { y: ["48 GB Unified"], x: [bgeGb], name: `bge-small (${bgeGb} GB)`, type: "bar", orientation: "h", marker: { color: t.greenColor } },
+          { y: ["48 GB Unified"], x: [freeGb], name: `OS & KV Headroom (${freeGb} GB)`, type: "bar", orientation: "h", marker: { color: t.gridColor } },
+        ], baseLayout({
+          barmode: "stack",
+          margin: { t: 24, r: 18, b: 44, l: 110 },
+          xaxis: { range: [0, 48], title: "Gigabytes (GB)", gridcolor: t.gridColor },
+          legend: { orientation: "h", y: 1.18 },
+        }), PLOT_CONFIG);
+
+        Plotly.newPlot("chart-app-throughput", [{
+          x: ["GBNF Schema (4-slot)", "GBNF Schema (1-slot)", 'format="json" (Peak)'],
+          y: [1.08, 2.53, 59.7],
+          type: "bar",
+          marker: { color: [t.roseColor, t.accentColor, t.greenColor] },
+          text: ["1.08 tok/s", "2.53 tok/s", "59.7 tok/s"],
+          textposition: "outside",
+        }], baseLayout({
+          yaxis: { title: "Tokens / sec", range: [0, 68], gridcolor: t.gridColor },
+        }), PLOT_CONFIG);
+      }
     }
 
     function updatePageDOM(targetPage) {
@@ -1555,7 +1731,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           (m) => `<div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-1"><p class="font-mono text-xs text-muted-foreground">${m.name.includes("llama") ? "Base Model" : "Cross-Family Judge"}</p><p class="font-semibold font-mono text-sm">${m.name} (${m.params})</p><p class="text-xs text-muted-foreground">${m.quant} · ${m.size_gb} GB · ctx=${m.ctx.toLocaleString()} · 100% Metal GPU</p><p class="font-mono text-[11px] text-muted-foreground">sha256:${m.digest}...</p></div>`
         ),
       ];
-      document.getElementById("p2-hw-cards").innerHTML = hwHtml.join("");
+      document.getElementById("app-hw-cards").innerHTML = hwHtml.join("");
 
       // Page 3 Split Metadata Cards & Corpus Sample Table
       const sp = DATA.split;
