@@ -88,7 +88,7 @@ tests/
   test_pipeline.py      # Corpus, retrieval, golden-set, blind-sample, agreement tests
   build_book.py         # Generates interactive Tailwind/shadcn/Plotly experiment book
 main.py                 # Unified CLI entrypoint
-experiment_book.html    # Self-contained 9-page interactive book (Chapters 1-7 + Appendix A)
+experiment_book.html    # Self-contained 10-page interactive book (Chapters 1-7 + Appendices A-B)
 notes.md                # Error analysis & Evening 2 QLoRA expectations
 ```
 
