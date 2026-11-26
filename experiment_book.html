@@ -316,7 +316,7 @@
 
       <div class="flex items-center gap-3">
         <a href="#page-1" data-nav-link="0" class="rounded-md border border-border bg-secondary px-2 py-1 font-mono text-xs hover:bg-accent transition-colors">↑ Agenda</a>
-        <span id="header-folio" class="font-mono text-xs text-muted-foreground hidden sm:inline">Page 1 / 9</span>
+        <span id="header-folio" class="font-mono text-xs text-muted-foreground hidden sm:inline">Page 1 / 10</span>
         <!-- Appearance Settings Disclosure (tri-state System / Light / Dark) -->
         <details id="appearance-popover" class="relative">
           <summary class="list-none cursor-pointer inline-flex items-center gap-1.5 rounded-md border border-border bg-secondary px-2.5 py-1.5 text-xs font-medium hover:bg-accent">
@@ -336,7 +336,7 @@
       </div>
     </div>
     <div class="h-0.5 bg-muted w-full">
-      <div id="reading-progress" class="h-full bg-primary transition-all duration-300" style="width: 11.1%"></div>
+      <div id="reading-progress" class="h-full bg-primary transition-all duration-300" style="width: 10%"></div>
     </div>
   </header>
 
@@ -359,6 +359,7 @@
         <a href="#page-8" data-nav-link="7" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 7</div><div class="truncate">Failure Analysis &amp; QLoRA</div></a>
         <div class="pt-2 mt-2 border-t border-border"></div>
         <a href="#page-9" data-nav-link="8" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Appendix A</div><div class="truncate">Compute &amp; Orchestration</div></a>
+        <a href="#page-10" data-nav-link="9" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Appendix B</div><div class="truncate">3 Research Continuations</div></a>
       </nav>
       <div class="mt-4 pt-3 border-t border-border text-xs text-muted-foreground space-y-1">
         <div class="flex justify-between"><span>Cutoff T</span><span class="font-mono text-foreground">2025-01-01</span></div>
@@ -440,9 +441,13 @@
                 <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Chapter 7</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 8 →</span></div>
                 <div><p class="font-serif text-base font-semibold group-hover:underline">Failure Analysis &amp; QLoRA</p><p class="text-xs text-muted-foreground mt-0.5">Master results table, 3 failure modes, and Evening 2 QLoRA hybrid roadmap.</p></div>
               </a>
-              <a href="#page-9" data-nav-link="8" class="group cursor-pointer sm:col-span-2 text-left rounded-xl border border-dashed border-border bg-secondary/40 p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
+              <a href="#page-9" data-nav-link="8" class="group cursor-pointer text-left rounded-xl border border-dashed border-border bg-secondary/40 p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
                 <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Appendix A</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 9 →</span></div>
                 <div><p class="font-serif text-base font-semibold group-hover:underline">Compute &amp; Subagent Orchestration</p><p class="text-xs text-muted-foreground mt-0.5">Mac mini M5 Pro (48 GB) user-space Ollama setup, 3-wave parallel fan-out, and 60 tok/s judge tuning.</p></div>
+              </a>
+              <a href="#page-10" data-nav-link="9" class="group cursor-pointer text-left rounded-xl border border-dashed border-border bg-secondary/40 p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
+                <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Appendix B</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 10 →</span></div>
+                <div><p class="font-serif text-base font-semibold group-hover:underline">Three Research Continuations</p><p class="text-xs text-muted-foreground mt-0.5">Confidence-gated QLoRA routing, temporal conflict DPO, and full-paper submodular RAG.</p></div>
               </a>
             </div>
           </div>
@@ -975,12 +980,115 @@
           </div>
         </section>
 
+        <!-- Page 10: Appendix B - Three Research Continuations -->
+        <section id="page-10" data-page="9" class="book-page hidden space-y-6">
+          <div class="border-b border-border pb-4">
+            <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Appendix B · Future Research Agenda</p>
+            <h1 class="font-serif text-3xl font-bold mt-1">Three Research Continuations Beyond Evening 1</h1>
+            <p class="text-sm text-muted-foreground mt-1">Concrete experimental extensions targeting the three empirical bottlenecks measured in Evening 1: live-only static collapse (<code class="font-mono text-xs">1.80</code>), residual temporal override misses (<code class="font-mono text-xs">3/10</code>), and abstract-only truncation (<code class="font-mono text-xs">3.85</code> live).</p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 text-xs">
+            <div class="rounded-xl border border-border bg-secondary/50 p-5 space-y-2.5 flex flex-col justify-between">
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="font-mono font-semibold text-primary">Continuation 1</span>
+                  <span class="rounded bg-muted px-2 py-0.5 font-mono text-[10px]">Static 1.80 &rarr; &ge;4.20</span>
+                </div>
+                <h2 class="font-serif text-lg font-semibold">Confidence-Gated Hybrid Routing + Pre-T QLoRA</h2>
+                <p class="text-muted-foreground"><strong>Evening 1 Bottleneck:</strong> Live-only RAG abstained 20/20 on <code class="font-mono">static</code> (<code class="font-mono">1.80</code>), while Zero-Shot refused 18/20 (<code class="font-mono">1.45</code>).</p>
+                <p><strong>Proposed Method:</strong> Train 4-bit <code class="font-mono">NF4</code> QLoRA adapters on <code class="font-mono">corpus/static.jsonl</code> QA pairs, then gate inference via a calibrated <code class="font-mono">bge-reranker-v2-m3</code> score <code class="font-mono">&tau;</code>: high <code class="font-mono">&tau;</code> enforces grounded post-T RAG; mid-band near-miss distractors (<code class="font-mono">u07–u10</code>) abstain; low <code class="font-mono">&tau;</code> routes to <code class="font-mono">[parametric &lt; T]</code> QLoRA weights.</p>
+              </div>
+              <div class="pt-2 border-t border-border font-mono text-[11px] text-muted-foreground">Hypothesis: Eliminates live-only blindspot without breaking unanswerable precision.</div>
+            </div>
+
+            <div class="rounded-xl border border-border bg-secondary/50 p-5 space-y-2.5 flex flex-col justify-between">
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="font-mono font-semibold text-primary">Continuation 2</span>
+                  <span class="rounded bg-muted px-2 py-0.5 font-mono text-[10px]">Override 70% &rarr; &ge;95%</span>
+                </div>
+                <h2 class="font-serif text-lg font-semibold">Temporal Reranking &amp; Counterfactual Conflict DPO</h2>
+                <p class="text-muted-foreground"><strong>Evening 1 Bottleneck:</strong> 3/10 <code class="font-mono">temporal_override</code> misses (<code class="font-mono">g44</code>, <code class="font-mono">g46</code>, <code class="font-mono">g48</code>) even at 10/10 rank-1 FAISS recall; static + live mixed indices lack date-aware ranking.</p>
+                <p><strong>Proposed Method:</strong> Pair hybrid BM25+dense RRF and date-decay reranking (<code class="font-mono">exp(&lambda; &middot; &Delta;t)</code> on current-state queries) with Direct Preference Optimization on synthetic conflict pairs (<code class="font-mono">pre-T chunk + post-T chunk</code>), preferring explicit post-T updates over hedging or abstention.</p>
+              </div>
+              <div class="pt-2 border-t border-border font-mono text-[11px] text-muted-foreground">Hypothesis: Resolves contradictory multi-era evidence deterministically.</div>
+            </div>
+
+            <div class="rounded-xl border border-border bg-secondary/50 p-5 space-y-2.5 flex flex-col justify-between">
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="font-mono font-semibold text-primary">Continuation 3</span>
+                  <span class="rounded bg-muted px-2 py-0.5 font-mono text-[10px]">Live 3.85 &rarr; &ge;4.50</span>
+                </div>
+                <h2 class="font-serif text-lg font-semibold">Section-Aware Full-Paper Ingestion &amp; Submodular Packing</h2>
+                <p class="text-muted-foreground"><strong>Evening 1 Bottleneck:</strong> Abstract-only chunks (175-word median) omit hyperparameter &amp; ablation tables probed by near-miss prompts (<code class="font-mono">u07–u10</code>) and cause partial omissions (<code class="font-mono">g27</code>).</p>
+                <p><strong>Proposed Method:</strong> Parse <code class="font-mono">ar5iv</code> HTML/LaTeX full papers into hierarchical section + table chunks, retrieve via <code class="font-mono">bge-m3</code> multi-vector scoring, and pack context via budgeted submodular maximization (cf. <code class="font-mono">2607.00725</code>) at fixed 1,500-token reader budgets.</p>
+              </div>
+              <div class="pt-2 border-t border-border font-mono text-[11px] text-muted-foreground">Hypothesis: Unlocks table/ablation QA while curbing token-budget truncation.</div>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <h3 id="cont-matrix-caption" class="font-serif text-lg font-semibold">Experimental Continuation Matrix</h3>
+            <div tabindex="0" role="region" aria-labelledby="cont-matrix-caption" class="table-wrapper book-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Continuation</th>
+                    <th>Target Bottleneck</th>
+                    <th>Primary Intervention</th>
+                    <th>Success Metric Target</th>
+                    <th>M5 Pro Compute / Latency</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th class="font-mono text-xs">1 · QLoRA + Router</th>
+                    <td data-label="Bottleneck" class="text-xs">20/20 <code class="font-mono">static</code> RAG abstentions (<code class="font-mono">1.80</code>)</td>
+                    <td data-label="Intervention" class="text-xs">4-bit QLoRA on pre-T corpus + <code class="font-mono">bge-reranker</code> threshold gate</td>
+                    <td data-label="Target" class="font-mono text-xs">Static &ge; 4.20 · Unansw. &ge; 4.80</td>
+                    <td data-label="Compute" class="font-mono text-xs">~1.5h train · +25 ms/query</td>
+                  </tr>
+                  <tr>
+                    <th class="font-mono text-xs">2 · Conflict DPO</th>
+                    <td data-label="Bottleneck" class="text-xs">3/10 <code class="font-mono">temporal_override</code> misses (<code class="font-mono">0.70</code>)</td>
+                    <td data-label="Intervention" class="text-xs">Time-decay RRF rerank + counterfactual DPO on mixed-date pairs</td>
+                    <td data-label="Target" class="font-mono text-xs">Override Obed &ge; 0.95 · Corr &ge; 4.60</td>
+                    <td data-label="Compute" class="font-mono text-xs">~2.0h DPO · +15 ms/query</td>
+                  </tr>
+                  <tr>
+                    <th class="font-mono text-xs">3 · Full-Paper Packing</th>
+                    <td data-label="Bottleneck" class="text-xs">Abstract-only depth limits (<code class="font-mono">3.85</code> live)</td>
+                    <td data-label="Intervention" class="text-xs"><code class="font-mono">ar5iv</code> section/table chunks + <code class="font-mono">bge-m3</code> + submodular packing</td>
+                    <td data-label="Target" class="font-mono text-xs">Live &ge; 4.50 · Deep Table QA &ge; 4.00</td>
+                    <td data-label="Compute" class="font-mono text-xs">~0.5h ingest · +90 ms/query</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="rounded-xl border border-border bg-card p-4 space-y-2">
+              <h3 class="font-serif text-lg font-semibold">Projected Cumulative Slice Trajectory</h3>
+              <p class="text-xs text-muted-foreground">Expected slice correctness progression as each continuation stacks onto Evening 1 RAG.</p>
+              <div id="chart-appb-impact" class="w-full h-72"></div>
+            </div>
+            <div class="rounded-xl border border-border bg-card p-4 space-y-2">
+              <h3 class="font-serif text-lg font-semibold">Accuracy Lift vs. Added Latency &amp; Compute</h3>
+              <p class="text-xs text-muted-foreground">Bubble size indicates approximate M5 Pro training/ingestion hours per track.</p>
+              <div id="chart-appb-pareto" class="w-full h-72"></div>
+            </div>
+          </div>
+        </section>
+
         <!-- Bottom Book Page Navigation Footer -->
         <footer class="mt-8 pt-5 border-t border-border flex items-center justify-between gap-4">
           <button id="btn-prev-page" type="button" class="inline-flex items-center gap-2 rounded-lg border border-border bg-secondary px-4 py-2 text-sm font-medium hover:bg-accent disabled:opacity-40 disabled:pointer-events-none">
             ← Previous Page
           </button>
-          <span id="footer-folio" class="font-serif italic text-sm text-muted-foreground">Page 1 of 9</span>
+          <span id="footer-folio" class="font-serif italic text-sm text-muted-foreground">Page 1 of 10</span>
           <button id="btn-next-page" type="button" class="inline-flex items-center gap-2 rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:opacity-90 disabled:opacity-40 disabled:pointer-events-none">
             Next Page →
           </button>
@@ -1003,6 +1111,7 @@
       { idx: 6, label: "Chapter 6", title: "Baselines & Run Inspector", desc: "120 Zero-Shot vs. RAG runs, latency distributions, and prompt-level drilldown." },
       { idx: 7, label: "Chapter 7", title: "Failure Analysis & QLoRA", desc: "Master results table, 3 failure modes, and Evening 2 QLoRA hybrid roadmap." },
       { idx: 8, label: "Appendix A", title: "Compute & Orchestration", desc: "Mac mini M5 Pro user-space Ollama setup, 3-wave agents, and 60 tok/s judge tuning." },
+      { idx: 9, label: "Appendix B", title: "3 Research Continuations", desc: "Confidence-gated QLoRA routing, temporal conflict DPO, and full-paper submodular RAG." },
     ];
 
     let currentPage = 0;
@@ -1342,6 +1451,43 @@
           textposition: "outside",
         }], baseLayout({
           yaxis: { title: "Tokens / sec", range: [0, 68], gridcolor: t.gridColor },
+        }), PLOT_CONFIG);
+      }
+
+      if (idx === 9) {
+        const axes = ["Static (20)", "Live (20)", "Override (10)", "Unansw. (10)", "Deep Table QA"];
+        Plotly.newPlot("chart-appb-impact", [
+          { x: axes, y: [1.80, 3.85, 4.20, 5.00, 1.50], name: "Evening 1 RAG (Measured)", type: "bar", marker: { color: t.zsColor } },
+          { x: axes, y: [4.25, 3.85, 4.20, 4.90, 1.50], name: "+Cont. 1: QLoRA Router (Target)", type: "bar", marker: { color: t.ragColor } },
+          { x: axes, y: [4.25, 3.95, 4.70, 4.90, 1.50], name: "+Cont. 2: Conflict DPO (Target)", type: "bar", marker: { color: t.accentColor } },
+          { x: axes, y: [4.30, 4.55, 4.75, 4.95, 4.20], name: "+Cont. 3: Full-Paper Pack (Target)", type: "bar", marker: { color: t.greenColor } },
+        ], baseLayout({
+          barmode: "group",
+          yaxis: { title: "Correctness / Target (1–5)", range: [0, 5.6], gridcolor: t.gridColor },
+          margin: { t: 24, r: 16, b: 56, l: 48 },
+          legend: { orientation: "h", y: 1.18 },
+        }), PLOT_CONFIG);
+
+        Plotly.newPlot("chart-appb-pareto", [{
+          x: [25, 15, 90],
+          y: [0.82, 0.35, 0.72],
+          text: [
+            "Cont. 1: QLoRA + Router (~1.5h, +25 ms)",
+            "Cont. 2: Conflict DPO (~2.0h, +15 ms)",
+            "Cont. 3: Full-Paper Pack (~0.5h, +90 ms)",
+          ],
+          textposition: ["top center", "bottom center", "top left"],
+          mode: "markers+text",
+          type: "scatter",
+          marker: {
+            size: [30, 36, 20],
+            color: [t.ragColor, t.accentColor, t.greenColor],
+            line: { width: 1.5, color: t.font.color },
+          },
+        }], baseLayout({
+          xaxis: { title: "Added Inference Latency (ms / query)", range: [0, 115], gridcolor: t.gridColor },
+          yaxis: { title: "Projected Overall Correctness Lift (+pts)", range: [0.1, 1.05], gridcolor: t.gridColor },
+          margin: { t: 24, r: 24, b: 48, l: 56 },
         }), PLOT_CONFIG);
       }
     }
