@@ -350,7 +350,7 @@
       </div>
       <nav aria-label="Book chapters" id="chapter-nav" class="space-y-1">
         <a href="#page-1" data-nav-link="0" aria-current="page" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-semibold bg-primary text-primary-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Prologue</div><div class="truncate">Abstract &amp; Agenda</div></a>
-        <a href="#page-2" data-nav-link="1" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 1</div><div class="truncate">Slices &amp; Eval Metrics</div></a>
+        <a href="#page-2" data-nav-link="1" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 1</div><div class="truncate">Slices, Metrics &amp; Agents</div></a>
         <a href="#page-3" data-nav-link="2" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 2</div><div class="truncate">Leakage-Safe Date Split</div></a>
         <a href="#page-4" data-nav-link="3" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 3</div><div class="truncate">Ingestion &amp; FAISS Retrieval</div></a>
         <a href="#page-5" data-nav-link="4" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 4</div><div class="truncate">60-Prompt Golden Set</div></a>
@@ -415,7 +415,7 @@
               </a>
               <a href="#page-2" data-nav-link="1" class="group cursor-pointer text-left rounded-xl border border-border bg-card p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
                 <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Chapter 1</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 2 →</span></div>
-                <div><p class="font-serif text-base font-semibold group-hover:underline">Slices &amp; Eval Metrics</p><p class="text-xs text-muted-foreground mt-0.5">Formal definitions of the 4 golden slices, 1–5 scoring anchors, override flag &amp; agreement gate.</p></div>
+                <div><p class="font-serif text-base font-semibold group-hover:underline">Slices, Metrics &amp; Agents</p><p class="text-xs text-muted-foreground mt-0.5">4 golden slices (+/- examples), 1–5 metrics, runtime agents &amp; 9 orchestration subagents.</p></div>
               </a>
               <a href="#page-3" data-nav-link="2" class="group cursor-pointer text-left rounded-xl border border-border bg-card p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
                 <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Chapter 2</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 3 →</span></div>
@@ -460,49 +460,80 @@
           </div>
         </section>
 
-        <!-- Page 2: Chapter 1 - Slices & Evaluation Metrics Definitions -->
+        <!-- Page 2: Chapter 1 - Slices, Metrics & Agents -->
         <section id="page-2" data-page="1" class="book-page hidden space-y-6">
           <div class="border-b border-border pb-4">
-            <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Chapter 1 · Evaluation Design</p>
-            <h1 class="font-serif text-3xl font-bold mt-1">Slice Taxonomy &amp; Evaluation Metrics</h1>
-            <p class="text-sm text-muted-foreground mt-1">Formal definitions of the 4 leakage-safe benchmark slices, 1–5 ordinal scoring scales, temporal override flag, latency decomposition, and the &ge;70% human-judge trust gate.</p>
+            <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Chapter 1 · Evaluation &amp; Agent Design</p>
+            <h1 class="font-serif text-3xl font-bold mt-1">Slice Taxonomy, Evaluation Metrics &amp; Agent Architecture</h1>
+            <p class="text-sm text-muted-foreground mt-1">Formal definitions and positive/negative examples for all 4 benchmark slices, 1–5 scoring scales, plus runtime and parallel subagent roles.</p>
           </div>
 
-          <!-- 4 Slice Definitions -->
+          <!-- 4 Slice Definitions with Positive & Negative Examples -->
           <div class="space-y-2.5">
-            <h2 class="font-serif text-xl font-semibold">1. Four Golden Slice Types (<code class="font-mono text-base">N = 60</code>)</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-              <div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-1.5">
+            <h2 class="font-serif text-xl font-semibold">1. Four Golden Slice Types (<code class="font-mono text-base">N = 60</code>) &amp; Concrete Examples</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 text-xs">
+              <div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-2.5">
                 <div class="flex items-center justify-between">
                   <span class="font-mono font-semibold text-primary">static · n = 20 (g01–g20)</span>
                   <span class="rounded bg-muted px-2 py-0.5 font-mono text-[10px]">Published &lt; T</span>
                 </div>
-                <p><strong>What it tests:</strong> Pre-cutoff <code class="font-mono">cs.CL</code> facts (15 landmark pre-Dec-2023 papers + 5 early-2024 papers) absent from the post-T RAG index.</p>
-                <p class="text-muted-foreground"><strong>Signal isolated:</strong> Parametric retention in zero-shot vs. over-abstention penalty when live-only RAG finds no matching post-T source.</p>
+                <p><strong>What it tests:</strong> Pre-cutoff <code class="font-mono">cs.CL</code> facts (15 landmark pre-Dec-2023 papers + 5 early-2024 papers) absent from the post-T RAG index. Isolates parametric retention vs. live-only RAG over-abstention.</p>
+                <div class="rounded-lg border border-border bg-card p-3 space-y-1">
+                  <div class="flex items-center justify-between font-mono text-[11px]"><span class="font-semibold text-foreground">&#10003; Positive Example (<code class="font-mono">g11</code> RoPE · Zero-Shot)</span><span class="rounded bg-muted px-1.5 py-0.5">C=4 F=4 Cit=5</span></div>
+                  <p class="text-muted-foreground">Explains RoPE rotation-matrix encoding and decaying inter-token dependency with relative distance accurately from pretraining weights.</p>
+                </div>
+                <div class="rounded-lg border border-border bg-card p-3 space-y-1">
+                  <div class="flex items-center justify-between font-mono text-[11px]"><span class="font-semibold text-foreground">&#10007; Negative Example (<code class="font-mono">g01</code> LoRA RAG / <code class="font-mono">g02</code> ZS)</span><span class="rounded bg-muted px-1.5 py-0.5">C=1 F=5 Cit=5</span></div>
+                  <p class="text-muted-foreground">Live-only RAG outputs <em>"Not in the sources."</em> because pre-T <code class="font-mono">2106.09685</code> is absent from <code class="font-mono">live.jsonl</code>; Zero-Shot <code class="font-mono">g02</code> misstates Lewis et al.'s RAG components as "Textual Memory".</p>
+                </div>
               </div>
-              <div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-1.5">
+
+              <div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-2.5">
                 <div class="flex items-center justify-between">
                   <span class="font-mono font-semibold text-primary">live · n = 20 (g21–g40)</span>
                   <span class="rounded bg-muted px-2 py-0.5 font-mono text-[10px]">Published &gt;= T</span>
                 </div>
-                <p><strong>What it tests:</strong> Post-cutoff (2025–2026) methods, datasets, and quantitative findings guaranteed unseen during <code class="font-mono">llama3.2:3b</code> pretraining.</p>
-                <p class="text-muted-foreground"><strong>Signal isolated:</strong> Dense <code class="font-mono">bge-small</code> retrieval recall + grounded synthesis + <code class="font-mono">[arxiv_id]</code> citation discipline.</p>
+                <p><strong>What it tests:</strong> Post-cutoff (2025–2026) methods, datasets, and empirical findings guaranteed unseen during <code class="font-mono">llama3.2:3b</code> pretraining. Isolates dense retrieval + <code class="font-mono">[arxiv_id]</code> citation grounding.</p>
+                <div class="rounded-lg border border-border bg-card p-3 space-y-1">
+                  <div class="flex items-center justify-between font-mono text-[11px]"><span class="font-semibold text-foreground">&#10003; Positive Example (<code class="font-mono">g37</code> MindEdit-Bench · RAG)</span><span class="rounded bg-muted px-1.5 py-0.5">C=5 F=5 Cit=5</span></div>
+                  <p class="text-muted-foreground">Accurately reports the 6-task world-model hierarchy and 8%–31% vs. 81%–97% (53 pp gap) on L4/L5 counterfactuals, citing <code class="font-mono">[2607.00491]</code>.</p>
+                </div>
+                <div class="rounded-lg border border-border bg-card p-3 space-y-1">
+                  <div class="flex items-center justify-between font-mono text-[11px]"><span class="font-semibold text-foreground">&#10007; Negative Example (<code class="font-mono">g28</code> LitBench · Zero-Shot)</span><span class="rounded bg-muted px-1.5 py-0.5">C=1 F=5 Cit=5</span></div>
+                  <p class="text-muted-foreground">Falsely abstains (<em>"I don't have information on LitBench..."</em>) due to Dec 2023 cutoff instead of retrieving post-T evidence (or scores 1/1/1 if hallucinating).</p>
+                </div>
               </div>
-              <div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-1.5">
+
+              <div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-2.5">
                 <div class="flex items-center justify-between">
                   <span class="font-mono font-semibold text-primary">temporal_override · n = 10 (g41–g50)</span>
                   <span class="rounded bg-muted px-2 py-0.5 font-mono text-[10px]">Post-T Beats Pre-T</span>
                 </div>
-                <p><strong>What it tests:</strong> Current-state queries (<em>"What is the current best approach to X?"</em>) where post-T evidence overturns or outperforms earlier paradigms.</p>
-                <p class="text-muted-foreground"><strong>Signal isolated:</strong> Conflict resolution—whether RAG adopts <code class="font-mono">newer_paper_id</code> instead of clinging to pretraining priors or hedging.</p>
+                <p><strong>What it tests:</strong> Current-state queries (<em>"What is the current best approach to X?"</em>) where post-T evidence beats or refutes earlier paradigms. Isolates evidence-over-prior conflict resolution.</p>
+                <div class="rounded-lg border border-border bg-card p-3 space-y-1">
+                  <div class="flex items-center justify-between font-mono text-[11px]"><span class="font-semibold text-foreground">&#10003; Positive Example (<code class="font-mono">g41</code> SOLAR · RAG)</span><span class="rounded bg-muted px-1.5 py-0.5">C=5 F=5 Cit=5 Ov=1</span></div>
+                  <p class="text-muted-foreground">Reports LRU/LFU underperforming FIFO on semantic buffers and adopts SOLAR (&le;3 competitive ratio, 5–75% gain), citing <code class="font-mono">[2607.00394]</code>.</p>
+                </div>
+                <div class="rounded-lg border border-border bg-card p-3 space-y-1">
+                  <div class="flex items-center justify-between font-mono text-[11px]"><span class="font-semibold text-foreground">&#10007; Negative Example (<code class="font-mono">g44</code> "Aha!" Shifts · RAG / <code class="font-mono">g41</code> ZS)</span><span class="rounded bg-muted px-1.5 py-0.5">C=1..3 Ov=0</span></div>
+                  <p class="text-muted-foreground">Zero-shot refuses/falls back to older priors (<code class="font-mono">Ov=0</code>), and RAG <code class="font-mono">g44</code> falsely abstains despite retrieving <code class="font-mono">[2601.00514]</code> at rank 1 (<code class="font-mono">C=1, Ov=0</code>).</p>
+                </div>
               </div>
-              <div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-1.5">
+
+              <div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-2.5">
                 <div class="flex items-center justify-between">
                   <span class="font-mono font-semibold text-primary">unanswerable · n = 10 (g51–g60)</span>
                   <span class="rounded bg-muted px-2 py-0.5 font-mono text-[10px]">Not in Sources</span>
                 </div>
-                <p><strong>What it tests:</strong> 6 out-of-corpus prompts + 4 near-miss distractors targeting indexed papers (<code class="font-mono">BaseRT</code>, <code class="font-mono">MSQA</code>, etc.) while asking unstated metrics.</p>
-                <p class="text-muted-foreground"><strong>Signal isolated:</strong> Precision abstention (<code class="font-mono">"Not in the sources."</code>) without hallucinating numbers from top-4 semantic distractors.</p>
+                <p><strong>What it tests:</strong> 6 out-of-corpus prompts + 4 near-miss distractors matching indexed papers (<code class="font-mono">BaseRT</code>, <code class="font-mono">MSQA</code>, etc.) while asking unstated metrics. Isolates abstention precision.</p>
+                <div class="rounded-lg border border-border bg-card p-3 space-y-1">
+                  <div class="flex items-center justify-between font-mono text-[11px]"><span class="font-semibold text-foreground">&#10003; Positive Example (<code class="font-mono">g59</code> MSQA Near-Miss · RAG)</span><span class="rounded bg-muted px-1.5 py-0.5">C=5 F=5 Cit=5</span></div>
+                  <p class="text-muted-foreground">Retrieves <code class="font-mono">2607.00724</code> at rank 1 (0.799 cosine), detects Swahili accuracy &amp; annotator counts are absent, and replies cleanly: <em>"Not in the sources."</em></p>
+                </div>
+                <div class="rounded-lg border border-border bg-card p-3 space-y-1">
+                  <div class="flex items-center justify-between font-mono text-[11px]"><span class="font-semibold text-foreground">&#10007; Negative Example (Distractor Hallucination Archetype)</span><span class="rounded bg-muted px-1.5 py-0.5">C=1 F=1 Cit=2</span></div>
+                  <p class="text-muted-foreground">Observed 0/20 times in Evening 1; would occur if the model fabricates Swahili accuracy/annotator counts and cites top-4 distractor <code class="font-mono">[2607.00724]</code>.</p>
+                </div>
               </div>
             </div>
           </div>
@@ -579,6 +610,117 @@
               <h3 class="font-serif text-lg font-semibold">Canonical Response Score Archetypes</h3>
               <p class="text-xs text-muted-foreground">Illustrative <code class="font-mono">Correctness / Faithfulness / Citation</code> vectors under the calibrated rubric.</p>
               <div id="chart-p2-archetypes" class="w-full h-72"></div>
+            </div>
+          </div>
+
+          <!-- 3. Agents Used: Roles & Mechanisms -->
+          <div class="space-y-4">
+            <h2 class="font-serif text-xl font-semibold">3. Agents Used: Roles &amp; How They Achieve Them</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <span class="font-mono font-semibold text-primary">Dense Retriever Agent</span>
+                  <span class="rounded bg-muted px-2 py-0.5 font-mono text-[10px]">bge-small + FAISS</span>
+                </div>
+                <p><strong>Role:</strong> Non-parametric evidence lookup over post-T (<code class="font-mono">&gt;= 2025-01-01</code>) literature.</p>
+                <p class="text-muted-foreground"><strong>How it achieves it:</strong> Prepends asymmetric BGE query instruction, L2-normalizes 384-d vectors, runs exact <code class="font-mono">IndexFlatIP</code> scan (~41 ms), and applies <code class="font-mono">published_date &gt;= after</code> prior to slicing <code class="font-mono">[:k]</code>.</p>
+              </div>
+              <div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <span class="font-mono font-semibold text-primary">Generator / Baseline Agent</span>
+                  <span class="rounded bg-muted px-2 py-0.5 font-mono text-[10px]">llama3.2:3b</span>
+                </div>
+                <p><strong>Role:</strong> Controlled answer synthesis in Zero-Shot vs. Strict Grounded RAG (<code class="font-mono">k=4</code>).</p>
+                <p class="text-muted-foreground"><strong>How it achieves it:</strong> Executes sequentially on Mac mini Metal GPU (<code class="font-mono">temperature=0.0</code>, <code class="font-mono">num_predict=384</code>); RAG prompt enforces <code class="font-mono">[arxiv_id]</code> bracket citations or exact <code class="font-mono">"Not in the sources."</code> abstention.</p>
+              </div>
+              <div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <span class="font-mono font-semibold text-primary">Cross-Family Judge Agent</span>
+                  <span class="rounded bg-muted px-2 py-0.5 font-mono text-[10px]">qwen2.5:7b</span>
+                </div>
+                <p><strong>Role:</strong> Automated rubric grading across all 120 runs without same-family bias.</p>
+                <p class="text-muted-foreground"><strong>How it achieves it:</strong> Emits <code class="font-mono">format="json"</code> (<code class="font-mono">num_ctx=4096</code>) with CoT <code class="font-mono">rationale</code> first, 2-step pure-vs-hedged abstention rules, regex fence stripping, and clamping/slice enforcement.</p>
+              </div>
+              <div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <span class="font-mono font-semibold text-primary">Blinded Human-Benchmark Auditor</span>
+                  <span class="rounded bg-muted px-2 py-0.5 font-mono text-[10px]">20 Stratified Items</span>
+                </div>
+                <p><strong>Role:</strong> Independent ground-truth audit validating the &ge;70% rubric trust gate.</p>
+                <p class="text-muted-foreground"><strong>How it achieves it:</strong> Grades <code class="font-mono">blind_sample_20.jsonl</code> (10 ZS + 10 RAG, zero judge leakage), exposing v1 abstention mis-scoring (48.33%) and verifying v2 calibration (80.0% exact / 86.67% &plusmn;1).</p>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <h3 id="agents-roster-caption" class="font-serif text-lg font-semibold">Parallel Orchestration Subagents (3 Waves, Disjoint File Ownership)</h3>
+              <div tabindex="0" role="region" aria-labelledby="agents-roster-caption" class="table-wrapper book-scroll">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Wave / Subagent</th>
+                      <th>Assigned Role</th>
+                      <th>How It Achieves It &amp; Verification Gate</th>
+                      <th>Owned Artifacts</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th class="font-mono text-xs">1A · Infra Setup</th>
+                      <td data-label="Role" class="text-xs">Provision Mac mini compute host</td>
+                      <td data-label="Method" class="text-xs text-muted-foreground">User-space <code class="font-mono">uv</code>, Python 3.13, <code class="font-mono">Ollama.app 0.40.18</code> symlink, GPU pull &amp; <code class="font-mono">/api/chat</code> smoke tests.</td>
+                      <td data-label="Artifacts" class="font-mono text-xs">corpus/env_manifest.json</td>
+                    </tr>
+                    <tr>
+                      <th class="font-mono text-xs">1B · Corpus Builder</th>
+                      <td data-label="Role" class="text-xs">Fetch leakage-safe date split</td>
+                      <td data-label="Method" class="text-xs text-muted-foreground">Rate-limited (3.1s) <code class="font-mono">cs.CL</code> queries, strips <code class="font-mono">vN</code>, asserts 300/200 counts &amp; 0 overlap around <code class="font-mono">T=2025-01-01</code>.</td>
+                      <td data-label="Artifacts" class="font-mono text-xs">src/fetch_corpus.py, corpus/*</td>
+                    </tr>
+                    <tr>
+                      <th class="font-mono text-xs">1C · Pipeline Author</th>
+                      <td data-label="Role" class="text-xs">Author rubric, RAG, eval &amp; tests</td>
+                      <td data-label="Method" class="text-xs text-muted-foreground">Writes <code class="font-mono">rubric.md</code> first, then modular FAISS ingest/retriever, baseline runner, judge, metrics, pytest.</td>
+                      <td data-label="Artifacts" class="font-mono text-xs">src/*.py, eval/rubric.md, tests/</td>
+                    </tr>
+                    <tr>
+                      <th class="font-mono text-xs">2A · Static Author</th>
+                      <td data-label="Role" class="text-xs">Author 20 pre-T prompts</td>
+                      <td data-label="Method" class="text-xs text-muted-foreground">Crafts 15 pre-Dec-2023 landmark + 5 early-2024 Q&amp;A pairs; verifies every ID &amp; claim against <code class="font-mono">static.jsonl</code>.</td>
+                      <td data-label="Artifacts" class="font-mono text-xs">eval/slices/static.jsonl</td>
+                    </tr>
+                    <tr>
+                      <th class="font-mono text-xs">2B · Live Author</th>
+                      <td data-label="Role" class="text-xs">Author 20 post-T prompts</td>
+                      <td data-label="Method" class="text-xs text-muted-foreground">Samples 2025–2026 methods across 4 cohorts; runs <code class="font-mono">retrieve(k=4)</code> on Mac mini confirming 20/20 rank-1 hits.</td>
+                      <td data-label="Artifacts" class="font-mono text-xs">eval/slices/live.jsonl</td>
+                    </tr>
+                    <tr>
+                      <th class="font-mono text-xs">2C · Override Author</th>
+                      <td data-label="Role" class="text-xs">Author 10 override conflicts</td>
+                      <td data-label="Method" class="text-xs text-muted-foreground">Identifies post-T papers overturning prior SOTA/assumptions; verifies 10/10 rank-1 hits on Mac mini.</td>
+                      <td data-label="Artifacts" class="font-mono text-xs">eval/slices/temporal_override.jsonl</td>
+                    </tr>
+                    <tr>
+                      <th class="font-mono text-xs">2D · Unanswerable</th>
+                      <td data-label="Role" class="text-xs">Author 10 absent/distractor Qs</td>
+                      <td data-label="Method" class="text-xs text-muted-foreground">Builds 6 OOC + 4 near-miss distractors; inspects all 40 top-4 chunks on Mac mini confirming zero leaks.</td>
+                      <td data-label="Artifacts" class="font-mono text-xs">eval/slices/unanswerable.jsonl</td>
+                    </tr>
+                    <tr>
+                      <th class="font-mono text-xs">3A · Judge Runner</th>
+                      <td data-label="Role" class="text-xs">Score 120 runs with Qwen2.5-7B</td>
+                      <td data-label="Method" class="text-xs text-muted-foreground">Runs <code class="font-mono">src.judge</code> on Mac mini Metal GPU, verifies schema/range bounds, syncs JSONL scores back.</td>
+                      <td data-label="Artifacts" class="font-mono text-xs">eval/judge_scores.jsonl</td>
+                    </tr>
+                    <tr>
+                      <th class="font-mono text-xs">3B · Human Grader</th>
+                      <td data-label="Role" class="text-xs">Blind-grade 20 sampled outputs</td>
+                      <td data-label="Method" class="text-xs text-muted-foreground">Reads only <code class="font-mono">rubric.md</code> + <code class="font-mono">blind_sample_20.jsonl</code>; outputs independent 1–5 scores &amp; notes.</td>
+                      <td data-label="Artifacts" class="font-mono text-xs">eval/human_scores_20.jsonl</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </section>
@@ -1103,7 +1245,7 @@
 
     const CHAPTERS = [
       { idx: 0, label: "Prologue", title: "Abstract & Agenda", desc: "Motivation, temporal cutoff T=2025-01-01, executive KPIs, and full comparison." },
-      { idx: 1, label: "Chapter 1", title: "Slices & Eval Metrics", desc: "Formal definitions of the 4 golden slices, 1–5 scoring anchors, override flag & agreement gate." },
+      { idx: 1, label: "Chapter 1", title: "Slices, Metrics & Agents", desc: "4 golden slices (+/- examples), 1–5 metrics, runtime agents & 9 orchestration subagents." },
       { idx: 2, label: "Chapter 2", title: "Leakage-Safe Date Split", desc: "300 static (<T) vs. 200 live (>=T) cs.CL abstracts with 0 ID overlap." },
       { idx: 3, label: "Chapter 3", title: "Ingestion & FAISS Retrieval", desc: "bge-small-en-v1.5 384-d embeddings, IndexFlatIP, and after=T filtering." },
       { idx: 4, label: "Chapter 4", title: "60-Prompt Golden Set", desc: "Interactive explorer across Static, Live, Temporal Override, and Unanswerable." },
