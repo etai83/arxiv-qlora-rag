@@ -4,6 +4,41 @@ Leakage-safe temporal RAG benchmark on arXiv `cs.CL` running locally on an **App
 
 ---
 
+## Start Here: Interactive 10-Page Experiment Book (`experiment_book.html`)
+
+> [!IMPORTANT]
+> **Best way to review this experiment and all results:** open **[`experiment_book.html`](experiment_book.html)**.
+> It compiles the full methodology, multi-agent orchestration, slice definitions with real positive/negative failure transcripts, all 18 interactive Plotly charts, judge-vs-human audit tables, and 3 QLoRA Evening 2+ research continuations into a single self-contained, Tailwind + shadcn styled book.
+
+### Ways to Open
+
+1. **Instant online preview (no clone required):** [Open rendered book via htmlpreview.github.io](https://htmlpreview.github.io/?https://github.com/etai83/arxiv-qlora-rag/blob/main/experiment_book.html)
+2. **Local (zero-server, opens directly in browser):**
+   ```bash
+   open experiment_book.html   # macOS (or double-click experiment_book.html)
+   ```
+3. **Regenerate from raw artifacts:**
+   ```bash
+   uv run python main.py book
+   ```
+
+### Book Structure (10 Pages + Clickable Agenda)
+
+| Page | Section | What You Will Find |
+| :--- | :--- | :--- |
+| **Page 1** | **Prologue: Abstract & Clickable Agenda** | Executive KPIs, experimental design thesis, and direct chapter navigation |
+| **Page 2** | **Ch. 1: Slice Definitions, Metrics & Agents** | Static/Live/Override/Unanswerable specs, 1–5 rubric + Override Obedience, 9-agent pipeline, and real `+`/`-` output examples per slice |
+| **Page 3** | **Ch. 2: Date-Split Corpus & Cutoff T** | `2024-09-25` Llama-3.2 cutoff provenance, 300 static + 200 live `cs.CL` papers, zero-overlap check |
+| **Page 4** | **Ch. 3: Vector Ingestion & Retriever** | `BAAI/bge-small-en-v1.5` 384-d embeddings, FAISS `IndexFlatIP`, `retrieve(query, k, after=...)` |
+| **Page 5** | **Ch. 4: 60-Prompt Golden Benchmark** | Slice composition, temporal override pairs, unanswerable trap construction |
+| **Page 6** | **Ch. 5: Evaluation Rubric & Calibration** | Cross-family `qwen2.5:7b` judge schema and calibration rules |
+| **Page 7** | **Ch. 6: Baselines & Judge Agreement** | Zero-shot vs RAG (`k=4`) scores, latency breakdown, 20-sample blind human agreement (`95.0%`) |
+| **Page 8** | **Ch. 7: Failure Modes & Evening 2 QLoRA** | Citation leakage, override resistance, and QLoRA mitigation targets |
+| **Page 9** | **Appendix A: Hardware & Sub-Agent Trace** | Mac mini M5 Pro runtime telemetry, Ollama throughput, and 9-agent execution trace |
+| **Page 10** | **Appendix B: 3 Future Research Directions** | Temporal DPO/ORPO, Abstention-Calibrated QLoRA, and Cross-Family Judge Distillation |
+
+---
+
 ## Temporal Split & Cutoff Provenance
 
 | Parameter | Value |
@@ -84,9 +119,9 @@ src/
   baselines.py          # Sequential zero-shot + RAG (k=4) runner
   judge.py              # Structured Qwen2.5-7B judge
   metrics.py            # Summary tables + human-agreement evaluator
+  build_book.py         # Generates interactive Tailwind/shadcn/Plotly experiment book
 tests/
   test_pipeline.py      # Corpus, retrieval, golden-set, blind-sample, agreement tests
-  build_book.py         # Generates interactive Tailwind/shadcn/Plotly experiment book
 main.py                 # Unified CLI entrypoint
 experiment_book.html    # Self-contained 10-page interactive book (Chapters 1-7 + Appendices A-B)
 notes.md                # Error analysis & Evening 2 QLoRA expectations
