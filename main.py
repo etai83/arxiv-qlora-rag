@@ -48,6 +48,10 @@ def _build_parser() -> argparse.ArgumentParser:
     metrics_p.add_argument("--human-path", default="eval/human_scores_20.jsonl")
     metrics_p.add_argument("--out-dir", default="eval")
 
+    book_p = sub.add_parser("book", help="Build interactive Tailwind/shadcn/Plotly experiment_book.html.")
+    book_p.add_argument("--root", default=".")
+    book_p.add_argument("--out-path", default="experiment_book.html")
+
     return parser
 
 
@@ -110,6 +114,11 @@ def main(argv: list[str] | None = None) -> None:
             out_dir=args.out_dir,
         )
         print(f"Wrote {json_path} and {md_path}")
+    elif args.command == "book":
+        from src.build_book import build_book
+
+        out = build_book(root=args.root, out_path=args.out_path)
+        print(f"Wrote {out}")
     else:
         print(f"Unknown command: {args.command}", file=sys.stderr)
         sys.exit(2)

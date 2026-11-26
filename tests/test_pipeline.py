@@ -246,3 +246,28 @@ def test_helpers_and_verdict_normalization() -> None:
         "temporal_override",
     )
     assert v_override.override_obedience == 1
+
+
+def test_build_experiment_book(tmp_path: Path) -> None:
+    """Verify experiment_book.html builds cleanly with all 8 book pages and embedded payload."""
+    from src.build_book import build_book
+
+    if not (ROOT / "eval" / "judge_scores.jsonl").exists():
+        pytest.skip("eval/judge_scores.jsonl not generated yet")
+
+    out = build_book(root=ROOT, out_path=tmp_path / "experiment_book.html")
+    html = out.read_text(encoding="utf-8")
+    assert '<meta name="color-scheme" content="light dark">' in html
+    assert "document.startViewTransition" in html
+    assert "plotly-2.35.2.min.js" in html
+    for page_idx in range(8):
+        assert f'data-page="{page_idx}"' in html
+
+    start = html.index('<script id="experiment-data" type="application/json">') + len(
+        '<script id="experiment-data" type="application/json">'
+    )
+    end = html.index("</script>", start)
+    payload = json.loads(html[start:end].replace("<\\/", "</"))
+    assert len(payload["runs"]) == 60
+    assert len(payload["calibration"]["audit_items"]) == 20
+    assert payload["split"]["id_overlap_count"] == 0

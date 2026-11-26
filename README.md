@@ -86,7 +86,9 @@ src/
   metrics.py            # Summary tables + human-agreement evaluator
 tests/
   test_pipeline.py      # Corpus, retrieval, golden-set, blind-sample, agreement tests
+  build_book.py         # Generates interactive Tailwind/shadcn/Plotly experiment book
 main.py                 # Unified CLI entrypoint
+experiment_book.html    # Self-contained 8-chapter interactive visualization book
 notes.md                # Error analysis & Evening 2 QLoRA expectations
 ```
 
@@ -99,5 +101,6 @@ uv run python main.py retrieve --query "continual learning ASR" --k 4 --after 20
 uv run python main.py baselines
 uv run python main.py judge
 uv run python main.py metrics
+uv run python main.py book
 uv run pytest -v
 ```
