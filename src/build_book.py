@@ -553,6 +553,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       </div>
 
       <div class="flex items-center gap-3">
+        <a href="#page-1" data-nav-link="0" class="rounded-md border border-border bg-secondary px-2 py-1 font-mono text-xs hover:bg-accent transition-colors">↑ Agenda</a>
         <span id="header-folio" class="font-mono text-xs text-muted-foreground hidden sm:inline">Page 1 / 8</span>
         <!-- Appearance Settings Disclosure (tri-state System / Light / Dark) -->
         <details id="appearance-popover" class="relative">
@@ -585,7 +586,16 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         <p class="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">Monograph Index</p>
         <h2 class="font-serif text-lg font-semibold mt-0.5">Evening 1 Lab Book</h2>
       </div>
-      <nav aria-label="Book chapters" id="chapter-nav" class="space-y-1"></nav>
+      <nav aria-label="Book chapters" id="chapter-nav" class="space-y-1">
+        <a href="#page-1" data-nav-link="0" aria-current="page" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-semibold bg-primary text-primary-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Prologue</div><div class="truncate">Abstract &amp; Agenda</div></a>
+        <a href="#page-2" data-nav-link="1" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 1</div><div class="truncate">Mac mini &amp; Subagent Fan-Out</div></a>
+        <a href="#page-3" data-nav-link="2" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 2</div><div class="truncate">Leakage-Safe Date Split</div></a>
+        <a href="#page-4" data-nav-link="3" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 3</div><div class="truncate">Ingestion &amp; FAISS Retrieval</div></a>
+        <a href="#page-5" data-nav-link="4" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 4</div><div class="truncate">60-Prompt Golden Set</div></a>
+        <a href="#page-6" data-nav-link="5" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 5</div><div class="truncate">Rubric &amp; Judge Calibration</div></a>
+        <a href="#page-7" data-nav-link="6" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 6</div><div class="truncate">Baselines &amp; Run Inspector</div></a>
+        <a href="#page-8" data-nav-link="7" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Epilogue</div><div class="truncate">Failure Analysis &amp; QLoRA</div></a>
+      </nav>
       <div class="mt-4 pt-3 border-t border-border text-xs text-muted-foreground space-y-1">
         <div class="flex justify-between"><span>Cutoff T</span><span class="font-mono text-foreground">2025-01-01</span></div>
         <div class="flex justify-between"><span>Base LLM</span><span class="font-mono text-foreground">llama3.2:3b</span></div>
@@ -598,7 +608,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     <main class="min-w-0">
       <article id="book-page-sheet" class="book-sheet rounded-2xl p-6 sm:p-10 min-h-[760px] flex flex-col justify-between">
         <!-- Page 1: Cover, Abstract & Agenda -->
-        <section data-page="0" class="book-page space-y-8">
+        <section id="page-1" data-page="0" class="book-page space-y-8">
           <div class="border-b border-border pb-6 space-y-4">
             <div class="flex flex-wrap items-center gap-2">
               <span class="inline-flex items-center rounded-full border border-border bg-secondary px-3 py-0.5 font-mono text-xs">Evening 1 · Baseline Monograph</span>
@@ -633,7 +643,40 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
               <h2 class="font-serif text-2xl font-semibold">Experiment Agenda</h2>
               <span class="text-xs text-muted-foreground">Click any chapter card to turn page</span>
             </div>
-            <div id="p1-agenda-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+            <div id="p1-agenda-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <a href="#page-1" data-nav-link="0" class="group cursor-pointer text-left rounded-xl border border-border bg-card p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
+                <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Prologue</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 1 →</span></div>
+                <div><p class="font-serif text-base font-semibold group-hover:underline">Abstract &amp; Agenda</p><p class="text-xs text-muted-foreground mt-0.5">Motivation, temporal cutoff T=2025-01-01, executive KPIs, and full comparison.</p></div>
+              </a>
+              <a href="#page-2" data-nav-link="1" class="group cursor-pointer text-left rounded-xl border border-border bg-card p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
+                <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Chapter 1</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 2 →</span></div>
+                <div><p class="font-serif text-base font-semibold group-hover:underline">Mac mini &amp; Subagent Fan-Out</p><p class="text-xs text-muted-foreground mt-0.5">User-space Ollama Metal GPU setup, 3-wave agents, and 60 tok/s judge tuning.</p></div>
+              </a>
+              <a href="#page-3" data-nav-link="2" class="group cursor-pointer text-left rounded-xl border border-border bg-card p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
+                <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Chapter 2</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 3 →</span></div>
+                <div><p class="font-serif text-base font-semibold group-hover:underline">Leakage-Safe Date Split</p><p class="text-xs text-muted-foreground mt-0.5">300 static (&lt;T) vs. 200 live (&gt;=T) cs.CL abstracts with 0 ID overlap.</p></div>
+              </a>
+              <a href="#page-4" data-nav-link="3" class="group cursor-pointer text-left rounded-xl border border-border bg-card p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
+                <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Chapter 3</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 4 →</span></div>
+                <div><p class="font-serif text-base font-semibold group-hover:underline">Ingestion &amp; FAISS Retrieval</p><p class="text-xs text-muted-foreground mt-0.5">bge-small-en-v1.5 384-d embeddings, IndexFlatIP, and after=T filtering.</p></div>
+              </a>
+              <a href="#page-5" data-nav-link="4" class="group cursor-pointer text-left rounded-xl border border-border bg-card p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
+                <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Chapter 4</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 5 →</span></div>
+                <div><p class="font-serif text-base font-semibold group-hover:underline">60-Prompt Golden Set</p><p class="text-xs text-muted-foreground mt-0.5">Interactive explorer across Static, Live, Temporal Override, and Unanswerable.</p></div>
+              </a>
+              <a href="#page-6" data-nav-link="5" class="group cursor-pointer text-left rounded-xl border border-border bg-card p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
+                <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Chapter 5</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 6 →</span></div>
+                <div><p class="font-serif text-base font-semibold group-hover:underline">Rubric &amp; Judge Calibration</p><p class="text-xs text-muted-foreground mt-0.5">48.3% -&gt; 80.0% exact agreement lift via CoT ordering and abstention rules.</p></div>
+              </a>
+              <a href="#page-7" data-nav-link="6" class="group cursor-pointer text-left rounded-xl border border-border bg-card p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
+                <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Chapter 6</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 7 →</span></div>
+                <div><p class="font-serif text-base font-semibold group-hover:underline">Baselines &amp; Run Inspector</p><p class="text-xs text-muted-foreground mt-0.5">120 Zero-Shot vs. RAG runs, latency distributions, and prompt-level drilldown.</p></div>
+              </a>
+              <a href="#page-8" data-nav-link="7" class="group cursor-pointer text-left rounded-xl border border-border bg-card p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
+                <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Epilogue</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 8 →</span></div>
+                <div><p class="font-serif text-base font-semibold group-hover:underline">Failure Analysis &amp; QLoRA</p><p class="text-xs text-muted-foreground mt-0.5">Master results table, 3 failure modes, and Evening 2 QLoRA hybrid roadmap.</p></div>
+              </a>
+            </div>
           </div>
 
           <!-- Prologue Summary Chart -->
@@ -645,7 +688,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         </section>
 
         <!-- Page 2: Step 0 - Mac mini & Subagent Infra -->
-        <section data-page="1" class="book-page hidden space-y-6">
+        <section id="page-2" data-page="1" class="book-page hidden space-y-6">
           <div class="border-b border-border pb-4">
             <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Chapter 1 · Compute &amp; Orchestration</p>
             <h1 class="font-serif text-3xl font-bold mt-1">Mac mini M5 Pro Setup &amp; Parallel Subagent Fan-Out</h1>
@@ -694,7 +737,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         </section>
 
         <!-- Page 3: Step 1 - Date-Split Corpus -->
-        <section data-page="2" class="book-page hidden space-y-6">
+        <section id="page-3" data-page="2" class="book-page hidden space-y-6">
           <div class="border-b border-border pb-4">
             <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Chapter 2 · Leakage-Safe Data Split</p>
             <h1 class="font-serif text-3xl font-bold mt-1">Date-Split arXiv <code class="font-mono text-2xl">cs.CL</code> Corpus (<code class="font-mono text-2xl">T = 2025-01-01</code>)</h1>
@@ -746,7 +789,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         </section>
 
         <!-- Page 4: Step 2 - Dense Ingestion & Retrieval -->
-        <section data-page="3" class="book-page hidden space-y-6">
+        <section id="page-4" data-page="3" class="book-page hidden space-y-6">
           <div class="border-b border-border pb-4">
             <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Chapter 3 · Embeddings &amp; Vector Store</p>
             <h1 class="font-serif text-3xl font-bold mt-1">Dense Ingestion &amp; Date-Filtered FAISS Retrieval</h1>
@@ -793,7 +836,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         </section>
 
         <!-- Page 5: Step 3 - 60-Prompt Golden Set -->
-        <section data-page="4" class="book-page hidden space-y-6">
+        <section id="page-5" data-page="4" class="book-page hidden space-y-6">
           <div class="border-b border-border pb-4">
             <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Chapter 4 · Evaluation Benchmark</p>
             <h1 class="font-serif text-3xl font-bold mt-1">60-Prompt 4-Slice Golden Set (<code class="font-mono text-2xl">eval/golden.jsonl</code>)</h1>
@@ -863,7 +906,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         </section>
 
         <!-- Page 6: Step 4 - Rubric & Judge Calibration -->
-        <section data-page="5" class="book-page hidden space-y-6">
+        <section id="page-6" data-page="5" class="book-page hidden space-y-6">
           <div class="border-b border-border pb-4">
             <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Chapter 5 · Evaluation Rigor</p>
             <h1 class="font-serif text-3xl font-bold mt-1">Rubric Design &amp; Judge-vs-Human Calibration</h1>
@@ -932,7 +975,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         </section>
 
         <!-- Page 7: Step 5 - Baselines Showdown & Run Inspector -->
-        <section data-page="6" class="book-page hidden space-y-6">
+        <section id="page-7" data-page="6" class="book-page hidden space-y-6">
           <div class="border-b border-border pb-4">
             <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Chapter 6 · Empirical Baselines</p>
             <h1 class="font-serif text-3xl font-bold mt-1">Zero-Shot vs. RAG (<code class="font-mono text-2xl">k=4</code>) Performance &amp; Run Inspector</h1>
@@ -976,7 +1019,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         </section>
 
         <!-- Page 8: Epilogue - Failure Analysis & Evening 2 Roadmap -->
-        <section data-page="7" class="book-page hidden space-y-6">
+        <section id="page-8" data-page="7" class="book-page hidden space-y-6">
           <div class="border-b border-border pb-4">
             <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Epilogue · Synthesis &amp; Next Evening</p>
             <h1 class="font-serif text-3xl font-bold mt-1">Failure Analysis &amp; Evening 2 QLoRA Outlook</h1>
@@ -1122,10 +1165,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     const PLOT_CONFIG = { responsive: true, displayModeBar: false };
 
     function renderChartsForPage(idx, force = false) {
+      if (!window.Plotly) return;
       if (force) renderedPages.delete(idx);
       if (renderedPages.has(idx)) {
         document.querySelectorAll(`section[data-page="${idx}"] .js-plotly-plot`).forEach((el) => {
-          if (window.Plotly) Plotly.Plots.resize(el);
+          Plotly.Plots.resize(el);
         });
         return;
       }
@@ -1380,12 +1424,12 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       document.getElementById("btn-prev-page").disabled = targetPage === 0;
       document.getElementById("btn-next-page").disabled = targetPage === CHAPTERS.length - 1;
 
-      document.querySelectorAll("#chapter-nav button").forEach((btn) => {
-        const active = Number(btn.dataset.targetPage) === targetPage;
-        btn.setAttribute("aria-current", active ? "page" : "false");
-        btn.className = active
-          ? "w-full text-left rounded-lg px-3 py-2 text-xs font-semibold bg-primary text-primary-foreground transition-colors"
-          : "w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors";
+      document.querySelectorAll("#chapter-nav a").forEach((link) => {
+        const active = Number(link.dataset.navLink) === targetPage;
+        link.setAttribute("aria-current", active ? "page" : "false");
+        link.className = active
+          ? "block w-full text-left rounded-lg px-3 py-2 text-xs font-semibold bg-primary text-primary-foreground transition-colors"
+          : "block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors";
       });
 
       const spine = document.getElementById("book-spine");
@@ -1396,9 +1440,25 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       window.scrollTo({ top: 0, behavior: "instant" });
     }
 
-    function navigateToPage(targetPage) {
+    function parseHashPage() {
+      const m = /^#page-(\d+)$/.exec(window.location.hash || "");
+      if (!m) return null;
+      const idx = Number(m[1]) - 1;
+      return idx >= 0 && idx < CHAPTERS.length ? idx : null;
+    }
+
+    function navigateToPage(targetPage, { pushHash = true } = {}) {
       if (targetPage < 0 || targetPage >= CHAPTERS.length || targetPage === currentPage) return;
       const direction = targetPage > currentPage ? "forward" : "backward";
+      const nextHash = `#page-${targetPage + 1}`;
+      if (pushHash && window.location.hash !== nextHash) {
+        try {
+          history.pushState({ page: targetPage }, "", nextHash);
+        } catch {
+          window.location.hash = nextHash;
+        }
+      }
+      document.documentElement.dataset.navDir = direction;
 
       if (!document.startViewTransition) {
         updatePageDOM(targetPage);
@@ -1406,10 +1466,21 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         return;
       }
 
-      const vt = document.startViewTransition({
-        update: () => updatePageDOM(targetPage),
-        types: [direction],
-      });
+      let vt;
+      try {
+        vt = document.startViewTransition({
+          update: () => updatePageDOM(targetPage),
+          types: [direction],
+        });
+      } catch {
+        try {
+          vt = document.startViewTransition(() => updatePageDOM(targetPage));
+        } catch {
+          updatePageDOM(targetPage);
+          renderChartsForPage(targetPage);
+          return;
+        }
+      }
       vt.finished.finally(() => renderChartsForPage(targetPage));
     }
 
@@ -1461,18 +1532,9 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       });
     }
 
-    // Populate Static & Dynamic Views
+    // Populate Dynamic Content (links in #chapter-nav & #p1-agenda-grid are static HTML <a href="#page-N">)
     function populateContent() {
-      // Chapter Nav
-      const nav = document.getElementById("chapter-nav");
-      nav.innerHTML = CHAPTERS.map(
-        (ch) => `<button type="button" data-target-page="${ch.idx}"><div class="font-mono text-[10px] opacity-75">${ch.label}</div><div class="truncate">${ch.title}</div></button>`
-      ).join("");
-      nav.querySelectorAll("button").forEach((btn) => {
-        btn.addEventListener("click", () => navigateToPage(Number(btn.dataset.targetPage)));
-      });
-
-      // Page 1 KPIs & Agenda
+      // Page 1 KPIs
       const kpis = [
         { k: "Date-Split Corpus", v: "500 Abstracts", s: "300 static (<T) · 200 live (>=T) · 0 overlap" },
         { k: "Golden Benchmark", v: "60 Prompts", s: "20 static · 20 live · 10 override · 10 unansw." },
@@ -1484,16 +1546,6 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           (item) => `<div class="rounded-xl border border-border bg-card p-4 shadow-sm"><p class="font-mono text-[11px] text-muted-foreground">${item.k}</p><p class="font-serif text-2xl font-bold mt-1">${item.v}</p><p class="text-xs text-muted-foreground mt-1">${item.s}</p></div>`
         )
         .join("");
-
-      document.getElementById("p1-agenda-grid").innerHTML = CHAPTERS.map(
-        (ch) => `<button type="button" data-agenda-page="${ch.idx}" class="text-left rounded-xl border border-border bg-card p-4 hover:bg-accent/60 transition-colors flex flex-col justify-between gap-2">
-          <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">${ch.label}</span><span class="font-mono text-xs text-primary">Page ${ch.idx + 1} →</span></div>
-          <div><p class="font-serif text-base font-semibold">${ch.title}</p><p class="text-xs text-muted-foreground mt-0.5">${ch.desc}</p></div>
-        </button>`
-      ).join("");
-      document.querySelectorAll("[data-agenda-page]").forEach((btn) => {
-        btn.addEventListener("click", () => navigateToPage(Number(btn.dataset.agendaPage)));
-      });
 
       // Page 2 Hardware & Model Cards
       const hw = DATA.env.host;
@@ -1713,7 +1765,22 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       renderChartsForPage(currentPage, true);
     });
 
-    // Global Book Controls
+    // Global Book Controls & Hash Link Navigation
+    document.addEventListener("click", (e) => {
+      const link = e.target.closest("a[data-nav-link]");
+      if (!link) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+      e.preventDefault();
+      navigateToPage(Number(link.dataset.navLink));
+    });
+    window.addEventListener("hashchange", () => {
+      const idx = parseHashPage();
+      if (idx !== null) navigateToPage(idx, { pushHash: false });
+    });
+    window.addEventListener("popstate", () => {
+      const idx = parseHashPage() ?? 0;
+      navigateToPage(idx, { pushHash: false });
+    });
     document.getElementById("btn-prev-page").addEventListener("click", () => navigateToPage(currentPage - 1));
     document.getElementById("btn-next-page").addEventListener("click", () => navigateToPage(currentPage + 1));
     document.getElementById("btn-spine-toggle").addEventListener("click", () => {
@@ -1730,8 +1797,9 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     // Boot
     syncThemeUI();
     populateContent();
-    updatePageDOM(0);
-    renderChartsForPage(0);
+    const initialPage = parseHashPage() ?? 0;
+    updatePageDOM(initialPage);
+    renderChartsForPage(initialPage);
   </script>
 </body>
 </html>

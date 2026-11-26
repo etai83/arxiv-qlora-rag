@@ -262,6 +262,9 @@ def test_build_experiment_book(tmp_path: Path) -> None:
     assert "plotly-2.35.2.min.js" in html
     for page_idx in range(8):
         assert f'data-page="{page_idx}"' in html
+        page_num = page_idx + 1
+        assert f'id="page-{page_num}"' in html
+        assert f'href="#page-{page_num}"' in html
 
     start = html.index('<script id="experiment-data" type="application/json">') + len(
         '<script id="experiment-data" type="application/json">'
