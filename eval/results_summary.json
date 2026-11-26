@@ -1,0 +1,136 @@
+{
+  "total_scored": 120,
+  "overall": {
+    "rag": {
+      "count": 60,
+      "correctness": 3.417,
+      "faithfulness": 4.85,
+      "citation_accuracy": 4.983,
+      "override_obedience": 0.7,
+      "latency_mean_ms": 1880.17,
+      "latency_median_ms": 1218.6
+    },
+    "zero_shot": {
+      "count": 60,
+      "correctness": 2.2,
+      "faithfulness": 4.933,
+      "citation_accuracy": 4.983,
+      "override_obedience": 0.0,
+      "latency_mean_ms": 1725.44,
+      "latency_median_ms": 1001.44
+    }
+  },
+  "by_mode_slice": {
+    "rag": {
+      "static": {
+        "count": 20,
+        "correctness": 1.8,
+        "faithfulness": 5.0,
+        "citation_accuracy": 5.0,
+        "override_obedience": null,
+        "latency_mean_ms": 936.85,
+        "latency_median_ms": 925.64
+      },
+      "live": {
+        "count": 20,
+        "correctness": 3.85,
+        "faithfulness": 4.55,
+        "citation_accuracy": 4.95,
+        "override_obedience": null,
+        "latency_mean_ms": 3008.95,
+        "latency_median_ms": 2938.43
+      },
+      "temporal_override": {
+        "count": 10,
+        "correctness": 4.2,
+        "faithfulness": 5.0,
+        "citation_accuracy": 5.0,
+        "override_obedience": 0.7,
+        "latency_mean_ms": 2586.69,
+        "latency_median_ms": 2143.64
+      },
+      "unanswerable": {
+        "count": 10,
+        "correctness": 5.0,
+        "faithfulness": 5.0,
+        "citation_accuracy": 5.0,
+        "override_obedience": null,
+        "latency_mean_ms": 802.72,
+        "latency_median_ms": 790.46
+      }
+    },
+    "zero_shot": {
+      "static": {
+        "count": 20,
+        "correctness": 1.45,
+        "faithfulness": 4.9,
+        "citation_accuracy": 5.0,
+        "override_obedience": null,
+        "latency_mean_ms": 2039.38,
+        "latency_median_ms": 1162.39
+      },
+      "live": {
+        "count": 20,
+        "correctness": 1.0,
+        "faithfulness": 5.0,
+        "citation_accuracy": 5.0,
+        "override_obedience": null,
+        "latency_mean_ms": 1010.11,
+        "latency_median_ms": 678.84
+      },
+      "temporal_override": {
+        "count": 10,
+        "correctness": 3.3,
+        "faithfulness": 4.8,
+        "citation_accuracy": 4.9,
+        "override_obedience": 0.0,
+        "latency_mean_ms": 3291.28,
+        "latency_median_ms": 3197.36
+      },
+      "unanswerable": {
+        "count": 10,
+        "correctness": 5.0,
+        "faithfulness": 5.0,
+        "citation_accuracy": 5.0,
+        "override_obedience": null,
+        "latency_mean_ms": 962.4,
+        "latency_median_ms": 917.25
+      }
+    }
+  },
+  "agreement": {
+    "n_items": 20,
+    "pooled_n": 60,
+    "dimensions": {
+      "correctness": {
+        "n": 20,
+        "exact_match_pct": 60.0,
+        "within_1_pct": 70.0,
+        "bucket_match_pct": 70.0
+      },
+      "faithfulness": {
+        "n": 20,
+        "exact_match_pct": 85.0,
+        "within_1_pct": 95.0,
+        "bucket_match_pct": 95.0
+      },
+      "citation_accuracy": {
+        "n": 20,
+        "exact_match_pct": 95.0,
+        "within_1_pct": 95.0,
+        "bucket_match_pct": 95.0
+      },
+      "override_obedience": {
+        "n": 4,
+        "override_exact_pct": 100.0
+      }
+    },
+    "pooled": {
+      "n": 60,
+      "exact_match_pct": 80.0,
+      "within_1_pct": 86.67,
+      "bucket_match_pct": 86.67
+    },
+    "override_exact_pct": 100.0
+  }
+}
