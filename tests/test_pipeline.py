@@ -269,6 +269,8 @@ def test_build_experiment_book(tmp_path: Path) -> None:
         "chart-appb-pareto",
     ):
         assert cid in html
+    for marker in ("Positive Example", "Negative Example", "Dense Retriever Agent", "agents-roster-caption"):
+        assert marker in html
     for page_idx in range(10):
         assert f'data-page="{page_idx}"' in html
         page_num = page_idx + 1
