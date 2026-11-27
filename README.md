@@ -4,11 +4,11 @@ Leakage-safe temporal RAG benchmark on arXiv `cs.CL` running locally on an **App
 
 ---
 
-## Start Here: Interactive 11-Page Experiment Book (`experiment_book.html`)
+## Start Here: Interactive 12-Page Experiment Book (`experiment_book.html`)
 
 > [!IMPORTANT]
 > **Best way to review this experiment and all results:** open **[`experiment_book.html`](experiment_book.html)**.
-> It compiles the full methodology, multi-agent orchestration, slice definitions with real positive/negative failure transcripts, all 22 interactive Plotly charts, judge-vs-human audit tables, and 3 QLoRA & RAG research continuations into a single self-contained, Tailwind + shadcn styled book.
+> It compiles the full methodology, multi-agent orchestration, slice definitions with real positive/negative failure transcripts, interactive Plotly charts, judge-vs-human audit tables, QLoRA fine-tuning results, and 3 QLoRA & RAG research continuations into a single self-contained, Tailwind + shadcn styled book.
 
 ### Ways to Open
 
@@ -22,7 +22,7 @@ Leakage-safe temporal RAG benchmark on arXiv `cs.CL` running locally on an **App
    uv run python main.py book
    ```
 
-### Book Structure (11 Pages + Clickable Agenda)
+### Book Structure (12 Pages + Clickable Agenda)
 
 | Page | Section | What You Will Find |
 | :--- | :--- | :--- |
@@ -34,9 +34,10 @@ Leakage-safe temporal RAG benchmark on arXiv `cs.CL` running locally on an **App
 | **Page 6** | **Ch. 5: Evaluation Rubric & Calibration** | Cross-family judge schema and calibration rules for Qwen2.5-7B and Qwen3.5-9B |
 | **Page 7** | **Ch. 6: Baselines & Judge Agreement** | Zero-shot vs RAG (`k=4`) scores, latency breakdown, 20-sample blind human agreement |
 | **Page 8** | **Ch. 7: Failure Modes & QLoRA Outlook** | Citation leakage, override resistance, and QLoRA mitigation targets |
-| **Page 9** | **Appendix A: Hardware & Sub-Agent Trace** | Mac mini M5 Pro runtime telemetry, Ollama throughput, and 9-agent execution trace |
-| **Page 10** | **Appendix B: 3 Future Research Directions** | Temporal DPO/ORPO, Abstention-Calibrated QLoRA, and Cross-Family Judge Distillation |
-| **Page 11** | **Appendix C: Stronger Judge (Qwen3.5-9B vs. Qwen2.5-7B)** | MLX `nvfp4` evaluation calibration, human agreement lift (`80.0% -> 90.0%`), and discordance analysis |
+| **Page 9** | **Ch. 8: QLoRA Fine-Tuning (`llama3.2-qlora:3b` vs. `llama3.2:3b`)** | MLX 4-bit QLoRA training telemetry, head-to-head scores & bootstrap CIs, win/tie/loss matrix, behavioral shift, and post-hoc hybrid routing |
+| **Page 10** | **Appendix A: Hardware & Sub-Agent Trace** | Mac mini M5 Pro runtime telemetry, Ollama throughput, and 9-agent execution trace |
+| **Page 11** | **Appendix B: 3 Future Research Directions** | Temporal DPO/ORPO, Abstention-Calibrated QLoRA, and Cross-Family Judge Distillation |
+| **Page 12** | **Appendix C: Stronger Judge (Qwen3.5-9B vs. Qwen2.5-7B)** | MLX `nvfp4` evaluation calibration, human agreement lift (`80.0% -> 90.0%`), and discordance analysis |
 
 ---
 
@@ -92,6 +93,57 @@ Leakage-safe temporal RAG benchmark on arXiv `cs.CL` running locally on an **App
 
 ---
 
+## QLoRA Fine-Tuning Experiment: `llama3.2-qlora:3b` vs. `llama3.2:3b` (Issue #2)
+
+To test whether domain-specific pre-cutoff fine-tuning improves static `cs.CL` recall, RAG synthesis, and temporal override handling without leaking post-T knowledge, we trained a 4-bit MLX QLoRA adapter on `mlx-community/Llama-3.2-3B-Instruct-4bit` distilled strictly from pre-T `corpus/static.jsonl` (`< 2025-01-01`), fused it into Ollama as **`llama3.2-qlora:3b`** (`nvfp4`, MLX runner), and evaluated both generators head-to-head across all `120` runs (`60` zero-shot + `60` RAG) using **`qwen3.5:9b`** as primary judge and **`qwen2.5:7b`** as secondary cross-check.
+
+> [!IMPORTANT]
+> **Bottom-Line Verdict (Issue #2)**: **`llama3.2-qlora:3b` delivers modest pooled correctness gains (`2.692 -> 2.825`, `+0.133`, 95% CI `[-0.092, +0.358]` under `qwen3.5:9b`; `+0.225` under `qwen2.5:7b`) at `2.5×` faster pooled inference (`-1,078.93 ms` mean latency: `1,802.81 ms -> 723.88 ms`), driven by major breakthroughs in RAG `temporal_override` (`3.60 -> 4.80`, `+1.20`; override obedience `0.50 -> 0.80`; `10/10` cited, `0/10` abstentions) and Zero-Shot `static` (`1.15 -> 1.60`, `+0.45`; abstentions `18/20 -> 0/20`).** However, those gains come with clear calibration trade-offs: zero-shot overconfidence reduces `zs/unanswerable` (`5.00 -> 4.60`) and `zs` faithfulness (`-2.383`), and concise 1–2 sentence distillation drops minor secondary details in `rag/live` (`4.85 -> 4.45` under `qwen3.5:9b`).
+
+### Training & Leakage-Audit Summary
+
+| Parameter / Audit Check | Value |
+|---|---|
+| Base Weights & Framework | `mlx-community/Llama-3.2-3B-Instruct-4bit`, `mlx_lm 0.32.2` |
+| LoRA Architecture | `rank=16`, `scale=2.0`, `dropout=0.05`, `num_layers=28`, `max_seq_length=2048` |
+| Trainable Parameters | **`0.757%`** (`24.314M / 3212.750M`), `batch_size=4`, `iters=600`, `lr=1e-4` (`cosine_decay`, warmup `40`, min `1e-5`) |
+| SFT Dataset (`data/qlora/`) | **`1,060` train / `120` valid** (`1,180` total): `570/30` ZS QA, `100/20` ZS abstention, `260/40` RAG synthesis, `130/30` RAG abstention |
+| Temporal Leakage Audit | Distilled strictly from `corpus/static.jsonl` (`300` papers, `2020-05-22` to `2024-01-06`): **`0`** live paper IDs, **`0`** golden prompts/non-abstention refs |
+| Training Telemetry | `train_loss 2.478 -> 0.509` (best `0.418`), `val_loss 2.506 -> 0.831` at selected **`iter 400`** checkpoint (`best_val_loss 0.788` at `iter 500`), wall time `4,171.88 s`, adapter `371.164 MB`, peak mem `11.5 GB` |
+| Export & Ollama Deployment | Fused via `mlx_lm fuse --dequantize`, registered as `llama3.2-qlora:3b` (`nvfp4`, native `MLX` runner, `2.80 GB`) |
+
+### Head-to-Head Mode & Slice Comparison (`llama3.2:3b` vs. `llama3.2-qlora:3b`)
+
+Primary judge: **`qwen3.5:9b`** (with **`qwen2.5:7b`** cross-check deltas and 2,000-resample paired bootstrap 95% CIs on `correctness`).
+
+| Scope | N | `llama3.2:3b` Corr | `llama3.2-qlora:3b` Corr | Delta (`qwen3.5:9b`) | 95% CI | `qwen2.5:7b` Delta | Delta Faith | Delta Cite | Delta Ov. Obed | Delta Mean Lat (ms) |
+|---|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|
+| **Pooled All** | **120** | 2.692 | **2.825** | **+0.133** | `[-0.092, +0.358]` | **+0.225** | -1.183 | -0.350 | +0.15 | **-1,078.93** |
+| **Zero-Shot (All)** | **60** | 1.733 | **1.867** | **+0.133** | `[-0.133, +0.400]` | **+0.367** | -2.383 | -0.667 | +0.00 | **-1,112.59** |
+| **RAG `k=4` (All)** | **60** | 3.650 | **3.783** | **+0.133** | `[-0.217, +0.500]` | **+0.083** | **+0.016** | -0.033 | **+0.30** | **-1,045.26** |
+| `zero_shot / static` | 20 | 1.15 | **1.60** | **+0.45** | `[-0.20, +1.15]` | +0.25 | -2.95 | -1.20 | - | -1,303.89 |
+| `zero_shot / live` | 20 | 1.00 | **1.20** | **+0.20** (sig) | `[+0.05, +0.40]` | +1.10 | -3.40 | -1.20 | - | -326.51 |
+| `zero_shot / temporal_override` | 10 | **1.10** | 1.00 | -0.10 | `[-0.30, +0.00]` | -0.50 | -1.20 | +0.80 | 0.00 | -2,812.39 |
+| `zero_shot / unanswerable` | 10 | **5.00** | 4.60 | -0.40 | `[-1.20, +0.00]` | 0.00 | -0.40 | 0.00 | - | -602.35 |
+| `rag / static` | 20 | 1.80 | **2.00** | **+0.20** | `[-0.40, +0.80]` | 0.00 | 0.00 | 0.00 | - | -438.09 |
+| `rag / live` | 20 | **4.85** | 4.45 | -0.40 | `[-0.80, +0.00]` | +0.05 | 0.00 | -0.10 | - | -1,834.61 |
+| `rag / temporal_override` | 10 | 3.60 | **4.80** | **+1.20** | `[+0.00, +2.40]` | **+0.40** | **+0.10** | 0.00 | **+0.30** (`0.50 -> 0.80`) | -1,337.24 |
+| `rag / unanswerable` | 10 | **5.00** | **5.00** | 0.00 | `[+0.00, +0.00]` | 0.00 | 0.00 | 0.00 | - | -388.92 |
+
+### Win / Tie / Loss, Behavioral Shift & Post-Hoc Hybrid Routing
+
+- **Prompt-Level Outcomes (`N=120`)**: **`14` improved / `95` tied / `11` regressed** (**`+3` net wins**):
+  - **Zero-Shot (`60`)**: `8` improved / `49` tied / `3` regressed (`+5` net; `static` `+3`, `live` `+4`, `temporal_override` `-1`, `unanswerable` `-1`).
+  - **RAG (`60`)**: `6` improved / `46` tied / `8` regressed (`-2` net; `temporal_override` `+3`, `static` `+1`, `unanswerable` `0`, `live` `-6`).
+- **Behavioral Shift**:
+  - **Zero-Shot**: Abstentions dropped `55/60 -> 9/60` (`static` `18 -> 0`, `live` `19 -> 0`, `temporal_override` `8 -> 0`, `unanswerable` `10 -> 9`).
+  - **RAG (`k=4`)**: Abstentions dropped `34/60 -> 30/60` (`temporal_override` `3 -> 0` with `10/10` cited, `live` `1 -> 0`), `spurious_trailing_abstention` dropped `1 -> 0`, while `rag/static` held `20/20` clean abstentions and `rag/unanswerable` held `10/10` clean abstentions. Explicit `[arxiv_id]` brackets in `rag/live` dropped `18/20 -> 2/20` (`18/20` uncited, though `qwen3.5:9b` still scored `citation_accuracy 4.90`).
+- **Post-Hoc Similarity-Gated Hybrid Routing (`N=60`)**:
+  - At **`tau=0.68`** (`93.33%` routed to RAG, including `95.0%` of `static` and `70.0%` of `unanswerable`): Base Hybrid **`3.700`** -> QLoRA Hybrid **`3.783`** (**`+0.083`**).
+  - At **`tau=0.75`** (`68.33%` routed to RAG): Base Hybrid **`3.500`** -> QLoRA Hybrid **`3.700`** (**`+0.200`**).
+
+---
+
 ## Stronger Judge Experiment: Qwen3.5-9B (MLX) vs. Qwen2.5-7B (Issue #1)
 
 To test evaluation robustness, we benchmarked a stronger candidate LLM-as-a-Judge: **`qwen3.5:9b`** (`9.7B` parameters, `nvfp4`, native Apple Silicon `MLX` runner on Ollama with `think=False`, `temperature=0.0`, `num_ctx=4096`) against the baseline **`qwen2.5:7b`** (`7.6B`, `Q4_K_M` GGUF).
@@ -138,40 +190,59 @@ To test evaluation robustness, we benchmarked a stronger candidate LLM-as-a-Judg
 
 ```text
 corpus/
-  static.jsonl          # 300 pre-T cs.CL abstracts (< 2025-01-01)
-  live.jsonl            # 200 post-T cs.CL abstracts (>= 2025-01-01)
-  split_metadata.json   # Cutoff provenance + date/overlap checks
-  env_manifest.json     # Mac mini + Ollama model digests
+  static.jsonl                    # 300 pre-T cs.CL abstracts (< 2025-01-01)
+  live.jsonl                      # 200 post-T cs.CL abstracts (>= 2025-01-01)
+  split_metadata.json             # Cutoff provenance + date/overlap checks
+  env_manifest.json               # Mac mini + Ollama model digests
 data/index/
-  live.faiss            # 384-d FAISS IndexFlatIP over live.jsonl
-  live_meta.json        # Chunk metadata including published_date
+  live.faiss                      # 384-d FAISS IndexFlatIP over live.jsonl
+  live_meta.json                  # Chunk metadata including published_date
+data/qlora/
+  train.jsonl                     # 1,060 leakage-free QLoRA SFT chat examples
+  valid.jsonl                     # 120 QLoRA validation examples
+  dataset_manifest.json           # Split counts, date bounds, SHA-256 checksums
+  lora_config.yaml                # mlx_lm LoRA config (rank=16, scale=2.0, 28 layers)
+  adapter_config.json             # MLX LoRA adapter configuration snapshot
+  train_manifest.json             # Training telemetry, val loss curve & iter 400 selection
+  training_log.jsonl              # Parsed step-by-step train/val loss log
 eval/
-  rubric.md             # 1-5 evaluation rubric + abstention calibration rules
-  golden.jsonl          # 60 prompts (20 static, 20 live, 10 override, 10 unanswerable)
-  slices/*.jsonl        # Per-slice golden sets
-  outputs_zero_shot.jsonl
-  outputs_rag.jsonl
-  blind_sample_20.jsonl # Stratified 20-item blind audit sample
-  human_scores_20.jsonl # Blinded human grades
-  judge_scores.jsonl    # Calibrated Qwen2.5-7B baseline scores (120 items)
-  judge_scores_qwen35_9b.jsonl # Calibrated Qwen3.5-9B stronger judge scores (120 items)
+  rubric.md                       # 1-5 evaluation rubric + abstention calibration rules
+  golden.jsonl                    # 60 prompts (20 static, 20 live, 10 override, 10 unanswerable)
+  slices/*.jsonl                  # Per-slice golden sets
+  outputs_zero_shot.jsonl         # Base llama3.2:3b zero-shot outputs
+  outputs_rag.jsonl               # Base llama3.2:3b RAG (k=4) outputs
+  outputs_zero_shot_ft.jsonl      # Fine-tuned llama3.2-qlora:3b zero-shot outputs
+  outputs_rag_ft.jsonl            # Fine-tuned llama3.2-qlora:3b RAG (k=4) outputs
+  blind_sample_20.jsonl           # Stratified 20-item blind audit sample
+  human_scores_20.jsonl           # Blinded human grades
+  judge_scores.jsonl              # Base model scored by Qwen2.5-7B (120 items)
+  judge_scores_qwen35_9b.jsonl    # Base model scored by Qwen3.5-9B (120 items)
+  judge_scores_ft_qwen25_7b.jsonl # Fine-tuned model scored by Qwen2.5-7B (120 items)
+  judge_scores_ft_qwen35_9b.jsonl # Fine-tuned model scored by Qwen3.5-9B (120 items)
   results_summary.{json,md}
   results_summary_qwen35_9b.{json,md}
-  judge_comparison.{json,md} # Judge vs judge agreement & human calibration report
+  results_summary_ft.{json,md}
+  results_summary_ft_qwen35_9b.{json,md}
+  judge_comparison.{json,md}      # Judge vs judge agreement & human calibration report
+  model_comparison.{json,md}      # Base vs QLoRA model comparison, CIs & hybrid routing
 src/
-  fetch_corpus.py       # Rate-limited arXiv API date-split fetcher
-  ingest.py             # bge-small-en-v1.5 embedding + FAISS builder
-  retriever.py          # retrieve(query, k, after=None) with date filtering
-  baselines.py          # Sequential zero-shot + RAG (k=4) runner
-  judge.py              # Structured Qwen2.5-7B judge runner
-  compare_judges.py     # Qwen3.5-9B MLX judge vs Qwen2.5-7B comparator
-  metrics.py            # Summary tables + human-agreement evaluator
-  build_book.py         # Generates interactive Tailwind/shadcn/Plotly experiment book (11 pages)
+  fetch_corpus.py                 # Rate-limited arXiv API date-split fetcher
+  ingest.py                       # bge-small-en-v1.5 embedding + FAISS builder
+  retriever.py                    # retrieve(query, k, after=None) with date filtering
+  baselines.py                    # Sequential zero-shot + RAG (k=4) runner
+  judge.py                        # Structured LLM-as-a-Judge runner
+  compare_judges.py               # Qwen3.5-9B MLX judge vs Qwen2.5-7B comparator
+  prepare_qlora_data.py           # Pre-T static distillation & QLoRA split builder
+  train_qlora.py                  # MLX QLoRA trainer, adapter fuser & Modelfile builder
+  compare_models.py               # Base vs QLoRA comparator, bootstrap CIs & hybrid sim
+  metrics.py                      # Summary tables + human-agreement evaluator
+  build_book.py                   # Generates interactive Tailwind/shadcn/Plotly experiment book (12 pages)
 tests/
-  test_pipeline.py      # Corpus, retrieval, golden-set, blind-sample, agreement tests
-main.py                 # Unified CLI entrypoint
-experiment_book.html    # Self-contained 11-page interactive book (Chapters 1-7 + Appendices A-C)
-notes.md                # Error analysis & QLoRA fine-tuning expectations
+  test_pipeline.py                # Corpus, retrieval, golden-set, blind-sample, agreement tests
+  test_compare_models.py          # QLoRA comparison, bootstrap CI & hybrid routing tests
+main.py                           # Unified CLI entrypoint
+experiment_book.html              # Self-contained 12-page interactive book (Chapters 1-8 + Appendices A-C)
+notes.md                          # Error analysis & empirical QLoRA results
 ```
 
 ## Quickstart (on Mac mini with `uv` + Ollama)
@@ -184,6 +255,11 @@ uv run python main.py baselines
 uv run python main.py judge --model qwen2.5:7b
 uv run python main.py judge --model qwen3.5:9b
 uv run python main.py compare-judges
+uv run python main.py prepare-qlora
+uv run python main.py train-qlora --fuse --build-modelfile
+uv run python main.py baselines --model llama3.2-qlora:3b --zs-out eval/outputs_zero_shot_ft.jsonl --rag-out eval/outputs_rag_ft.jsonl
+uv run python main.py judge --model qwen3.5:9b --zs-path eval/outputs_zero_shot_ft.jsonl --rag-path eval/outputs_rag_ft.jsonl --out-path eval/judge_scores_ft_qwen35_9b.jsonl
+uv run python main.py compare-models
 uv run python main.py metrics
 uv run python main.py book
 uv run pytest -v

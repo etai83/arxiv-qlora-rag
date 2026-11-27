@@ -4,7 +4,9 @@
 - **Temporal Cutoff (`T`)**: `2025-01-01`
   - **Pre-T (`static`) corpus**: `corpus/static.jsonl` — papers published strictly before `2025-01-01` (`published_date < "2025-01-01"`).
   - **Post-T (`live`) corpus**: `corpus/live.jsonl` — papers published on or after `2025-01-01` (`published_date >= "2025-01-01"`).
-- **Generator / Base Model**: `Llama-3.2-3B-Instruct` (`llama3.2:3b` via Ollama), knowledge cutoff **December 2023** per the Meta Llama 3.2 Model Card (well prior to `T = 2025-01-01`).
+- **Generator / Base & Fine-Tuned Models**:
+  - Baseline Generator: `Llama-3.2-3B-Instruct` (`llama3.2:3b` via Ollama, GGUF `Q4_K_M`), knowledge cutoff **December 2023** per the Meta Llama 3.2 Model Card (well prior to `T = 2025-01-01`).
+  - Fine-Tuned Candidate: `llama3.2-qlora:3b` (`mlx-community/Llama-3.2-3B-Instruct-4bit` QLoRA fine-tuned via `mlx_lm 0.32.2` strictly on pre-T `corpus/static.jsonl` distilled splits, `iter 400` checkpoint fused with `--dequantize` and quantized to `nvfp4` via Ollama's native Apple Silicon `MLX` runner).
 - **Judge Models**:
   - Baseline Judge: `Qwen2.5-7B-Instruct` (`qwen2.5:7b` via Ollama), GGUF `Q4_K_M` quantization, structured JSON verdict with `temperature = 0.0` and `num_ctx = 4096`.
   - Stronger Judge: `Qwen3.5-9B` (`qwen3.5:9b` via Ollama), `9.7B` parameters, native Apple Silicon `MLX` runner (`nvfp4`), configured with `think=False`, `temperature = 0.0`, and `num_ctx = 4096`.
