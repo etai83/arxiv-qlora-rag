@@ -296,6 +296,8 @@ def write_report(
     rag_path: str | Path | None = "eval/outputs_rag.jsonl",
     human_path: str | Path | None = "eval/human_scores_20.jsonl",
     out_dir: str | Path = "eval",
+    json_name: str = "results_summary.json",
+    md_name: str = "results_summary.md",
 ) -> tuple[Path, Path]:
     """Compute summary (+ optional agreement) and write JSON & Markdown reports."""
     summary = compute_summary(judge_path=judge_path, zs_path=zs_path, rag_path=rag_path)
@@ -306,8 +308,8 @@ def write_report(
 
     out_root = Path(out_dir)
     out_root.mkdir(parents=True, exist_ok=True)
-    json_path = out_root / "results_summary.json"
-    md_path = out_root / "results_summary.md"
+    json_path = out_root / json_name
+    md_path = out_root / md_name
 
     json_path.write_text(
         json.dumps(summary, indent=2, ensure_ascii=False),
@@ -331,6 +333,8 @@ def main() -> None:
     parser.add_argument("--judge-path", default="eval/judge_scores.jsonl")
     parser.add_argument("--human-path", default="eval/human_scores_20.jsonl")
     parser.add_argument("--out-dir", default="eval")
+    parser.add_argument("--json-name", default="results_summary.json")
+    parser.add_argument("--md-name", default="results_summary.md")
     args = parser.parse_args()
 
     if args.export_blind:
@@ -349,6 +353,8 @@ def main() -> None:
         rag_path=args.rag_path,
         human_path=args.human_path,
         out_dir=args.out_dir,
+        json_name=args.json_name,
+        md_name=args.md_name,
     )
     print(f"Wrote {json_path} and {md_path}")
 

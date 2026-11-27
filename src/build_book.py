@@ -194,9 +194,9 @@ def collect_book_payload(root: Path) -> dict[str, Any]:
                 {
                     "name": m["name"],
                     "size_gb": round(m["size"] / 1e9, 2),
-                    "params": m["details"]["parameter_size"],
-                    "quant": m["details"]["quantization_level"],
-                    "ctx": m["details"]["context_length"],
+                    "params": m["details"].get("parameter_size") or "9B",
+                    "quant": m["details"].get("quantization_level") or m["details"].get("format", "mlx"),
+                    "ctx": m["details"].get("context_length"),
                     "digest": m["digest"][:16],
                 }
                 for m in env_manifest["models"]
@@ -2016,7 +2016,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       const hwHtml = [
         `<div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-1"><p class="font-mono text-xs text-muted-foreground">Compute Host</p><p class="font-semibold">${hw.model_name} (${hw.chip})</p><p class="text-xs text-muted-foreground">${hw.total_number_of_cores} · ${hw.memory} Unified · macOS ${DATA.env.os}</p><p class="font-mono text-[11px] text-muted-foreground">${DATA.env.uv.split(" ")[0]} + ${DATA.env.python}</p></div>`,
         ...DATA.env.models.map(
-          (m) => `<div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-1"><p class="font-mono text-xs text-muted-foreground">${m.name.includes("llama") ? "Base Model" : "Cross-Family Judge"}</p><p class="font-semibold font-mono text-sm">${m.name} (${m.params})</p><p class="text-xs text-muted-foreground">${m.quant} · ${m.size_gb} GB · ctx=${m.ctx.toLocaleString()} · 100% Metal GPU</p><p class="font-mono text-[11px] text-muted-foreground">sha256:${m.digest}...</p></div>`
+          (m) => `<div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-1"><p class="font-mono text-xs text-muted-foreground">${m.name.includes("llama") ? "Base Model" : "Cross-Family Judge"}</p><p class="font-semibold font-mono text-sm">${m.name} (${m.params})</p><p class="text-xs text-muted-foreground">${m.quant} · ${m.size_gb} GB · ctx=${m.ctx ? m.ctx.toLocaleString() : "default"} · 100% Metal GPU</p><p class="font-mono text-[11px] text-muted-foreground">sha256:${m.digest}...</p></div>`
         ),
       ];
       document.getElementById("app-hw-cards").innerHTML = hwHtml.join("");

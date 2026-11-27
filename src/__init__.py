@@ -49,6 +49,7 @@ def ollama_chat(
     messages: list[dict[str, str]],
     options: dict[str, Any] | None = None,
     format_schema: dict[str, Any] | str | None = None,
+    think: bool | None = None,
     url: str | None = None,
 ) -> dict[str, Any]:
     """Send a non-streaming `/api/chat` request to Ollama and return parsed JSON."""
@@ -61,6 +62,8 @@ def ollama_chat(
         payload["options"] = options
     if format_schema is not None:
         payload["format"] = format_schema
+    if think is not None:
+        payload["think"] = think
 
     response = client.post(url or get_ollama_url(), json=payload)
     response.raise_for_status()

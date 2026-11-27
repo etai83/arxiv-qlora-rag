@@ -91,6 +91,28 @@
         "completion",
         "tools"
       ]
+    },
+    {
+      "name": "qwen3.5:9b",
+      "model": "qwen3.5:9b",
+      "modified_at": "2026-11-27T12:00:05.336836731+02:00",
+      "size": 7639229431,
+      "digest": "d63f830f28d515fefea546f213fca7a75e9dd5176ef51a6deabc952d1c99a911",
+      "details": {
+        "parent_model": "",
+        "format": "safetensors",
+        "family": "",
+        "families": null,
+        "parameter_size": "",
+        "quantization_level": "",
+        "runner": "mlx"
+      },
+      "capabilities": [
+        "completion",
+        "vision",
+        "tools",
+        "thinking"
+      ]
     }
   ],
   "smoke_tests": {
@@ -103,6 +125,12 @@
       "status": "ok",
       "response": "OK_QWEN",
       "processor": "100% GPU"
+    },
+    "qwen3.5:9b": {
+      "status": "ok",
+      "response": "{\"rationale\": \"ok\", \"correctness\": 5, \"faithfulness\": 5, \"citation_accuracy\": 5, \"override_obedience\": null}",
+      "processor": "100% GPU",
+      "tok_per_s": 29.56
     }
   }
 }

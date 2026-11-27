@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any
@@ -133,8 +134,9 @@ def format_judge_prompt(record: dict[str, Any]) -> str:
 
 
 def _parse_verdict_json(content: str, slice_name: str) -> JudgeVerdict:
-    """Parse JSON verdict from raw model output, stripping fences if present."""
-    cleaned = re.sub(r"^```(?:json)?\s*|\s*```$", "", content.strip(), flags=re.I)
+    """Parse JSON verdict from raw model output, stripping thinking blocks and fences."""
+    no_think = re.sub(r"<think>.*?</think>", "", content, flags=re.S | re.I).strip()
+    cleaned = re.sub(r"^```(?:json)?\s*|\s*```$", "", no_think, flags=re.I)
     try:
         parsed = JudgeVerdict.model_validate_json(cleaned)
         return normalize_verdict(parsed.model_dump(), slice_name)
@@ -145,40 +147,93 @@ def _parse_verdict_json(content: str, slice_name: str) -> JudgeVerdict:
         return normalize_verdict(raw_dict, slice_name)
 
 
+def default_think_setting(model: str) -> bool | None:
+    """Return False if qwen3 is in model name, else None."""
+    return False if "qwen3" in model.lower() else None
+
+
+def judge_record_with_meta(
+    client: httpx.Client,
+    record: dict[str, Any],
+    *,
+    model: str = JUDGE_MODEL,
+    think: bool | None = None,
+) -> tuple[JudgeVerdict, dict[str, Any]]:
+    """Score a single record and return verdict along with execution metadata."""
+    messages = [
+        {"role": "system", "content": RUBRIC_SYSTEM_PROMPT},
+        {"role": "user", "content": format_judge_prompt(record)},
+    ]
+    effective_think = default_think_setting(model) if think is None else think
+    t0 = time.perf_counter()
+    last_err: Exception | None = None
+
+    for num_predict in (JUDGE_OPTIONS["num_predict"], 768):
+        opts = {**JUDGE_OPTIONS, "num_predict": num_predict}
+        try:
+            response = ollama_chat(
+                client,
+                model=model,
+                messages=messages,
+                options=opts,
+                format_schema="json",
+                think=effective_think,
+            )
+        except httpx.HTTPStatusError as exc:
+            if exc.response.status_code == 400 and effective_think is not None:
+                effective_think = None
+                response = ollama_chat(
+                    client,
+                    model=model,
+                    messages=messages,
+                    options=opts,
+                    format_schema="json",
+                    think=effective_think,
+                )
+            else:
+                raise
+
+        content = str(response.get("message", {}).get("content", "")).strip()
+        try:
+            verdict = _parse_verdict_json(content, record["slice"])
+            eval_count = int(response.get("eval_count") or 0)
+            eval_duration_ns = int(response.get("eval_duration") or 0)
+            tok_per_s = (
+                round(eval_count / (eval_duration_ns / 1e9), 2)
+                if eval_duration_ns > 0
+                else None
+            )
+            judge_latency_ms = round((time.perf_counter() - t0) * 1000.0, 2)
+            meta = {
+                "judge_model": model,
+                "judge_latency_ms": judge_latency_ms,
+                "judge_eval_tokens": eval_count,
+                "judge_tok_per_s": tok_per_s,
+            }
+            return verdict, meta
+        except (ValidationError, json.JSONDecodeError, ValueError) as exc:
+            last_err = exc
+
+    raise RuntimeError(f"Judge JSON parse failed for {record.get('id')}/{record.get('mode')}: {last_err}")
+
+
 def judge_record(
     client: httpx.Client,
     record: dict[str, Any],
     *,
     model: str = JUDGE_MODEL,
+    think: bool | None = None,
 ) -> JudgeVerdict:
     """Score a single model output record using Ollama structured output."""
-    messages = [
-        {"role": "system", "content": RUBRIC_SYSTEM_PROMPT},
-        {"role": "user", "content": format_judge_prompt(record)},
-    ]
-    last_err: Exception | None = None
-    for num_predict in (JUDGE_OPTIONS["num_predict"], 768):
-        opts = {**JUDGE_OPTIONS, "num_predict": num_predict}
-        response = ollama_chat(
-            client,
-            model=model,
-            messages=messages,
-            options=opts,
-            format_schema="json",
-        )
-        content = str(response.get("message", {}).get("content", "")).strip()
-        try:
-            return _parse_verdict_json(content, record["slice"])
-        except (ValidationError, json.JSONDecodeError, ValueError) as exc:
-            last_err = exc
-    raise RuntimeError(f"Judge JSON parse failed for {record.get('id')}/{record.get('mode')}: {last_err}")
+    verdict, _ = judge_record_with_meta(client, record, model=model, think=think)
+    return verdict
 
 
-def _score_one(record: dict[str, Any], model: str) -> dict[str, Any]:
+def _score_one(record: dict[str, Any], model: str, think: bool | None = None) -> dict[str, Any]:
     """Thread-worker helper creating a local HTTP client to score one record."""
-    with httpx.Client(timeout=120.0) as client:
-        verdict = judge_record(client, record, model=model)
-    return {**record, **verdict.model_dump()}
+    with httpx.Client(timeout=180.0) as client:
+        verdict, meta = judge_record_with_meta(client, record, model=model, think=think)
+    return {**record, **verdict.model_dump(), **meta}
 
 
 def run_judge(
@@ -187,6 +242,7 @@ def run_judge(
     out_path: str | Path = "eval/judge_scores.jsonl",
     *,
     model: str = JUDGE_MODEL,
+    think: bool | None = None,
     max_workers: int = 1,
 ) -> Path:
     """Score all zero-shot and RAG outputs and save verdicts to JSONL."""
@@ -197,15 +253,15 @@ def run_judge(
     if max_workers <= 1:
         scored_rows: list[dict[str, Any]] = []
         total = len(records)
-        with httpx.Client(timeout=120.0) as client:
+        with httpx.Client(timeout=180.0) as client:
             for idx, rec in enumerate(records, start=1):
-                verdict = judge_record(client, rec, model=model)
-                scored_rows.append({**rec, **verdict.model_dump()})
+                verdict, meta = judge_record_with_meta(client, rec, model=model, think=think)
+                scored_rows.append({**rec, **verdict.model_dump(), **meta})
                 if idx % 20 == 0 or idx == total:
                     print(f"Judged {idx}/{total}", flush=True)
     else:
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            scored_rows = list(executor.map(lambda rec: _score_one(rec, model), records))
+            scored_rows = list(executor.map(lambda rec: _score_one(rec, model, think=think), records))
 
     write_jsonl(tmp_file, scored_rows)
     tmp_file.replace(out_file)
@@ -214,11 +270,13 @@ def run_judge(
 
 def main() -> None:
     """CLI entry point for running the LLM-as-a-Judge evaluator."""
-    parser = argparse.ArgumentParser(description="Judge baseline outputs with Qwen2.5-7B.")
+    parser = argparse.ArgumentParser(description="Judge baseline outputs with Qwen2.5-7B or Qwen3.5.")
     parser.add_argument("--zs-path", default="eval/outputs_zero_shot.jsonl")
     parser.add_argument("--rag-path", default="eval/outputs_rag.jsonl")
     parser.add_argument("--out-path", default="eval/judge_scores.jsonl")
     parser.add_argument("--model", default=JUDGE_MODEL)
+    parser.add_argument("--think", action="store_true", default=None)
+    parser.add_argument("--no-think", action="store_false", dest="think")
     args = parser.parse_args()
 
     out = run_judge(
@@ -226,6 +284,7 @@ def main() -> None:
         rag_path=args.rag_path,
         out_path=args.out_path,
         model=args.model,
+        think=args.think,
     )
     print(f"Wrote {out}")
 
