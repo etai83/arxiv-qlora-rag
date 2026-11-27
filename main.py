@@ -47,6 +47,19 @@ def _build_parser() -> argparse.ArgumentParser:
     metrics_p.add_argument("--judge-path", default="eval/judge_scores.jsonl")
     metrics_p.add_argument("--human-path", default="eval/human_scores_20.jsonl")
     metrics_p.add_argument("--out-dir", default="eval")
+    metrics_p.add_argument("--json-name", default="results_summary.json")
+    metrics_p.add_argument("--md-name", default="results_summary.md")
+
+    compare_p = sub.add_parser("compare-judges", help="Statistically compare two judge runs.")
+    compare_p.add_argument("--base-judge", default="eval/judge_scores.jsonl")
+    compare_p.add_argument("--cand-judge", default="eval/judge_scores_qwen35_9b.jsonl")
+    compare_p.add_argument("--human-path", default="eval/human_scores_20.jsonl")
+    compare_p.add_argument("--zs-path", default="eval/outputs_zero_shot.jsonl")
+    compare_p.add_argument("--rag-path", default="eval/outputs_rag.jsonl")
+    compare_p.add_argument("--base-label", default="qwen2.5:7b")
+    compare_p.add_argument("--cand-label", default="qwen3.5:9b-mlx")
+    compare_p.add_argument("--out-json", default="eval/judge_comparison.json")
+    compare_p.add_argument("--out-md", default="eval/judge_comparison.md")
 
     book_p = sub.add_parser("book", help="Build interactive Tailwind/shadcn/Plotly experiment_book.html.")
     book_p.add_argument("--root", default=".")
@@ -112,8 +125,25 @@ def main(argv: list[str] | None = None) -> None:
             rag_path=args.rag_path,
             human_path=args.human_path,
             out_dir=args.out_dir,
+            json_name=args.json_name,
+            md_name=args.md_name,
         )
         print(f"Wrote {json_path} and {md_path}")
+    elif args.command == "compare-judges":
+        from src.compare_judges import write_comparison
+
+        json_path, md_path = write_comparison(
+            base_judge_path=args.base_judge,
+            cand_judge_path=args.cand_judge,
+            human_path=args.human_path,
+            zs_path=args.zs_path,
+            rag_path=args.rag_path,
+            out_json=args.out_json,
+            out_md=args.out_md,
+            base_label=args.base_label,
+            cand_label=args.cand_label,
+        )
+        print(f"Wrote comparison JSON to {json_path} and Markdown to {md_path}")
     elif args.command == "book":
         from src.build_book import build_book
 

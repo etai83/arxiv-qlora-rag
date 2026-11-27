@@ -1,0 +1,1905 @@
+{
+  "labels": {
+    "base": "qwen2.5:7b",
+    "cand": "qwen3.5:9b"
+  },
+  "human_calibration": {
+    "base": {
+      "dimensions": {
+        "correctness": {
+          "n": 20,
+          "exact_match_pct": 60.0,
+          "within_1_pct": 70.0,
+          "bucket_match_pct": 70.0,
+          "kappa_w": 0.4236,
+          "mae": 1.2,
+          "mean_signed_bias": 0.9
+        },
+        "faithfulness": {
+          "n": 20,
+          "exact_match_pct": 85.0,
+          "within_1_pct": 95.0,
+          "bucket_match_pct": 95.0,
+          "kappa_w": -0.0465,
+          "mae": 0.3,
+          "mean_signed_bias": 0.1
+        },
+        "citation_accuracy": {
+          "n": 20,
+          "exact_match_pct": 95.0,
+          "within_1_pct": 95.0,
+          "bucket_match_pct": 95.0,
+          "kappa_w": 0.0,
+          "mae": 0.2,
+          "mean_signed_bias": 0.2
+        },
+        "override_obedience": {
+          "n": 4,
+          "override_exact_pct": 100.0
+        }
+      },
+      "pooled": {
+        "n": 60,
+        "exact_match_pct": 80.0,
+        "within_1_pct": 86.67,
+        "bucket_match_pct": 86.67,
+        "kappa_w": 0.5349,
+        "mae": 0.567,
+        "mean_signed_bias": 0.4
+      },
+      "confusion_matrix": [
+        [
+          5,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          2
+        ],
+        [
+          7,
+          0,
+          0,
+          1,
+          42
+        ]
+      ],
+      "override_exact_pct": 100.0
+    },
+    "cand": {
+      "dimensions": {
+        "correctness": {
+          "n": 20,
+          "exact_match_pct": 85.0,
+          "within_1_pct": 95.0,
+          "bucket_match_pct": 95.0,
+          "kappa_w": 0.8757,
+          "mae": 0.3,
+          "mean_signed_bias": 0.2
+        },
+        "faithfulness": {
+          "n": 20,
+          "exact_match_pct": 90.0,
+          "within_1_pct": 90.0,
+          "bucket_match_pct": 90.0,
+          "kappa_w": -0.0526,
+          "mae": 0.4,
+          "mean_signed_bias": 0.0
+        },
+        "citation_accuracy": {
+          "n": 20,
+          "exact_match_pct": 95.0,
+          "within_1_pct": 95.0,
+          "bucket_match_pct": 95.0,
+          "kappa_w": 0.0,
+          "mae": 0.2,
+          "mean_signed_bias": 0.2
+        },
+        "override_obedience": {
+          "n": 4,
+          "override_exact_pct": 100.0
+        }
+      },
+      "pooled": {
+        "n": 60,
+        "exact_match_pct": 90.0,
+        "within_1_pct": 93.33,
+        "bucket_match_pct": 93.33,
+        "kappa_w": 0.7823,
+        "mae": 0.3,
+        "mean_signed_bias": 0.133
+      },
+      "confusion_matrix": [
+        [
+          9,
+          1,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          0,
+          1,
+          44
+        ]
+      ],
+      "override_exact_pct": 100.0
+    },
+    "bootstrap_ci": {
+      "n_pairs": 60,
+      "n_boot": 2000,
+      "base_exact_ci95": [
+        68.33,
+        90.0
+      ],
+      "cand_exact_ci95": [
+        81.67,
+        96.67
+      ],
+      "delta_exact_ci95": [
+        1.67,
+        20.0
+      ]
+    },
+    "delta": {
+      "pooled_exact_match_pct": 10.0,
+      "pooled_within_1_pct": 6.66,
+      "pooled_bucket_match_pct": 6.66,
+      "pooled_kappa_w": 0.2474,
+      "pooled_mae": -0.267,
+      "override_exact_pct": 0.0,
+      "correctness_exact_match_pct": 25.0,
+      "faithfulness_exact_match_pct": 5.0,
+      "citation_accuracy_exact_match_pct": 0.0
+    },
+    "audit_items": [
+      {
+        "sample_id": "sample_08",
+        "id": "g01",
+        "mode": "rag",
+        "slice": "static",
+        "human": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_l1": 4,
+        "cand_l1": 4,
+        "outcome": "tied_miss"
+      },
+      {
+        "sample_id": "sample_07",
+        "id": "g01",
+        "mode": "zero_shot",
+        "slice": "static",
+        "human": {
+          "correctness": 2,
+          "faithfulness": 1,
+          "citation_accuracy": 1
+        },
+        "base": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_l1": 9,
+        "cand_l1": 9,
+        "outcome": "tied_miss"
+      },
+      {
+        "sample_id": "sample_03",
+        "id": "g02",
+        "mode": "rag",
+        "slice": "static",
+        "human": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand": {
+          "correctness": 1,
+          "faithfulness": 1,
+          "citation_accuracy": 5
+        },
+        "base_l1": 4,
+        "cand_l1": 4,
+        "outcome": "tied_miss"
+      },
+      {
+        "sample_id": "sample_15",
+        "id": "g03",
+        "mode": "rag",
+        "slice": "static",
+        "human": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_l1": 4,
+        "cand_l1": 0,
+        "outcome": "improved"
+      },
+      {
+        "sample_id": "sample_13",
+        "id": "g04",
+        "mode": "zero_shot",
+        "slice": "static",
+        "human": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_l1": 0,
+        "cand_l1": 0,
+        "outcome": "tied_exact"
+      },
+      {
+        "sample_id": "sample_12",
+        "id": "g09",
+        "mode": "zero_shot",
+        "slice": "static",
+        "human": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_l1": 0,
+        "cand_l1": 0,
+        "outcome": "tied_exact"
+      },
+      {
+        "sample_id": "sample_10",
+        "id": "g25",
+        "mode": "zero_shot",
+        "slice": "live",
+        "human": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_l1": 0,
+        "cand_l1": 0,
+        "outcome": "tied_exact"
+      },
+      {
+        "sample_id": "sample_19",
+        "id": "g27",
+        "mode": "rag",
+        "slice": "live",
+        "human": {
+          "correctness": 3,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base": {
+          "correctness": 3,
+          "faithfulness": 4,
+          "citation_accuracy": 5
+        },
+        "cand": {
+          "correctness": 3,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_l1": 1,
+        "cand_l1": 0,
+        "outcome": "improved"
+      },
+      {
+        "sample_id": "sample_17",
+        "id": "g28",
+        "mode": "rag",
+        "slice": "live",
+        "human": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base": {
+          "correctness": 3,
+          "faithfulness": 4,
+          "citation_accuracy": 5
+        },
+        "cand": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_l1": 3,
+        "cand_l1": 0,
+        "outcome": "improved"
+      },
+      {
+        "sample_id": "sample_02",
+        "id": "g28",
+        "mode": "zero_shot",
+        "slice": "live",
+        "human": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_l1": 0,
+        "cand_l1": 0,
+        "outcome": "tied_exact"
+      },
+      {
+        "sample_id": "sample_04",
+        "id": "g37",
+        "mode": "rag",
+        "slice": "live",
+        "human": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_l1": 0,
+        "cand_l1": 0,
+        "outcome": "tied_exact"
+      },
+      {
+        "sample_id": "sample_09",
+        "id": "g40",
+        "mode": "zero_shot",
+        "slice": "live",
+        "human": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_l1": 0,
+        "cand_l1": 0,
+        "outcome": "tied_exact"
+      },
+      {
+        "sample_id": "sample_20",
+        "id": "g41",
+        "mode": "rag",
+        "slice": "temporal_override",
+        "human": {
+          "correctness": 4,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_l1": 1,
+        "cand_l1": 1,
+        "outcome": "tied_miss"
+      },
+      {
+        "sample_id": "sample_11",
+        "id": "g42",
+        "mode": "zero_shot",
+        "slice": "temporal_override",
+        "human": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_l1": 4,
+        "cand_l1": 0,
+        "outcome": "improved"
+      },
+      {
+        "sample_id": "sample_18",
+        "id": "g49",
+        "mode": "zero_shot",
+        "slice": "temporal_override",
+        "human": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_l1": 4,
+        "cand_l1": 0,
+        "outcome": "improved"
+      },
+      {
+        "sample_id": "sample_05",
+        "id": "g50",
+        "mode": "rag",
+        "slice": "temporal_override",
+        "human": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_l1": 0,
+        "cand_l1": 0,
+        "outcome": "tied_exact"
+      },
+      {
+        "sample_id": "sample_16",
+        "id": "g52",
+        "mode": "zero_shot",
+        "slice": "unanswerable",
+        "human": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_l1": 0,
+        "cand_l1": 0,
+        "outcome": "tied_exact"
+      },
+      {
+        "sample_id": "sample_06",
+        "id": "g54",
+        "mode": "rag",
+        "slice": "unanswerable",
+        "human": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_l1": 0,
+        "cand_l1": 0,
+        "outcome": "tied_exact"
+      },
+      {
+        "sample_id": "sample_01",
+        "id": "g57",
+        "mode": "zero_shot",
+        "slice": "unanswerable",
+        "human": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_l1": 0,
+        "cand_l1": 0,
+        "outcome": "tied_exact"
+      },
+      {
+        "sample_id": "sample_14",
+        "id": "g59",
+        "mode": "rag",
+        "slice": "unanswerable",
+        "human": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_l1": 0,
+        "cand_l1": 0,
+        "outcome": "tied_exact"
+      }
+    ]
+  },
+  "benchmark_shift": {
+    "base": {
+      "total_scored": 120,
+      "overall": {
+        "rag": {
+          "count": 60,
+          "correctness": 3.417,
+          "faithfulness": 4.85,
+          "citation_accuracy": 4.983,
+          "override_obedience": 0.7,
+          "latency_mean_ms": 1880.17,
+          "latency_median_ms": 1218.6
+        },
+        "zero_shot": {
+          "count": 60,
+          "correctness": 2.2,
+          "faithfulness": 4.933,
+          "citation_accuracy": 4.983,
+          "override_obedience": 0.0,
+          "latency_mean_ms": 1725.44,
+          "latency_median_ms": 1001.44
+        }
+      },
+      "by_mode_slice": {
+        "rag": {
+          "static": {
+            "count": 20,
+            "correctness": 1.8,
+            "faithfulness": 5.0,
+            "citation_accuracy": 5.0,
+            "override_obedience": null,
+            "latency_mean_ms": 936.85,
+            "latency_median_ms": 925.64
+          },
+          "live": {
+            "count": 20,
+            "correctness": 3.85,
+            "faithfulness": 4.55,
+            "citation_accuracy": 4.95,
+            "override_obedience": null,
+            "latency_mean_ms": 3008.95,
+            "latency_median_ms": 2938.43
+          },
+          "temporal_override": {
+            "count": 10,
+            "correctness": 4.2,
+            "faithfulness": 5.0,
+            "citation_accuracy": 5.0,
+            "override_obedience": 0.7,
+            "latency_mean_ms": 2586.69,
+            "latency_median_ms": 2143.64
+          },
+          "unanswerable": {
+            "count": 10,
+            "correctness": 5.0,
+            "faithfulness": 5.0,
+            "citation_accuracy": 5.0,
+            "override_obedience": null,
+            "latency_mean_ms": 802.72,
+            "latency_median_ms": 790.46
+          }
+        },
+        "zero_shot": {
+          "static": {
+            "count": 20,
+            "correctness": 1.45,
+            "faithfulness": 4.9,
+            "citation_accuracy": 5.0,
+            "override_obedience": null,
+            "latency_mean_ms": 2039.38,
+            "latency_median_ms": 1162.39
+          },
+          "live": {
+            "count": 20,
+            "correctness": 1.0,
+            "faithfulness": 5.0,
+            "citation_accuracy": 5.0,
+            "override_obedience": null,
+            "latency_mean_ms": 1010.11,
+            "latency_median_ms": 678.84
+          },
+          "temporal_override": {
+            "count": 10,
+            "correctness": 3.3,
+            "faithfulness": 4.8,
+            "citation_accuracy": 4.9,
+            "override_obedience": 0.0,
+            "latency_mean_ms": 3291.28,
+            "latency_median_ms": 3197.36
+          },
+          "unanswerable": {
+            "count": 10,
+            "correctness": 5.0,
+            "faithfulness": 5.0,
+            "citation_accuracy": 5.0,
+            "override_obedience": null,
+            "latency_mean_ms": 962.4,
+            "latency_median_ms": 917.25
+          }
+        }
+      }
+    },
+    "cand": {
+      "total_scored": 120,
+      "overall": {
+        "rag": {
+          "count": 60,
+          "correctness": 3.65,
+          "faithfulness": 4.917,
+          "citation_accuracy": 5.0,
+          "override_obedience": 0.5,
+          "latency_mean_ms": 1880.17,
+          "latency_median_ms": 1218.6
+        },
+        "zero_shot": {
+          "count": 60,
+          "correctness": 1.733,
+          "faithfulness": 4.533,
+          "citation_accuracy": 4.8,
+          "override_obedience": 0.0,
+          "latency_mean_ms": 1725.44,
+          "latency_median_ms": 1001.44
+        }
+      },
+      "by_mode_slice": {
+        "rag": {
+          "static": {
+            "count": 20,
+            "correctness": 1.8,
+            "faithfulness": 4.8,
+            "citation_accuracy": 5.0,
+            "override_obedience": null,
+            "latency_mean_ms": 936.85,
+            "latency_median_ms": 925.64
+          },
+          "live": {
+            "count": 20,
+            "correctness": 4.85,
+            "faithfulness": 5.0,
+            "citation_accuracy": 5.0,
+            "override_obedience": null,
+            "latency_mean_ms": 3008.95,
+            "latency_median_ms": 2938.43
+          },
+          "temporal_override": {
+            "count": 10,
+            "correctness": 3.6,
+            "faithfulness": 4.9,
+            "citation_accuracy": 5.0,
+            "override_obedience": 0.5,
+            "latency_mean_ms": 2586.69,
+            "latency_median_ms": 2143.64
+          },
+          "unanswerable": {
+            "count": 10,
+            "correctness": 5.0,
+            "faithfulness": 5.0,
+            "citation_accuracy": 5.0,
+            "override_obedience": null,
+            "latency_mean_ms": 802.72,
+            "latency_median_ms": 790.46
+          }
+        },
+        "zero_shot": {
+          "static": {
+            "count": 20,
+            "correctness": 1.15,
+            "faithfulness": 4.2,
+            "citation_accuracy": 4.8,
+            "override_obedience": null,
+            "latency_mean_ms": 2039.38,
+            "latency_median_ms": 1162.39
+          },
+          "live": {
+            "count": 20,
+            "correctness": 1.0,
+            "faithfulness": 4.8,
+            "citation_accuracy": 5.0,
+            "override_obedience": null,
+            "latency_mean_ms": 1010.11,
+            "latency_median_ms": 678.84
+          },
+          "temporal_override": {
+            "count": 10,
+            "correctness": 1.1,
+            "faithfulness": 4.2,
+            "citation_accuracy": 4.2,
+            "override_obedience": 0.0,
+            "latency_mean_ms": 3291.28,
+            "latency_median_ms": 3197.36
+          },
+          "unanswerable": {
+            "count": 10,
+            "correctness": 5.0,
+            "faithfulness": 5.0,
+            "citation_accuracy": 5.0,
+            "override_obedience": null,
+            "latency_mean_ms": 962.4,
+            "latency_median_ms": 917.25
+          }
+        }
+      }
+    },
+    "overall_delta": {
+      "zero_shot": {
+        "correctness": -0.467,
+        "faithfulness": -0.4,
+        "citation_accuracy": -0.183,
+        "override_obedience": 0.0
+      },
+      "rag": {
+        "correctness": 0.233,
+        "faithfulness": 0.067,
+        "citation_accuracy": 0.017,
+        "override_obedience": -0.2
+      }
+    },
+    "by_mode_slice_delta": {
+      "rag": {
+        "static": {
+          "correctness": 0.0,
+          "faithfulness": -0.2,
+          "citation_accuracy": 0.0,
+          "override_obedience": null
+        },
+        "live": {
+          "correctness": 1.0,
+          "faithfulness": 0.45,
+          "citation_accuracy": 0.05,
+          "override_obedience": null
+        },
+        "temporal_override": {
+          "correctness": -0.6,
+          "faithfulness": -0.1,
+          "citation_accuracy": 0.0,
+          "override_obedience": -0.2
+        },
+        "unanswerable": {
+          "correctness": 0.0,
+          "faithfulness": 0.0,
+          "citation_accuracy": 0.0,
+          "override_obedience": null
+        }
+      },
+      "zero_shot": {
+        "static": {
+          "correctness": -0.3,
+          "faithfulness": -0.7,
+          "citation_accuracy": -0.2,
+          "override_obedience": null
+        },
+        "live": {
+          "correctness": 0.0,
+          "faithfulness": -0.2,
+          "citation_accuracy": 0.0,
+          "override_obedience": null
+        },
+        "temporal_override": {
+          "correctness": -2.2,
+          "faithfulness": -0.6,
+          "citation_accuracy": -0.7,
+          "override_obedience": 0.0
+        },
+        "unanswerable": {
+          "correctness": 0.0,
+          "faithfulness": 0.0,
+          "citation_accuracy": 0.0,
+          "override_obedience": null
+        }
+      }
+    }
+  },
+  "inter_judge": {
+    "n_items": 120,
+    "pooled_n": 360,
+    "dimensions": {
+      "correctness": {
+        "n": 120,
+        "exact_match_pct": 76.67,
+        "within_1_pct": 79.17,
+        "bucket_match_pct": 78.33,
+        "kappa_w": 0.6951,
+        "mae": 0.667,
+        "mean_signed_diff": -0.117
+      },
+      "faithfulness": {
+        "n": 120,
+        "exact_match_pct": 85.0,
+        "within_1_pct": 93.33,
+        "bucket_match_pct": 93.33,
+        "kappa_w": 0.1816,
+        "mae": 0.317,
+        "mean_signed_diff": -0.167
+      },
+      "citation_accuracy": {
+        "n": 120,
+        "exact_match_pct": 96.67,
+        "within_1_pct": 97.5,
+        "bucket_match_pct": 97.5,
+        "kappa_w": 0.1532,
+        "mae": 0.1,
+        "mean_signed_diff": -0.083
+      },
+      "override_obedience": {
+        "n": 20,
+        "override_exact_pct": 90.0
+      }
+    },
+    "pooled": {
+      "n": 360,
+      "exact_match_pct": 86.11,
+      "within_1_pct": 90.0,
+      "bucket_match_pct": 89.72,
+      "kappa_w": 0.7647,
+      "mae": 0.361,
+      "mean_signed_diff": -0.122
+    },
+    "confusion_matrix": [
+      [
+        55,
+        0,
+        0,
+        0,
+        3
+      ],
+      [
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        2,
+        0,
+        1,
+        1,
+        9
+      ],
+      [
+        4,
+        0,
+        0,
+        1,
+        12
+      ],
+      [
+        17,
+        0,
+        1,
+        1,
+        252
+      ]
+    ],
+    "override_exact_pct": 90.0,
+    "discordance_counts_by_category": {
+      "hedged_zero_shot_ungrounded": 6,
+      "false_abstention_fix": 8,
+      "rag_completeness_strictness": 16,
+      "rubric_boundary_shift": 4
+    },
+    "discordant_items": [
+      {
+        "id": "g02",
+        "mode": "rag",
+        "slice": "static",
+        "prompt": "In the original Retrieval-Augmented Generation (RAG) paper by Lewis et al., what two memory components are combined, and what are the two RAG formulations compared?",
+        "model_answer_preview": "Not in the sources.",
+        "base_scores": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 1,
+          "faithfulness": 1,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "Pure abstention on static slice matches reference with no ungrounded claims or fake citations.",
+        "cand_rationale": "The slice is 'static', so a pure clean abstention (saying 'Not in the sources') on an answerable question constitutes a false abstention. The reference answer confirms the information exists in the original Lewis et al. paper, meaning the model failed to retrieve or synthesize it from the provided context, resulting in low correctness and faithfulness scores.",
+        "category": "rag_completeness_strictness"
+      },
+      {
+        "id": "g02",
+        "mode": "zero_shot",
+        "slice": "static",
+        "prompt": "In the original Retrieval-Augmented Generation (RAG) paper by Lewis et al., what two memory components are combined, and what are the two RAG formulations compared?",
+        "model_answer_preview": "In the original Retrieval-Augmented Generation (RAG) paper by Lewis et al., the two memory components combined are:\n\n1. **Textual Memory**: a learned embedding of the input text.\n2. **Knowledge Graph Embeddings**: learned embeddings of enti",
+        "base_scores": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 1,
+          "faithfulness": 1,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "Pure abstention on answerable slice is a false abstention (correctness=1) with no ungrounded claims or fake citations.",
+        "cand_rationale": "The model answer makes substantive factual claims about the Lewis et al. paper (identifying memory components and RAG formulations) despite being in zero-shot mode with no retrieved context provided. Since the retrieved_context is NONE, any specific factual claim is ungrounded, resulting in faithfulness=1. The claims are also factually incorrect relative to the reference answer (hallucinating Knowledge Graphs instead of Wikipedia), so correctness=1.",
+        "category": "hedged_zero_shot_ungrounded"
+      },
+      {
+        "id": "g03",
+        "mode": "rag",
+        "slice": "static",
+        "prompt": "How does Direct Preference Optimization (DPO) avoid training a separate reward model and using reinforcement learning during RLHF alignment?",
+        "model_answer_preview": "Not in the sources.",
+        "base_scores": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "Pure abstention on static slice matches reference with no ungrounded claims or fake citations.",
+        "cand_rationale": "The model output is a pure clean abstention ('Not in the sources'). Since the slice is 'static' (answerable), this constitutes a false abstention. Per the rubric, correctness must be 1 for false abstentions on answerable slices, while faithfulness and citation_accuracy remain 5 as no ungrounded claims were made.",
+        "category": "false_abstention_fix"
+      },
+      {
+        "id": "g04",
+        "mode": "rag",
+        "slice": "static",
+        "prompt": "What is chain-of-thought prompting, and what performance did it achieve with a 540B-parameter language model on the GSM8K benchmark?",
+        "model_answer_preview": "Not in the sources.",
+        "base_scores": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "Pure abstention on answerable slice is a false abstention (correctness=1) with no ungrounded claims or fake citations.",
+        "cand_rationale": "The model output is a pure clean abstention ('Not in the sources.') which correctly matches the reference answer indicating the specific performance data for the 540B-parameter model on GSM8K is not present in the provided context. Since the slice is 'static' and the question is unanswerable from the sources, this abstention is correct (correctness=5), faithful (faithfulness=5), and has accurate citations (citation_accuracy=5).",
+        "category": "rag_completeness_strictness"
+      },
+      {
+        "id": "g05",
+        "mode": "rag",
+        "slice": "static",
+        "prompt": "How does the self-consistency decoding strategy improve upon greedy decoding in chain-of-thought prompting, and what gain did it achieve on GSM8K?",
+        "model_answer_preview": "Not in the sources.",
+        "base_scores": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "Pure abstention on answerable slice is a false abstention (correctness=1) with no ungrounded claims or fake citations.",
+        "cand_rationale": "The model output is a pure clean abstention ('Not in the sources.') which matches the reference answer's implicit stance that the specific details (self-consistency mechanism and +17.9% gain) are not present in the provided context. Since the slice is 'static' and the question asks for facts absent from the retrieved context, this constitutes a correct abstention rather than a false one.",
+        "category": "rag_completeness_strictness"
+      },
+      {
+        "id": "g05",
+        "mode": "zero_shot",
+        "slice": "static",
+        "prompt": "How does the self-consistency decoding strategy improve upon greedy decoding in chain-of-thought prompting, and what gain did it achieve on GSM8K?",
+        "model_answer_preview": "I don't have specific information on the self-consistency decoding strategy or its comparison to greedy decoding in chain-of-thought prompting, particularly in the context of GSM8K. My training data may not have included this specific topic",
+        "base_scores": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "Pure abstention on static slice with no ungrounded claims or fake citations.",
+        "cand_rationale": "The model_answer is a pure clean abstention (refusal to answer due to lack of training data) with no substantive factual claims or general overview. Since the slice is 'static' (answerable), this constitutes a false abstention, resulting in correctness=1. Per the zero-shot rubric for pure abstentions on answerable slices, faithfulness and citation_accuracy are 5 because no ungrounded claims were made.",
+        "category": "false_abstention_fix"
+      },
+      {
+        "id": "g06",
+        "mode": "rag",
+        "slice": "static",
+        "prompt": "How does the ReAct framework combine reasoning and acting in large language models, and what results did it achieve on ALFWorld and WebShop?",
+        "model_answer_preview": "Not in the sources.",
+        "base_scores": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "Pure abstention on static slice matches reference with no ungrounded claims or fake citations.",
+        "cand_rationale": "The model output is a pure clean abstention ('Not in the sources.') because the retrieved context contains no information about the ReAct framework, ALFWorld, or WebShop. Since the slice is 'static' (answerable) and the reference answer provides specific details absent from the context, this constitutes a false abstention. Therefore, correctness must be 1, while faithfulness and citation_accuracy are 5 as no ungrounded claims were made.",
+        "category": "false_abstention_fix"
+      },
+      {
+        "id": "g08",
+        "mode": "zero_shot",
+        "slice": "static",
+        "prompt": "In 'Lost in the Middle: How Language Models Use Long Contexts', how does the position of relevant information inside a long input context affect LLM performance?",
+        "model_answer_preview": "I don't have specific information on the article \"Lost in the Middle: How Language Models Use Long Contexts\". However, I can provide general insights on how the position of relevant information within a long input context affects LLM perfor",
+        "base_scores": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 1,
+          "faithfulness": 1,
+          "citation_accuracy": 1
+        },
+        "base_rationale": "Pure abstention on a static slice is a false abstention (correctness=1) with no ungrounded claims or fake citations.",
+        "cand_rationale": "The model_answer is NOT a pure clean abstention because it makes substantive factual claims (e.g., 'Early information... may be more influential', 'Middle information... may be more influential') and provides a general overview of attention/tokenization effects, rather than simply refusing or stating 'Not in the sources.' Since the slice is 'static' (answerable) and retrieved_context is NONE, these ungrounded parametric claims constitute a false answer. Therefore, correctness must be 1 (false abstention on answerable slice), faithfulness must be 1 (ungrounded claims with no context), and citation_accuracy must be 1 (claims made without valid citations).",
+        "category": "hedged_zero_shot_ungrounded"
+      },
+      {
+        "id": "g11",
+        "mode": "zero_shot",
+        "slice": "static",
+        "prompt": "How does Rotary Position Embedding (RoPE) used in RoFormer encode positional information, and what properties does it provide in self-attention?",
+        "model_answer_preview": "Rotary Position Embedding (RoPE) is a positional encoding technique used in RoFormer models, which is a type of transformer-based architecture. RoPE encodes positional information in a way that is different from traditional positional encod",
+        "base_scores": {
+          "correctness": 4,
+          "faithfulness": 4,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 1,
+          "faithfulness": 1,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "Non-pure abstention on static slice provides substantive claims with minor imprecision and synthesis. No retrieved context provided, so faithfulness and citation accuracy are based on model_answer alone.",
+        "cand_rationale": "The model answer makes substantive factual claims about RoPE (describing it as sinusoidal with frequency dependent on sequence length) while the slice is 'static' (requiring knowledge of the specific rotation matrix method defined in the reference). Since valid_context_ids is empty, these ungrounded parametric claims constitute a hallucination relative to the zero-shot constraint. The model incorrectly describes RoPE as sinusoidal (it is actually rotational) and misses the core mechanism of absolute position encoding via rotation matrices.",
+        "category": "hedged_zero_shot_ungrounded"
+      },
+      {
+        "id": "g12",
+        "mode": "zero_shot",
+        "slice": "static",
+        "prompt": "What parameter sizes are included in the original LLaMA model family, what data sources were used to train them, and how does LLaMA-13B compare to GPT-3?",
+        "model_answer_preview": "I can provide information on the original LLaMA model family.\n\nThe original LLaMA model family includes:\n\n- LLaMA-3B: 3 billion parameters\n- LLaMA-13B: 13 billion parameters\n- LLaMA-52B: 52 billion parameters\n\nThe LLaMA model family was tra",
+        "base_scores": {
+          "correctness": 3,
+          "faithfulness": 4,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 4,
+          "faithfulness": 1,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "Non-pure abstention on static slice provides partial information and general comparisons, but lacks specific data sources and detailed performance comparisons.",
+        "cand_rationale": "The slice is 'static' (pre-cutoff knowledge), so the question is answerable. The model_answer provides substantive factual claims (listing 3B, 13B, 52B sizes and data sources) without abstaining. Since retrieved_context is NONE, any specific factual claim violates faithfulness (must be 1). Correctness is 4 because the model misses the 7B/65B sizes mentioned in reference but gets the core concept right; Faithfulness is 1 due to ungrounded claims with no context; Citation_accuracy is 5 as it abstains from citing specific IDs.",
+        "category": "hedged_zero_shot_ungrounded"
+      },
+      {
+        "id": "g13",
+        "mode": "rag",
+        "slice": "static",
+        "prompt": "What is the 'attention sink' phenomenon identified in the StreamingLLM paper, and how does StreamingLLM enable infinite-length streaming generation without fine-tuning?",
+        "model_answer_preview": "Not in the sources.",
+        "base_scores": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "Pure abstention on answerable slice is a false abstention (correctness=1) with no ungrounded claims or fake citations.",
+        "cand_rationale": "The model output is a pure clean abstention ('Not in the sources.') which matches the reference answer's implicit unanswerability given the provided context (none of the four retrieved papers discuss StreamingLLM or attention sinks). Since the slice is 'static' and the question is unanswerable from the context, this correct abstention yields full correctness (5), faithfulness (5), and citation accuracy (5).",
+        "category": "rag_completeness_strictness"
+      },
+      {
+        "id": "g21",
+        "mode": "rag",
+        "slice": "live",
+        "prompt": "What is the Integrated Gated Calculator (IGC) module for LLMs, and what accuracy does it achieve on the BigBench Arithmetic benchmark?",
+        "model_answer_preview": "The Integrated Gated Calculator (IGC) module is a module that enables Large Language Models (LLMs) to perform arithmetic by emulating a calculator on the GPU. \n\nIt achieves 98% to 99% accuracy across multiple training runs and for all subta",
+        "base_scores": {
+          "correctness": 3,
+          "faithfulness": 4,
+          "citation_accuracy": 4
+        },
+        "cand_scores": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "The model answer makes substantive claims but only partially covers the reference_answer, omitting the finetuning details and the specific benchmark (BigBench Arithmetic). It is faithful to the retrieved_context but does not fully capture the accuracy claim. No citations are provided.",
+        "cand_rationale": "The model answer provides a substantive factual response grounded entirely in the retrieved context (ID: 2501.00684), accurately describing the IGC module and its reported accuracy without hallucination or false abstention.",
+        "category": "rag_completeness_strictness"
+      },
+      {
+        "id": "g23",
+        "mode": "rag",
+        "slice": "live",
+        "prompt": "What is the LUSIFER zero-shot approach for multilingual embeddings, and what benchmark does the paper introduce to evaluate it?",
+        "model_answer_preview": "According to the abstract [2501.00874], LUSIFER is a novel zero-shot approach that adapts large language models (LLMs) based embedding models for multilingual tasks without requiring multilingual supervision. The LUSIFER architecture combin",
+        "base_scores": {
+          "correctness": 3,
+          "faithfulness": 4,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "The model answer makes substantive claims but only partially covers the question, omitting the specific connection between the multilingual encoder and the LLM embedding model. It correctly cites the relevant paper [2501.00874] but does not fully explain the architecture or the benchmark details.",
+        "cand_rationale": "The model answer correctly extracts the definition of LUSIFER and the specific benchmark details (5 tasks, 123 datasets, 14 languages) directly from the provided context [2501.00874]. It is not a pure abstention but a faithful summary supported entirely by the retrieved text.",
+        "category": "rag_completeness_strictness"
+      },
+      {
+        "id": "g26",
+        "mode": "rag",
+        "slice": "live",
+        "prompt": "How does the ASTRO (\"Autoregressive Search-Taught Reasoner\") framework train non-reasoner LLMs to reason, and what absolute gains does it achieve on Llama 3?",
+        "model_answer_preview": "According to the abstract [2507.00417], the ASTRO framework trains non-reasoner LLMs to reason by leveraging self-reflection, backtracking, and exploration in their outputs. Specifically, it uses a synthetic dataset derived from Monte Carlo",
+        "base_scores": {
+          "correctness": 3,
+          "faithfulness": 4,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "The model answer makes substantive factual claims that are partially accurate but overly vague. It correctly identifies the core method of ASTRO but omits details about converting search traces into natural language chain-of-thoughts. The performance gains are correctly cited but lack the specific benchmarks and percentages mentioned in the reference answer.",
+        "cand_rationale": "The model answer is substantively accurate, correctly extracting the training mechanism (MCTS traces converted to CoT) and specific performance gains from the provided context [2507.00417]. It cites the relevant ID for all claims, satisfying faithfulness and citation accuracy requirements.",
+        "category": "rag_completeness_strictness"
+      },
+      {
+        "id": "g27",
+        "mode": "rag",
+        "slice": "live",
+        "prompt": "What continual learning scenarios and speech dataset scale does the Nirantar framework introduce for multilingual and multi-domain ASR?",
+        "model_answer_preview": "According to the abstract [2507.00534], the Nirantar framework introduces the following continual learning scenarios for multilingual and multi-domain ASR:\n\n1. Language-Incremental (LIL) scenario\n2. Domain-Incremental (DIL) scenario\n3. Lang",
+        "base_scores": {
+          "correctness": 3,
+          "faithfulness": 4,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 3,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "The model answer makes substantive claims but only partially matches the reference_answer, omitting the specific dataset details. It abstains on the dataset scale question, which is relevant to the slice 'live'.",
+        "cand_rationale": "The model correctly identifies the LIL, DIL, and LIDIL scenarios and dataset statistics (22 languages, 208 districts) from the provided context [2507.00534]. However, it fails to answer the specific question regarding 'speech dataset scale' (total hours vs. new hours) by appending a false abstention ('Not in the sources') despite the numbers being present in the text. This results in a partial answer that misses core findings, warranting a correctness score of 3.",
+        "category": "rubric_boundary_shift"
+      },
+      {
+        "id": "g28",
+        "mode": "rag",
+        "slice": "live",
+        "prompt": "What dataset and benchmark does LitBench provide for creative writing evaluation, and what accuracy do trained reward models achieve compared to Claude-3.7-Sonnet?",
+        "model_answer_preview": "According to the abstract [2507.00769], LitBench provides a held-out test set of 2,480 debiased, human-labeled story comparisons drawn from Reddit and a 43,827-pair training corpus of human preference labels.\n\nAdditionally, the abstract sta",
+        "base_scores": {
+          "correctness": 3,
+          "faithfulness": 4,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "The model answer makes substantive claims but only partially covers the reference_answer. It correctly cites the key points about the LitBench dataset and the accuracy of the reward models, but omits the direct comparison to Claude-3.7-Sonnet's 73% accuracy.",
+        "cand_rationale": "The model answer is a pure clean abstention in the sense that it provides no general overview or parametric knowledge outside the retrieved context; it strictly extracts and cites the specific numbers (2,480 test set, 43,827 training pairs, 78% accuracy, 73% Claude-3.7-Sonnet) directly from the provided text [2507.00769]. Since the retrieved context contains all necessary facts to answer the prompt fully, and the model relies entirely on this source without hallucination or ungrounded claims, it satisfies faithfulness and citation accuracy perfectly. The correctness is 5 because the extracted facts match the reference answer exactly.",
+        "category": "rag_completeness_strictness"
+      },
+      {
+        "id": "g29",
+        "mode": "rag",
+        "slice": "live",
+        "prompt": "What corpus and multi-agent framework does the TransLaw paper introduce for Hong Kong case law translation, and how many iterations does it take to converge?",
+        "model_answer_preview": "According to the abstract [2507.00875], the TransLaw paper introduces a multi-agent framework for Hong Kong case law translation, which decomposes translation into word-level expression, sentence-level translation, and multidimensional revi",
+        "base_scores": {
+          "correctness": 3,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "The model answer makes substantive claims but only partially covers the reference_answer, omitting the specific corpus details. It is faithful to the retrieved_context and cites a valid ID, but the answer is not fully accurate.",
+        "cand_rationale": "The model answer makes substantive factual claims supported entirely by the retrieved context (ID 2507.00875), correctly identifying the corpus name, framework details, and convergence iteration count without hallucination or false abstention.",
+        "category": "rag_completeness_strictness"
+      },
+      {
+        "id": "g31",
+        "mode": "rag",
+        "slice": "live",
+        "prompt": "What is the Pat-DEVAL evaluation framework and its Chain-of-Legal-Thought (CoLT) mechanism, and what correlations does it achieve on Pap2Pat-EvalGold?",
+        "model_answer_preview": "The Pat-DEVAL evaluation framework is a multi-dimensional evaluation framework dedicated to patent description bodies. It introduces Chain-of-Legal-Thought (CoLT), a legally-constrained reasoning mechanism that enforces sequential patent-la",
+        "base_scores": {
+          "correctness": 3,
+          "faithfulness": 4,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "The model answer makes substantive claims but does not fully cover the prompt. It correctly identifies the key aspects of Pat-DEVAL and CoLT, and cites the correct correlation values, but omits the Chain-of-Legal-Thought (CoLT) mechanism details and the validation by patent experts. The answer is partially right but overly vague on some details.",
+        "cand_rationale": "The model answer is substantively accurate, correctly identifying Pat-DEVAL as a multi-dimensional framework for patent descriptions and citing the specific Pearson correlations (0.69 overall, 0.73 in Legal-Professional Compliance) from the provided context [2601.00166]. It properly grounds all claims in the retrieved text without hallucination or false abstention.",
+        "category": "rag_completeness_strictness"
+      },
+      {
+        "id": "g32",
+        "mode": "rag",
+        "slice": "live",
+        "prompt": "How does the three-stage DepFlow text-to-speech framework mitigate semantic bias in depression detection, and what macro-F1 improvements does its CDoA dataset yield?",
+        "model_answer_preview": "According to the abstract [2601.00303], the three-stage DepFlow text-to-speech framework mitigates semantic bias in depression detection by:\n\n1. Learning speaker- and content-invariant depression embeddings through adversarial training, ach",
+        "base_scores": {
+          "correctness": 4,
+          "faithfulness": 4,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "The model_answer makes substantive claims that are mostly accurate but lacks full detail and context. It correctly identifies the three stages of DepFlow and the macro-F1 improvements, but omits key details like FiLM modulation and the prototype-based severity mapping. The answer is grounded in the retrieved_context, which supports the claims, and cites the correct paper [2601.00303].",
+        "cand_rationale": "The model answer is a faithful, accurate extraction of the reference answer fully supported by the retrieved context (ID 2601.00303). It correctly details the three-stage framework and the specific macro-F1 improvements without hallucination or false abstention.",
+        "category": "rag_completeness_strictness"
+      },
+      {
+        "id": "g35",
+        "mode": "rag",
+        "slice": "live",
+        "prompt": "What does the ChiEngMixBench benchmark evaluate, how many pairs does it contain, and what gap does it uncover across nine open-weight models?",
+        "model_answer_preview": "According to the abstract [2601.16217], the ChiEngMixBench benchmark evaluates Chinese-English terminology mixing, specifically the adaptation of Chinese frames to incorporate established English technical terms.\n\nThe benchmark contains 1,7",
+        "base_scores": {
+          "correctness": 3,
+          "faithfulness": 4,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "The model answer makes substantive claims that are partially accurate but lacks the full context of the benchmark's purpose and the strict subset of 1,167 pairs. It also omits the nine open-weight models and their performance. The answer is grounded in the retrieved context but is incomplete and slightly imprecise.",
+        "cand_rationale": "The model answer is substantively accurate, extracting all key facts (evaluation target, pair count, term count, and the specific gap found) directly from the provided context [2601.16217] without hallucination or false abstention.",
+        "category": "rag_completeness_strictness"
+      },
+      {
+        "id": "g36",
+        "mode": "rag",
+        "slice": "live",
+        "prompt": "What representational bottleneck in Looped Transformers motivates DiscoLoop for two-hop reasoning, and how does DiscoLoop's recurrent architecture address it?",
+        "model_answer_preview": "According to the abstract [2607.00341], the representational bottleneck in Looped Transformers that motivates DiscoLoop for two-hop reasoning is that the first loop often makes the correct bridge entity nearly perfectly decodable, yet the c",
+        "base_scores": {
+          "correctness": 3,
+          "faithfulness": 4,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "The model_answer makes substantive claims that are partially accurate and supported by the retrieved_context. It correctly identifies the representational bottleneck and how DiscoLoop addresses it, but the answer is not fully accurate as it does not mention the nearly perfect decodability of the first-hop bridge entity, which is a key point in the reference_answer.",
+        "cand_rationale": "The model answer correctly identifies the representational bottleneck (decodable entity but misaligned hidden state) and DiscoLoop's solution (recurrent architecture with discrete/continuous channels) based strictly on the provided context [2607.00341]. It cites the correct ID and makes no hallucinated claims or false abstentions.",
+        "category": "rag_completeness_strictness"
+      },
+      {
+        "id": "g36",
+        "mode": "zero_shot",
+        "slice": "live",
+        "prompt": "What representational bottleneck in Looped Transformers motivates DiscoLoop for two-hop reasoning, and how does DiscoLoop's recurrent architecture address it?",
+        "model_answer_preview": "DiscoLoop is a recurrent transformer architecture designed to address the representational bottleneck in Looped Transformers for two-hop reasoning. \n\nThe representational bottleneck in Looped Transformers is the difficulty in capturing long",
+        "base_scores": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 1,
+          "faithfulness": 1,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "Pure abstention on answerable slice is a false abstention (correctness=1) with no ungrounded claims or fake citations.",
+        "cand_rationale": "The model_answer makes substantive factual claims about the specific 'representational bottleneck' (claiming it is general long-range dependency issues) and DiscoLoop's solution (RNN loops), which directly contradict the reference_answer (bridge entity decodability vs. hidden state misalignment). Since retrieved_context is NONE, these ungrounded claims violate faithfulness constraints for zero-shot mode.",
+        "category": "hedged_zero_shot_ungrounded"
+      },
+      {
+        "id": "g38",
+        "mode": "rag",
+        "slice": "live",
+        "prompt": "What is BaseRT for Apple Silicon LLM inference, and what decode throughput speedups does it achieve compared to llama.cpp and MLX?",
+        "model_answer_preview": "BaseRT is a native Metal inference runtime for large language models (LLMs) on Apple Silicon, designed to recover performance that framework-based approaches leave on the table. According to the abstract [2607.00501], BaseRT achieves up to ",
+        "base_scores": {
+          "correctness": 3,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "The model answer makes substantive factual claims, which are partially accurate but lack the full details from the reference answer. It correctly identifies BaseRT as a native Metal runtime for Apple Silicon and its performance benefits, but omits the specific models and quantization levels evaluated. The answer is grounded in the retrieved context, which supports the claims, and cites a valid ID.",
+        "cand_rationale": "The model answer provides a substantive factual summary of the BaseRT paper supported entirely by the retrieved context (ID 2607.00501). It correctly identifies the system, its purpose, and the specific throughput speedup metrics without hallucination or false abstention.",
+        "category": "rag_completeness_strictness"
+      },
+      {
+        "id": "g40",
+        "mode": "rag",
+        "slice": "live",
+        "prompt": "How does R^2Adapter dynamically allocate queries in hybrid text-graph RAG, and by how much does it reduce graph-based RAG usage?",
+        "model_answer_preview": "According to the abstract [2609.02894], R^2Adapter dynamically allocates queries between vanilla and graph-based RAG by routing only the queries that genuinely benefit from graph-based reasoning. This reduces unnecessary graph retrieval ove",
+        "base_scores": {
+          "correctness": 4,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "The model_answer makes substantive claims supported by retrieved_context, specifically citing [2609.02894] which directly supports the claims about query allocation and reduction in graph-based RAG usage.",
+        "cand_rationale": "The model answer correctly extracts the dynamic allocation mechanism (routing queries that benefit from graph reasoning) and the specific reduction metric (up to 59%) directly from the provided context [2609.02894]. It is grounded, accurate, and properly cited.",
+        "category": "rag_completeness_strictness"
+      },
+      {
+        "id": "g41",
+        "mode": "zero_shot",
+        "slice": "temporal_override",
+        "prompt": "What is the current best cache replacement approach for semantic retrieval buffers in LLM agents compared to classic heuristics like LRU and LFU?",
+        "model_answer_preview": "I don't have the most up-to-date information on the current best cache replacement approach for semantic retrieval buffers in LLM agents. My knowledge cutoff is December 2023, and I may not be aware of the latest research or advancements in",
+        "base_scores": {
+          "correctness": 3,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "Pure abstention on temporal_override slice with no ungrounded claims or fake citations, but fails to report the newer SOLAR approach.",
+        "cand_rationale": "The slice is 'temporal_override', requiring the model to adopt the post-T finding (SOLAR) from newer_paper_id. The model_answer refuses to answer, citing a knowledge cutoff, which constitutes a false abstention on an answerable temporal override task. Per strict rubric, this yields correctness=1 and faithfulness=5 (no ungrounded claims), with citation_accuracy=5 due to empty citations.",
+        "category": "rubric_boundary_shift"
+      },
+      {
+        "id": "g42",
+        "mode": "rag",
+        "slice": "temporal_override",
+        "prompt": "What do current empirical findings show regarding which attention signals to distill in Multimodal LLM knowledge distillation compared to prompt-to-vision attention?",
+        "model_answer_preview": "According to the abstract [2607.02593], current empirical findings show that downstream performance correlates strongly with response-to-vision attention similarity to the teacher, but negligibly with that of prompt-conditioned attention.",
+        "base_scores": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 3,
+          "faithfulness": 4,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "Slice is 'temporal_override', model_answer correctly reports the newer finding from [2607.02593] as the current best conclusion.",
+        "cand_rationale": "The model answer is a partial extraction from the provided context (ID 2607.02593) which explicitly states the correlation findings regarding response-to-vision vs. prompt-conditioned attention. However, it fails to address the second half of the question concerning 'uniform token-level objectives' and the proposed solution (TRAG), resulting in an incomplete answer relative to the reference. Since the model makes substantive claims grounded in the context rather than a pure abstention, faithfulness is penalized for missing the full scope of the findings.",
+        "category": "rag_completeness_strictness"
+      },
+      {
+        "id": "g42",
+        "mode": "zero_shot",
+        "slice": "temporal_override",
+        "prompt": "What do current empirical findings show regarding which attention signals to distill in Multimodal LLM knowledge distillation compared to prompt-to-vision attention?",
+        "model_answer_preview": "I don't have specific information on current empirical findings regarding multimodal LLM knowledge distillation and prompt-to-vision attention. My training data may not be up-to-date or comprehensive on this topic. I can suggest some possib",
+        "base_scores": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "Pure abstention on temporal_override slice, no ungrounded claims or fake citations.",
+        "cand_rationale": "The slice is 'temporal_override', requiring the model to adopt the newer post-T finding (TRAG/response-to-vision attention). The model_answer is a pure clean abstention ('I don't have specific information...') with no substantive claims. Per strict rules, abstaining on an answerable temporal_override slice is a false abstention: correctness=1, faithfulness=5, citation_accuracy=5, override_obedience=0.",
+        "category": "false_abstention_fix"
+      },
+      {
+        "id": "g43",
+        "mode": "zero_shot",
+        "slice": "temporal_override",
+        "prompt": "Do math reasoning improvements transfer to general LLM capabilities, and what do current empirical findings show about SFT-distilled data versus RL post-training?",
+        "model_answer_preview": "I can provide a concise answer based on my internal knowledge.\n\n**Math Reasoning Improvements:**\n\nResearch suggests that math reasoning improvements can transfer to general LLM capabilities to some extent. Studies have shown that models fin",
+        "base_scores": {
+          "correctness": 2,
+          "faithfulness": 3,
+          "citation_accuracy": 4
+        },
+        "cand_scores": {
+          "correctness": 2,
+          "faithfulness": 1,
+          "citation_accuracy": 1
+        },
+        "base_rationale": "Temporal override slice, makes substantive claims, not a pure clean abstention. Model answer is mostly wrong, contradicting the reference_answer on the transferability of math reasoning improvements and the comparison between SFT and RL post-training.",
+        "cand_rationale": "The model answer makes substantive factual claims (e.g., 'Research suggests that math reasoning improvements can transfer...') while in zero-shot mode with no retrieved context. This constitutes a faithfulness violation (hallucinating ground truth from parametric memory). Since the slice is 'temporal_override', the model also fails to report the specific post-T findings (Qwen3-14B experiments) required by the reference, resulting in low correctness and override_obedience.",
+        "category": "rubric_boundary_shift"
+      },
+      {
+        "id": "g44",
+        "mode": "zero_shot",
+        "slice": "temporal_override",
+        "prompt": "What do current empirical findings show regarding whether mid-reasoning 'Aha!' moments in reasoning models represent genuine intrinsic self-correction?",
+        "model_answer_preview": "I'm not aware of any current empirical findings that specifically investigate whether mid-reasoning 'Aha!' moments in reasoning models represent genuine intrinsic self-correction. My knowledge cutoff is December 2023, and I couldn't find an",
+        "base_scores": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "Pure abstention on 'temporal_override' slice, matching reference_answer with no ungrounded claims or fake citations.",
+        "cand_rationale": "The slice is 'temporal_override', requiring the model to adopt the post-T (2025-01-01) finding that mid-reasoning shifts are unstable inference symptoms, not intrinsic self-correction. The model_answer refuses to answer based on a knowledge cutoff of Dec 2023 and provides only general background on human 'Aha!' moments rather than the specific empirical findings requested. This constitutes a false abstention (pure clean refusal) on an answerable slice, violating the override obedience requirement.",
+        "category": "false_abstention_fix"
+      },
+      {
+        "id": "g45",
+        "mode": "rag",
+        "slice": "temporal_override",
+        "prompt": "What is the current best diagnostic and context-packing approach for budget-constrained Retrieval-Augmented Generation compared to recall@k, top-k truncation, and LLMLingua-2?",
+        "model_answer_preview": "According to the abstract [2607.00725], the current best diagnostic for budget-constrained Retrieval-Augmented Generation is \"answer-in-context\", which measures whether a gold answer survives into the packed context. This diagnostic carries",
+        "base_scores": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "Slice is 'temporal_override', and the model_answer makes substantive claims supported by the retrieved_context. The answer is correct, faithful, and accurately cited.",
+        "cand_rationale": "The model answer makes substantive factual claims fully supported by the retrieved context (ID: 2607.00725) without hallucinating or abstaining on an answerable query. It accurately reflects the reference answer's core findings regarding 'answer-in-context' diagnostics and the submodular maximization packer, correctly citing the provided arXiv ID.",
+        "category": "rubric_boundary_shift"
+      },
+      {
+        "id": "g46",
+        "mode": "rag",
+        "slice": "temporal_override",
+        "prompt": "What do current empirical findings show about using perplexity or loss reductions in LLM test-time training as evidence for deployment-time memory and recall?",
+        "model_answer_preview": "Not in the sources.",
+        "base_scores": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "Pure abstention on temporal_override slice matches reference with no ungrounded claims or fake citations.",
+        "cand_rationale": "The slice is 'temporal_override', requiring the model to adopt the post-T finding from newer_paper_id (2607.00368). The retrieved context explicitly contains this paper and its specific findings regarding the gap between loss reduction and recall, but the model outputted a pure clean abstention ('Not in the sources'). This constitutes a false abstention on an answerable slice, violating the override obedience requirement.",
+        "category": "false_abstention_fix"
+      },
+      {
+        "id": "g46",
+        "mode": "zero_shot",
+        "slice": "temporal_override",
+        "prompt": "What do current empirical findings show about using perplexity or loss reductions in LLM test-time training as evidence for deployment-time memory and recall?",
+        "model_answer_preview": "I don't have specific information on current empirical findings regarding the use of perplexity or loss reductions in LLM test-time training as evidence for deployment-time memory and recall. My training data may not be up-to-date or compre",
+        "base_scores": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "Pure abstention on temporal_override slice, no ungrounded claims or fake citations.",
+        "cand_rationale": "The model_answer is a pure clean abstention (zero substantive claims) due to lack of retrieved context. Since the slice is 'temporal_override' and the reference_answer provides a specific factual finding, the model's refusal constitutes a false abstention on an answerable query. Therefore, correctness must be 1 (false abstention), while faithfulness and citation_accuracy are 5 as no ungrounded claims were made.",
+        "category": "false_abstention_fix"
+      },
+      {
+        "id": "g48",
+        "mode": "zero_shot",
+        "slice": "temporal_override",
+        "prompt": "Does multilingual fluency in LLMs imply cultural understanding, and what do current empirical findings show about whether inference-time calibration, repeated sampling, or RAG resolve cultural gaps?",
+        "model_answer_preview": "I can provide a concise answer based on my internal knowledge.\n\nThe relationship between multilingual fluency in Large Language Models (LLMs) and cultural understanding is complex. While LLMs can process and generate text in multiple langua",
+        "base_scores": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 1,
+          "faithfulness": 1,
+          "citation_accuracy": 1
+        },
+        "base_rationale": "The model abstains in zero-shot mode, providing a general overview without making substantive claims. This aligns with the reference_answer's core findings but does not cite any sources, hence the abstention is clean.",
+        "cand_rationale": "The model_answer makes substantive factual claims (e.g., specific mechanisms of RAG, calibration limits) while operating in zero-shot mode with no retrieved_context. This violates the faithfulness constraint which requires abstention when context is absent. Since the slice is 'temporal_override', a pure clean abstention would have been correct (correctness=5), but providing an ungrounded answer results in correctness=1, faithfulness=1, and citation_accuracy=1.",
+        "category": "hedged_zero_shot_ungrounded"
+      },
+      {
+        "id": "g49",
+        "mode": "zero_shot",
+        "slice": "temporal_override",
+        "prompt": "What do current pretraining ablations show about the role of bilingual, parallel, and code-switching data for translation versus cross-lingual reasoning in multilingual LLMs?",
+        "model_answer_preview": "I don't have specific information on current pretraining ablations regarding the role of bilingual, parallel, and code-switching data for translation versus cross-lingual reasoning in multilingual LLMs. My knowledge cutoff is December 2023,",
+        "base_scores": {
+          "correctness": 5,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "cand_scores": {
+          "correctness": 1,
+          "faithfulness": 5,
+          "citation_accuracy": 5
+        },
+        "base_rationale": "Pure abstention on a temporal_override slice, with no ungrounded claims or fake citations.",
+        "cand_rationale": "The model_answer is a pure clean abstention (zero-shot refusal citing knowledge cutoff) with no substantive factual claims. Since the slice is 'temporal_override' (requiring adoption of post-T findings), a clean abstention constitutes a false abstention, resulting in correctness=1. Faithfulness and citation_accuracy are 5 because no ungrounded claims or fake citations were made.",
+        "category": "false_abstention_fix"
+      }
+    ]
+  },
+  "operational": {
+    "base": {
+      "n_measured": 120,
+      "latency_mean_ms": 16442.07,
+      "latency_median_ms": 7754.56,
+      "total_time_s": 1973.05,
+      "tok_per_s_mean": 23.44,
+      "tok_per_s_median": 25.01,
+      "eval_tokens_mean": 67.92,
+      "eval_tokens_median": 63.0,
+      "total_eval_tokens": 8150
+    },
+    "cand": {
+      "n_measured": 120,
+      "latency_mean_ms": 8820.11,
+      "latency_median_ms": 3758.85,
+      "total_time_s": 1058.41,
+      "tok_per_s_mean": 45.19,
+      "tok_per_s_median": 36.86,
+      "eval_tokens_mean": 122.83,
+      "eval_tokens_median": 119.5,
+      "total_eval_tokens": 14740
+    },
+    "delta": {
+      "tok_per_s_median": 11.85,
+      "tok_per_s_mean": 21.75,
+      "latency_median_ms": -3995.71,
+      "latency_mean_ms": -7621.96,
+      "latency_ratio_median": 0.48,
+      "eval_tokens_median": 56.5,
+      "eval_tokens_mean": 54.91
+    },
+    "cand_latency_mean_ms": 8820.11,
+    "cand_latency_median_ms": 3758.85,
+    "cand_total_time_s": 1058.41,
+    "cand_tok_per_s_mean": 45.19,
+    "cand_tok_per_s_median": 36.86,
+    "cand_total_eval_tokens": 14740,
+    "base_documented_tok_per_s": 59.7,
+    "models_meta": {
+      "generated_at_utc": "2026-11-26T10:51:37.727295+00:00",
+      "host": {
+        "ssh_alias": "macmini",
+        "user": "harpaz",
+        "hostname": "Itais-Mac-Mini.local",
+        "arch": "arm64",
+        "macos_product_version": "27.2.1",
+        "macos_build_version": "26B131",
+        "hardware": {
+          "model_name": "Mac mini",
+          "model_identifier": "Mac17,16",
+          "model_number": "Z1UD0018HHB/A",
+          "chip": "Apple M5 Pro",
+          "total_number_of_cores": "15 (5 Super and 10 Performance)",
+          "memory": "48 GB",
+          "system_firmware_version": "20457.41.3",
+          "os_loader_version": "20457.41.3"
+        }
+      },
+      "tools": {
+        "uv": {
+          "path": "/Users/harpaz/.local/bin/uv",
+          "version": "uv 0.13.10 (e3e7c1eac 2026-11-24 aarch64-apple-darwin)"
+        },
+        "python3_13": {
+          "path": "/Users/harpaz/.local/share/uv/python/cpython-3.13-macos-aarch64-none/bin/python3.13",
+          "version": "Python 3.13.18"
+        },
+        "ollama": {
+          "bin_path": "/Users/harpaz/.local/bin/ollama",
+          "resolved_path": "/Users/harpaz/Applications/Ollama.app/Contents/Resources/ollama",
+          "app_bundle_path": "/Users/harpaz/Applications/Ollama.app",
+          "install_mode": "Ollama.app fallback symlink (tgz lacked llama-server/Metal dylibs in ~/.local/bin)",
+          "cli_version": "ollama version is 0.40.18",
+          "api_version": "0.40.18",
+          "endpoint": "http://127.0.0.1:11434",
+          "serve_env": {
+            "OLLAMA_NUM_PARALLEL": 4,
+            "OLLAMA_MAX_LOADED_MODELS": 2,
+            "OLLAMA_KEEP_ALIVE": "30m"
+          },
+          "serve_log": "/Users/harpaz/.ollama/serve.log"
+        }
+      },
+      "models": [
+        {
+          "name": "qwen2.5:7b",
+          "model": "qwen2.5:7b",
+          "modified_at": "2026-11-26T12:51:11.067462929+02:00",
+          "size": 4683087332,
+          "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+          "details": {
+            "parent_model": "",
+            "format": "gguf",
+            "family": "qwen2",
+            "families": [
+              "qwen2"
+            ],
+            "parameter_size": "7.6B",
+            "quantization_level": "Q4_K_M",
+            "context_length": 32768,
+            "embedding_length": 3584,
+            "runner": "ggml"
+          },
+          "capabilities": [
+            "completion",
+            "tools"
+          ]
+        },
+        {
+          "name": "llama3.2:3b",
+          "model": "llama3.2:3b",
+          "modified_at": "2026-11-26T12:20:52.898581416+02:00",
+          "size": 2019393189,
+          "digest": "a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72",
+          "details": {
+            "parent_model": "",
+            "format": "gguf",
+            "family": "llama",
+            "families": [
+              "llama"
+            ],
+            "parameter_size": "3.2B",
+            "quantization_level": "Q4_K_M",
+            "context_length": 131072,
+            "embedding_length": 3072,
+            "runner": "ggml"
+          },
+          "capabilities": [
+            "completion",
+            "tools"
+          ]
+        },
+        {
+          "name": "qwen3.5:9b",
+          "model": "qwen3.5:9b",
+          "modified_at": "2026-11-27T12:00:05.336836731+02:00",
+          "size": 7639229431,
+          "digest": "d63f830f28d515fefea546f213fca7a75e9dd5176ef51a6deabc952d1c99a911",
+          "details": {
+            "parent_model": "",
+            "format": "safetensors",
+            "family": "",
+            "families": null,
+            "parameter_size": "",
+            "quantization_level": "",
+            "runner": "mlx"
+          },
+          "capabilities": [
+            "completion",
+            "vision",
+            "tools",
+            "thinking"
+          ]
+        }
+      ],
+      "smoke_tests": {
+        "llama3.2:3b": {
+          "status": "ok",
+          "response": "OK_LLAMA",
+          "processor": "100% GPU"
+        },
+        "qwen2.5:7b": {
+          "status": "ok",
+          "response": "OK_QWEN",
+          "processor": "100% GPU"
+        },
+        "qwen3.5:9b": {
+          "status": "ok",
+          "response": "{\"rationale\": \"ok\", \"correctness\": 5, \"faithfulness\": 5, \"citation_accuracy\": 5, \"override_obedience\": null}",
+          "processor": "100% GPU",
+          "tok_per_s": 29.56
+        }
+      }
+    }
+  },
+  "recommendation": {
+    "winner": "qwen3.5:9b",
+    "verdict_headline": "YES — Use `qwen3.5:9b` as the default benchmark judge: it raises exact human agreement by +10.0% (QWK 0.5349 -> 0.7823, correctness +25.0%), with faster median latency (-3995.71 ms/item, +11.85 tok/s, +56.5 tokens/item) at +2.96 GB model size (7.64 GB vs 4.68 GB)."
+  }
+}

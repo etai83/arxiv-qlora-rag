@@ -249,7 +249,7 @@ def test_helpers_and_verdict_normalization() -> None:
 
 
 def test_build_experiment_book(tmp_path: Path) -> None:
-    """Verify experiment_book.html builds cleanly with all 10 book pages and embedded payload."""
+    """Verify experiment_book.html builds cleanly with all 11 book pages and embedded payload."""
     from src.build_book import build_book
 
     if not (ROOT / "eval" / "judge_scores.jsonl").exists():
@@ -260,18 +260,30 @@ def test_build_experiment_book(tmp_path: Path) -> None:
     assert '<meta name="color-scheme" content="light dark">' in html
     assert "document.startViewTransition" in html
     assert "plotly-2.35.2.min.js" in html
+    assert "evening" not in html.lower()
     for cid in (
         "chart-p2-taxonomy",
         "chart-p2-archetypes",
+        "chart-appc-judge-human",
+        "chart-appc-slice-deltas",
+        "chart-appc-speed-tokens",
+        "chart-appc-interjudge-matrix",
         "chart-app-memory",
         "chart-app-throughput",
         "chart-appb-impact",
         "chart-appb-pareto",
     ):
         assert cid in html
-    for marker in ("Positive Example", "Negative Example", "Dense Retriever Agent", "agents-roster-caption"):
+    for marker in (
+        "Positive Example",
+        "Negative Example",
+        "Dense Retriever Agent",
+        "agents-roster-caption",
+        "Bottom-Line Verdict",
+        "How to Read These Judge Metrics",
+    ):
         assert marker in html
-    for page_idx in range(10):
+    for page_idx in range(11):
         assert f'data-page="{page_idx}"' in html
         page_num = page_idx + 1
         assert f'id="page-{page_num}"' in html
@@ -285,3 +297,192 @@ def test_build_experiment_book(tmp_path: Path) -> None:
     assert len(payload["runs"]) == 60
     assert len(payload["calibration"]["audit_items"]) == 20
     assert payload["split"]["id_overlap_count"] == 0
+    assert payload["judge_comparison"]["inter_judge"]["n_items"] == 120
+    assert "qwen35" in payload["runs"][0]["rag"]
+    assert "judge_qwen35" in payload["calibration"]["audit_items"][0]
+
+
+def test_judge_comparison_artifacts() -> None:
+    """Verify Qwen3.5-9B judge scores and comparison JSON match expected invariants."""
+    cand_path = ROOT / "eval" / "judge_scores_qwen35_9b.jsonl"
+    comp_path = ROOT / "eval" / "judge_comparison.json"
+    if not cand_path.exists() or not comp_path.exists():
+        pytest.skip("Qwen3.5-9B judge artifacts not generated yet")
+
+    base_rows = read_jsonl(ROOT / "eval" / "judge_scores.jsonl")
+    cand_rows = read_jsonl(cand_path)
+    assert len(base_rows) == 120
+    assert len(cand_rows) == 120
+    assert all(r.get("judge_model") == "qwen3.5:9b" for r in cand_rows)
+
+    comp = json.loads(comp_path.read_text(encoding="utf-8"))
+    assert comp["human_calibration"]["cand"]["pooled"]["n"] == 60
+    assert comp["inter_judge"]["n_items"] == 120
+    assert comp["inter_judge"]["pooled"]["n"] == 360
+
+
+def test_parse_verdict_json_strips_think_and_fences() -> None:
+    """Verify _parse_verdict_json extracts verdict from <think> blocks and markdown fences."""
+    from src.judge import _parse_verdict_json
+
+    raw = """<think>
+Thinking process...
+</think>
+```json
+{
+  "rationale": "Valid verdict",
+  "correctness": 5,
+  "faithfulness": 5,
+  "citation_accuracy": 5,
+  "override_obedience": null
+}
+```"""
+    verdict = _parse_verdict_json(raw, "live")
+    assert verdict.correctness == 5
+    assert verdict.faithfulness == 5
+    assert verdict.citation_accuracy == 5
+    assert verdict.rationale == "Valid verdict"
+
+
+def test_default_think_setting() -> None:
+    """Verify default_think_setting returns False for qwen3 models and None for others."""
+    from src.judge import default_think_setting
+
+    assert default_think_setting("qwen3.5:9b-mlx") is False
+    assert default_think_setting("qwen3.5:9b") is False
+    assert default_think_setting("qwen2.5:7b") is None
+
+
+def test_quadratic_weighted_kappa() -> None:
+    """Verify quadratic_weighted_kappa on exact match, partial disagreement, and constant inputs."""
+    from src.compare_judges import quadratic_weighted_kappa
+
+    perfect = [(i, i) for i in range(1, 6)] * 4
+    assert quadratic_weighted_kappa(perfect) == 1.0
+
+    partial = [(1, 2), (2, 2), (3, 4), (4, 4), (5, 3)]
+    qwk = quadratic_weighted_kappa(partial)
+    assert qwk is not None
+    assert 0.0 < qwk < 1.0
+
+    constant = [(3, 3), (3, 3)]
+    assert quadratic_weighted_kappa(constant) == 1.0
+
+    assert quadratic_weighted_kappa([]) is None
+
+
+def test_compare_judges_synthetic(tmp_path: Path) -> None:
+    """Verify compare_judges on synthetic JSONL files verifying metrics, CIs, and discordance."""
+    from src.compare_judges import compare_judges
+
+    base_scores = []
+    cand_scores = []
+    human_scores = []
+
+    for i in range(1, 11):
+        row_id = f"q_{i:02d}"
+        mode = "zero_shot" if i <= 5 else "rag"
+        sl = "static" if i % 2 == 0 else "live"
+        base_scores.append({
+            "id": row_id,
+            "mode": mode,
+            "slice": sl,
+            "correctness": 4,
+            "faithfulness": 4,
+            "citation_accuracy": 4,
+            "override_obedience": None,
+            "rationale": "base",
+            "judge_latency_ms": 100.0,
+            "judge_tok_per_s": 50.0,
+            "judge_eval_tokens": 100,
+        })
+        cand_scores.append({
+            "id": row_id,
+            "mode": mode,
+            "slice": sl,
+            "correctness": 5,
+            "faithfulness": 5,
+            "citation_accuracy": 5,
+            "override_obedience": None,
+            "rationale": "cand",
+            "judge_latency_ms": 90.0,
+            "judge_tok_per_s": 60.0,
+            "judge_eval_tokens": 90,
+        })
+        if i <= 5:
+            human_scores.append({
+                "sample_id": f"sample_{i:02d}",
+                "id": row_id,
+                "mode": mode,
+                "slice": sl,
+                "correctness": 5,
+                "faithfulness": 5,
+                "citation_accuracy": 5,
+                "override_obedience": None,
+            })
+
+    base_p = write_jsonl(tmp_path / "base.jsonl", base_scores)
+    cand_p = write_jsonl(tmp_path / "cand.jsonl", cand_scores)
+    hum_p = write_jsonl(tmp_path / "human.jsonl", human_scores)
+    zs_p = write_jsonl(tmp_path / "zs.jsonl", [r for r in base_scores if r["mode"] == "zero_shot"])
+    rag_p = write_jsonl(tmp_path / "rag.jsonl", [r for r in base_scores if r["mode"] == "rag"])
+
+    report = compare_judges(
+        base_judge_path=base_p,
+        cand_judge_path=cand_p,
+        human_path=hum_p,
+        zs_path=zs_p,
+        rag_path=rag_p,
+    )
+
+    assert "human_calibration" in report
+    assert "benchmark_shift" in report
+    assert "inter_judge" in report
+    assert "bootstrap_ci" in report["human_calibration"]
+    ci = report["human_calibration"]["bootstrap_ci"]
+    assert "base_exact_ci95" in ci
+    assert "cand_exact_ci95" in ci
+    assert "delta_exact_ci95" in ci
+    assert len(report["human_calibration"]["cand"]["confusion_matrix"]) == 5
+    assert len(report["inter_judge"]["confusion_matrix"]) == 5
+    assert "discordance_counts_by_category" in report["inter_judge"]
+    assert report["operational"]["base"]["latency_median_ms"] == 100.0
+    assert report["operational"]["cand"]["latency_median_ms"] == 90.0
+    assert report["operational"]["delta"]["latency_median_ms"] == -10.0
+    assert report["operational"]["delta"]["eval_tokens_median"] == -10.0
+    assert report["operational"]["delta"]["tok_per_s_median"] == 10.0
+    assert report["recommendation"]["winner"] == "qwen3.5:9b-mlx"
+
+
+def test_write_report_custom_names(tmp_path: Path) -> None:
+    """Verify write_report writes custom json_name and md_name without touching results_summary.json."""
+    from src.metrics import write_report
+
+    judge_rows = [{
+        "id": "q1",
+        "mode": "rag",
+        "slice": "live",
+        "correctness": 5,
+        "faithfulness": 5,
+        "citation_accuracy": 5,
+        "override_obedience": None,
+        "latency_ms": 100.0,
+    }]
+    judge_p = write_jsonl(tmp_path / "judge.jsonl", judge_rows)
+    out_dir = tmp_path / "eval_out"
+
+    json_p, md_p = write_report(
+        judge_path=judge_p,
+        zs_path=None,
+        rag_path=None,
+        human_path=None,
+        out_dir=out_dir,
+        json_name="custom_summary.json",
+        md_name="custom_summary.md",
+    )
+
+    assert json_p.name == "custom_summary.json"
+    assert md_p.name == "custom_summary.md"
+    assert json_p.exists()
+    assert md_p.exists()
+    assert not (out_dir / "results_summary.json").exists()
