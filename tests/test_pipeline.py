@@ -249,7 +249,7 @@ def test_helpers_and_verdict_normalization() -> None:
 
 
 def test_build_experiment_book(tmp_path: Path) -> None:
-    """Verify experiment_book.html builds cleanly with all 10 book pages and embedded payload."""
+    """Verify experiment_book.html builds cleanly with all 11 book pages and embedded payload."""
     from src.build_book import build_book
 
     if not (ROOT / "eval" / "judge_scores.jsonl").exists():
@@ -260,9 +260,13 @@ def test_build_experiment_book(tmp_path: Path) -> None:
     assert '<meta name="color-scheme" content="light dark">' in html
     assert "document.startViewTransition" in html
     assert "plotly-2.35.2.min.js" in html
+    assert "evening" not in html.lower()
     for cid in (
         "chart-p2-taxonomy",
         "chart-p2-archetypes",
+        "chart-p9-judge-human",
+        "chart-p9-slice-deltas",
+        "chart-p9-interjudge-matrix",
         "chart-app-memory",
         "chart-app-throughput",
         "chart-appb-impact",
@@ -271,7 +275,7 @@ def test_build_experiment_book(tmp_path: Path) -> None:
         assert cid in html
     for marker in ("Positive Example", "Negative Example", "Dense Retriever Agent", "agents-roster-caption"):
         assert marker in html
-    for page_idx in range(10):
+    for page_idx in range(11):
         assert f'data-page="{page_idx}"' in html
         page_num = page_idx + 1
         assert f'id="page-{page_num}"' in html
@@ -285,6 +289,28 @@ def test_build_experiment_book(tmp_path: Path) -> None:
     assert len(payload["runs"]) == 60
     assert len(payload["calibration"]["audit_items"]) == 20
     assert payload["split"]["id_overlap_count"] == 0
+    assert payload["judge_comparison"]["inter_judge"]["n_items"] == 120
+    assert "qwen35" in payload["runs"][0]["rag"]
+    assert "judge_qwen35" in payload["calibration"]["audit_items"][0]
+
+
+def test_judge_comparison_artifacts() -> None:
+    """Verify Qwen3.5-9B judge scores and comparison JSON match expected invariants."""
+    cand_path = ROOT / "eval" / "judge_scores_qwen35_9b.jsonl"
+    comp_path = ROOT / "eval" / "judge_comparison.json"
+    if not cand_path.exists() or not comp_path.exists():
+        pytest.skip("Qwen3.5-9B judge artifacts not generated yet")
+
+    base_rows = read_jsonl(ROOT / "eval" / "judge_scores.jsonl")
+    cand_rows = read_jsonl(cand_path)
+    assert len(base_rows) == 120
+    assert len(cand_rows) == 120
+    assert all(r.get("judge_model") == "qwen3.5:9b" for r in cand_rows)
+
+    comp = json.loads(comp_path.read_text(encoding="utf-8"))
+    assert comp["human_calibration"]["cand"]["pooled"]["n"] == 60
+    assert comp["inter_judge"]["n_items"] == 120
+    assert comp["inter_judge"]["pooled"]["n"] == 360
 
 
 def test_parse_verdict_json_strips_think_and_fences() -> None:
