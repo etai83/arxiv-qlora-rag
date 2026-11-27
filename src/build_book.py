@@ -633,10 +633,10 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         <a href="#page-6" data-nav-link="5" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 5</div><div class="truncate">Rubric &amp; Judge Calibration</div></a>
         <a href="#page-7" data-nav-link="6" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 6</div><div class="truncate">Baselines &amp; Run Inspector</div></a>
         <a href="#page-8" data-nav-link="7" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 7</div><div class="truncate">Failure Analysis &amp; QLoRA</div></a>
-        <a href="#page-9" data-nav-link="8" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 8</div><div class="truncate">Stronger Judge (Qwen3.5-9B)</div></a>
         <div class="pt-2 mt-2 border-t border-border"></div>
-        <a href="#page-10" data-nav-link="9" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Appendix A</div><div class="truncate">Compute &amp; Orchestration</div></a>
-        <a href="#page-11" data-nav-link="10" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Appendix B</div><div class="truncate">3 Research Continuations</div></a>
+        <a href="#page-9" data-nav-link="8" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Appendix A</div><div class="truncate">Compute &amp; Orchestration</div></a>
+        <a href="#page-10" data-nav-link="9" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Appendix B</div><div class="truncate">3 Research Continuations</div></a>
+        <a href="#page-11" data-nav-link="10" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Appendix C</div><div class="truncate">Stronger Judge (Qwen3.5-9B)</div></a>
       </nav>
       <div class="mt-4 pt-3 border-t border-border text-xs text-muted-foreground space-y-1">
         <div class="flex justify-between"><span>Cutoff T</span><span class="font-mono text-foreground">2025-01-01</span></div>
@@ -718,17 +718,17 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                 <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Chapter 7</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 8 →</span></div>
                 <div><p class="font-serif text-base font-semibold group-hover:underline">Failure Analysis &amp; QLoRA</p><p class="text-xs text-muted-foreground mt-0.5">Master results table, 3 failure modes, and QLoRA hybrid roadmap.</p></div>
               </a>
-              <a href="#page-9" data-nav-link="8" class="group cursor-pointer text-left rounded-xl border border-border bg-card p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
-                <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Chapter 8</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 9 →</span></div>
-                <div><p class="font-serif text-base font-semibold group-hover:underline">Stronger Judge: Qwen3.5-9B (MLX)</p><p class="text-xs text-muted-foreground mt-0.5">90.0% human agreement (+10.0pp), 360-pair concordance &amp; 34 discordant cases.</p></div>
-              </a>
-              <a href="#page-10" data-nav-link="9" class="group cursor-pointer text-left rounded-xl border border-dashed border-border bg-secondary/40 p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
-                <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Appendix A</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 10 →</span></div>
+              <a href="#page-9" data-nav-link="8" class="group cursor-pointer text-left rounded-xl border border-dashed border-border bg-secondary/40 p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
+                <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Appendix A</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 9 →</span></div>
                 <div><p class="font-serif text-base font-semibold group-hover:underline">Compute &amp; Subagent Orchestration</p><p class="text-xs text-muted-foreground mt-0.5">Mac mini M5 Pro (48 GB) user-space Ollama setup, MLX runner, and parallel subagent waves.</p></div>
               </a>
-              <a href="#page-11" data-nav-link="10" class="group cursor-pointer text-left rounded-xl border border-dashed border-border bg-secondary/40 p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
-                <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Appendix B</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 11 →</span></div>
+              <a href="#page-10" data-nav-link="9" class="group cursor-pointer text-left rounded-xl border border-dashed border-border bg-secondary/40 p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
+                <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Appendix B</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 10 →</span></div>
                 <div><p class="font-serif text-base font-semibold group-hover:underline">Three Research Continuations</p><p class="text-xs text-muted-foreground mt-0.5">Confidence-gated QLoRA routing, temporal conflict DPO, and full-paper submodular RAG.</p></div>
+              </a>
+              <a href="#page-11" data-nav-link="10" class="group cursor-pointer text-left rounded-xl border border-dashed border-border bg-secondary/40 p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
+                <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Appendix C</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 11 →</span></div>
+                <div><p class="font-serif text-base font-semibold group-hover:underline">Stronger Judge: Qwen3.5-9B vs. Qwen2.5-7B</p><p class="text-xs text-muted-foreground mt-0.5">Bottom-line verdict, QWK guide, speed/token telemetry (2.06× faster), and 34 discordant cases.</p></div>
               </a>
             </div>
           </div>
@@ -1362,87 +1362,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           </div>
         </section>
 
-        <!-- Page 9: Chapter 8 - Stronger Judge Experiment (Qwen3.5-9B MLX vs. Qwen2.5-7B) -->
+        <!-- Page 9: Appendix A - Compute & Subagent Orchestration -->
         <section id="page-9" data-page="8" class="book-page hidden space-y-6">
-          <div class="border-b border-border pb-4">
-            <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Chapter 8 · Stronger Cross-Family Judge Ablation</p>
-            <h1 class="font-serif text-3xl font-bold mt-1">Qwen3.5-9B (MLX) vs. Qwen2.5-7B Judge Comparison</h1>
-            <p class="text-sm text-muted-foreground mt-1">Holding all 120 <code class="font-mono text-xs">llama3.2:3b</code> outputs frozen, we replace <code class="font-mono text-xs">qwen2.5:7b</code> (GGUF <code class="font-mono text-xs">Q4_K_M</code>) with <code class="font-mono text-xs">qwen3.5:9b</code> (<code class="font-mono text-xs">9.7B</code>, <code class="font-mono text-xs">nvfp4</code>, Apple Silicon <code class="font-mono text-xs">MLX</code> runner, <code class="font-mono text-xs">think=False</code>) and audit agreement, slice deltas, and discordance.</p>
-          </div>
-
-          <div id="p9-kpis" class="grid grid-cols-2 lg:grid-cols-4 gap-4"></div>
-
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div class="rounded-xl border border-border bg-card p-4 space-y-2">
-              <h3 class="font-serif text-lg font-semibold">Blind Human Agreement (<code class="font-mono text-sm">N=20</code> / 60 Ordinal Pairs)</h3>
-              <p class="text-xs text-muted-foreground">Pooled exact agreement rises +10.0 pp (95% CI [1.67%, 20.0%]) and correctness jumps +25.0 pp.</p>
-              <div id="chart-p9-judge-human" class="w-full h-72"></div>
-            </div>
-            <div class="rounded-xl border border-border bg-card p-4 space-y-2">
-              <h3 class="font-serif text-lg font-semibold">Slice Correctness Shift on Frozen Outputs</h3>
-              <p class="text-xs text-muted-foreground">Harsher zero-shot hallucination penalties (<code class="font-mono">-2.20</code> override) and higher RAG live credit (<code class="font-mono">+1.00</code>).</p>
-              <div id="chart-p9-slice-deltas" class="w-full h-72"></div>
-            </div>
-          </div>
-
-          <div class="rounded-xl border border-border bg-card p-4 space-y-2">
-            <h3 class="font-serif text-lg font-semibold">Inter-Judge Confusion Matrix (<code class="font-mono text-sm">N = 360</code> Ordinal Pairs)</h3>
-            <p class="text-xs text-muted-foreground">86.11% exact match (90.0% within ±1, QWK = 0.7647) across all 120 baseline runs.</p>
-            <div id="chart-p9-interjudge-matrix" class="w-full h-72"></div>
-          </div>
-
-          <div id="p9-tabs-root" class="space-y-3">
-            <div class="tablist" role="tablist" aria-label="Stronger judge diagnostics">
-              <button type="button" role="tab" id="p9tab-discordant" aria-selected="true" data-panel="p9panel-discordant">Discordant Items Explorer (34)</button>
-              <button type="button" role="tab" id="p9tab-method" aria-selected="false" data-panel="p9panel-method">Statistical Protocol &amp; MLX Engineering</button>
-            </div>
-
-            <div role="tabpanel" id="p9panel-discordant" aria-labelledby="p9tab-discordant" tabindex="0">
-              <div class="tabpanel-box space-y-3">
-                <div class="flex flex-wrap items-center justify-between gap-2">
-                  <select id="discordant-filter" aria-label="Filter discordance category" class="rounded-md border border-border bg-card px-2.5 py-1.5 text-xs">
-                    <option value="all">All Categories (34)</option>
-                    <option value="rag_completeness_strictness">RAG Completeness Strictness (16)</option>
-                    <option value="false_abstention_fix">False Abstention Fix (8)</option>
-                    <option value="hedged_zero_shot_ungrounded">Hedged Zero-Shot Ungrounded (6)</option>
-                    <option value="rubric_boundary_shift">Rubric Boundary Shift (4)</option>
-                  </select>
-                  <input id="discordant-search" type="search" placeholder="Filter ID, prompt, or rationale..." class="rounded-md border border-border bg-card px-2.5 py-1.5 text-xs w-60">
-                </div>
-                <div tabindex="0" role="region" aria-label="Discordant judge items table" class="table-wrapper book-scroll">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Item</th>
-                        <th>Category</th>
-                        <th>Qwen2.5-7B (C/F/Cit)</th>
-                        <th>Qwen3.5-9B (C/F/Cit)</th>
-                        <th>Prompt &amp; Judge Rationales</th>
-                      </tr>
-                    </thead>
-                    <tbody id="discordant-tbody"></tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-
-            <div role="tabpanel" id="p9panel-method" aria-labelledby="p9tab-method" hidden="until-found">
-              <div class="tabpanel-box grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                <div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-2">
-                  <h4 class="font-serif text-base font-semibold">Paired Bootstrap &amp; Weighted Kappa</h4>
-                  <p class="text-muted-foreground">Because both judges evaluate the exact same 20 blind human items (<code class="font-mono">60</code> ordinal pairs), we compute 2,000-resample paired bootstrap 95% percentile CIs for exact match delta (<code class="font-mono">[1.67%, 20.0%]</code>) and quadratic weighted Cohen's <code class="font-mono">kappa_w</code> (<code class="font-mono">0.5349 -&gt; 0.7823</code>), reducing MAE from <code class="font-mono">0.567</code> to <code class="font-mono">0.300</code> and signed leniency bias from <code class="font-mono">+0.400</code> to <code class="font-mono">+0.133</code>.</p>
-                </div>
-                <div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-2">
-                  <h4 class="font-serif text-base font-semibold">MLX <code class="font-mono">think=False</code> Token Budget Protection</h4>
-                  <p class="text-muted-foreground"><code class="font-mono">qwen3.5:9b</code> defaults to <code class="font-mono">thinking=true</code> in Ollama 0.40.18, which can exhaust <code class="font-mono">num_predict=512</code> inside hidden reasoning tokens before emitting JSON. Passing <code class="font-mono">"think": false</code> plus <code class="font-mono">&lt;think&gt;...&lt;/think&gt;</code> stripping achieved 120/120 valid structured verdicts at <strong>45.19 tok/s</strong> mean on M5 Pro Metal GPU.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Page 10: Appendix A - Compute & Subagent Orchestration -->
-        <section id="page-10" data-page="9" class="book-page hidden space-y-6">
           <div class="border-b border-border pb-4">
             <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Appendix A · Compute &amp; Orchestration</p>
             <h1 class="font-serif text-3xl font-bold mt-1">Mac mini M5 Pro Setup &amp; Parallel Subagent Fan-Out</h1>
@@ -1484,14 +1405,14 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
             </div>
             <div class="rounded-xl border border-border bg-card p-4 space-y-2">
               <h3 class="font-serif text-lg font-semibold">Judge Decoding Throughput Engineering</h3>
-              <p class="text-xs text-muted-foreground">Removing 152k-vocab GBNF schema mask &amp; multi-slot contention accelerated Qwen2.5-7B.</p>
+              <p class="text-xs text-muted-foreground">End-to-end 120-item median <code class="font-mono">tok/s</code> (<code class="font-mono">Qwen2.5-7B</code> GGUF vs <code class="font-mono">Qwen3.5-9B</code> MLX) alongside GBNF vs JSON tuning.</p>
               <div id="chart-app-throughput" class="w-full h-72"></div>
             </div>
           </div>
         </section>
 
-        <!-- Page 11: Appendix B - Three Research Continuations -->
-        <section id="page-11" data-page="10" class="book-page hidden space-y-6">
+        <!-- Page 10: Appendix B - Three Research Continuations -->
+        <section id="page-10" data-page="9" class="book-page hidden space-y-6">
           <div class="border-b border-border pb-4">
             <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Appendix B · Future Research Agenda</p>
             <h1 class="font-serif text-3xl font-bold mt-1">Three Research Continuations Beyond Baselines</h1>
@@ -1593,6 +1514,139 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           </div>
         </section>
 
+        <!-- Page 11: Appendix C - Stronger Judge Experiment (Qwen3.5-9B MLX vs. Qwen2.5-7B) -->
+        <section id="page-11" data-page="10" class="book-page hidden space-y-6">
+          <div class="border-b border-border pb-4">
+            <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Appendix C · Stronger Cross-Family Judge Ablation</p>
+            <h1 class="font-serif text-3xl font-bold mt-1">Qwen3.5-9B (MLX) vs. Qwen2.5-7B Judge Comparison</h1>
+            <p class="text-sm text-muted-foreground mt-1">Holding all 120 <code class="font-mono text-xs">llama3.2:3b</code> outputs frozen, we compare <code class="font-mono text-xs">qwen2.5:7b</code> (GGUF <code class="font-mono text-xs">Q4_K_M</code>) against <code class="font-mono text-xs">qwen3.5:9b</code> (<code class="font-mono text-xs">9.7B</code>, <code class="font-mono text-xs">nvfp4</code>, Apple Silicon <code class="font-mono text-xs">MLX</code> runner, <code class="font-mono text-xs">think=False</code>) on human calibration, speed, median latency, token volume, and discordance.</p>
+          </div>
+
+          <!-- Explicit Bottom-Line Recommendation Banner -->
+          <div class="rounded-xl border-2 border-primary/40 bg-secondary/70 p-5 space-y-2">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="font-mono text-xs font-semibold uppercase tracking-wider text-primary">Bottom-Line Verdict</span>
+              <span class="rounded-full bg-primary text-primary-foreground px-3 py-0.5 font-mono text-xs font-semibold">Winner: qwen3.5:9b (MLX)</span>
+            </div>
+            <p class="font-serif text-lg font-semibold">YES — Use <code class="font-mono text-base">qwen3.5:9b</code> (MLX, <code class="font-mono text-base">think=False</code>) over <code class="font-mono text-base">qwen2.5:7b</code> as the default benchmark judge on Mac mini M5 Pro.</p>
+            <p class="text-xs text-muted-foreground leading-relaxed">
+              It is <strong>both more accurate and faster</strong>: exact match vs. blind human grades jumps from <strong>80.0% to 90.0%</strong> (<strong>+10.0 pp</strong> overall, <strong>+25.0 pp</strong> on correctness), severity-weighted agreement (<code class="font-mono">QWK</code>) climbs from <strong>0.535 (moderate) to 0.782 (strong)</strong>, and Apple Silicon <code class="font-mono">MLX</code> runs <strong>2.06× faster in median wall time</strong> (<strong>3.76 s</strong> vs <strong>7.75 s</strong> per item; <strong>36.86</strong> vs <strong>25.01 median tok/s</strong>) while writing <strong>1.90× richer rationales</strong> (<strong>119.5</strong> vs <strong>63.0 median tokens</strong>). Only keep <code class="font-mono">qwen2.5:7b</code> on RAM-limited laptops (&le;16 GB) where <code class="font-mono">4.68 GB</code> fits better than <code class="font-mono">7.64 GB</code>.
+            </p>
+          </div>
+
+          <div id="appc-kpis" class="grid grid-cols-2 lg:grid-cols-4 gap-4"></div>
+
+          <!-- Plain-English Guide to Calibration Metrics -->
+          <div class="rounded-xl border border-border bg-secondary/40 p-4 space-y-2 text-xs">
+            <h2 class="font-serif text-base font-semibold">How to Read These Judge Metrics (Plain English)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p class="font-semibold text-foreground">Exact Score Match vs. Human ("Pooled Exact")</p>
+                <p class="text-muted-foreground mt-0.5">Each of the <strong>20 blind test answers</strong> is graded by a human on <strong>3 separate 1–5 scales</strong> (<code class="font-mono">correctness</code>, <code class="font-mono">faithfulness</code>, <code class="font-mono">citation_accuracy</code>) = <strong>60 total human ratings</strong>. <strong>90.0%</strong> means the judge gave the <strong>exact same integer</strong> as the human on <strong>54 out of 60</strong> ratings (vs. <strong>48/60 = 80.0%</strong> for Qwen2.5-7B).</p>
+              </div>
+              <div>
+                <p class="font-semibold text-foreground">Severity-Weighted Agreement ("Weighted Kappa / QWK")</p>
+                <p class="text-muted-foreground mt-0.5">Raw % match treats every miss equally and can look high just because score <code class="font-mono">5</code> is common. <strong>QWK</strong> (<code class="font-mono">-1</code> to <code class="font-mono">+1</code>; <code class="font-mono">0</code> = random luck, <code class="font-mono">1</code> = human clone) adjusts for luck and punishes big misses quadratically—scoring <code class="font-mono">1</code> when human said <code class="font-mono">5</code> hurts <strong>16× more</strong> than <code class="font-mono">4 vs 5</code>. Rule of thumb: <code class="font-mono">0.40–0.60</code> moderate, <code class="font-mono">&gt;0.75</code> strong.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="rounded-xl border border-border bg-card p-4 space-y-2">
+              <h3 class="font-serif text-lg font-semibold">Speed, Median Time &amp; Output Tokens (<code class="font-mono text-sm">N=120</code>)</h3>
+              <p class="text-xs text-muted-foreground">Head-to-head on Mac mini M5 Pro: Qwen3.5-9B MLX is <strong>2.06× faster</strong> per item despite generating <strong>+56.5 more tokens</strong>.</p>
+              <div id="chart-appc-speed-tokens" class="w-full h-72"></div>
+            </div>
+            <div class="rounded-xl border border-border bg-card p-4 space-y-2">
+              <h3 class="font-serif text-lg font-semibold">Blind Human Agreement (<code class="font-mono text-sm">N=20</code> / 60 Ratings)</h3>
+              <p class="text-xs text-muted-foreground">Exact match vs. human rises +10.0 pp overall (95% CI [1.67%, 20.0%]) and +25.0 pp on correctness.</p>
+              <div id="chart-appc-judge-human" class="w-full h-72"></div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="rounded-xl border border-border bg-card p-4 space-y-2">
+              <h3 class="font-serif text-lg font-semibold">Slice Correctness Shift on Frozen Outputs</h3>
+              <p class="text-xs text-muted-foreground">Stricter zero-shot hallucination penalties (<code class="font-mono">-2.20</code> override) and higher RAG live credit (<code class="font-mono">+1.00</code>).</p>
+              <div id="chart-appc-slice-deltas" class="w-full h-72"></div>
+            </div>
+            <div class="rounded-xl border border-border bg-card p-4 space-y-2">
+              <h3 class="font-serif text-lg font-semibold">Inter-Judge Confusion Matrix (<code class="font-mono text-sm">N = 360</code> Pairs)</h3>
+              <p class="text-xs text-muted-foreground">86.11% exact agreement (90.0% within ±1, QWK = 0.7647) across all 120 baseline runs.</p>
+              <div id="chart-appc-interjudge-matrix" class="w-full h-72"></div>
+            </div>
+          </div>
+
+          <div id="appc-tabs-root" class="space-y-3">
+            <div class="tablist" role="tablist" aria-label="Stronger judge diagnostics">
+              <button type="button" role="tab" id="appctab-speed" aria-selected="true" data-panel="appcpanel-speed">Speed, Latency &amp; Token Comparison</button>
+              <button type="button" role="tab" id="appctab-discordant" aria-selected="false" data-panel="appcpanel-discordant">Discordant Items Explorer (34)</button>
+              <button type="button" role="tab" id="appctab-method" aria-selected="false" data-panel="appcpanel-method">When to Use Which &amp; MLX Notes</button>
+            </div>
+
+            <div role="tabpanel" id="appcpanel-speed" aria-labelledby="appctab-speed" tabindex="0">
+              <div class="tabpanel-box">
+                <div tabindex="0" role="region" aria-label="Judge speed and token comparison table" class="table-wrapper book-scroll">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Operational Metric</th>
+                        <th>Qwen2.5-7B (GGUF Q4_K_M)</th>
+                        <th>Qwen3.5-9B (MLX nvfp4)</th>
+                        <th>Difference (Qwen3.5 - Qwen2.5)</th>
+                      </tr>
+                    </thead>
+                    <tbody id="speed-tokens-tbody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div role="tabpanel" id="appcpanel-discordant" aria-labelledby="appctab-discordant" hidden="until-found">
+              <div class="tabpanel-box space-y-3">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <select id="discordant-filter" aria-label="Filter discordance category" class="rounded-md border border-border bg-card px-2.5 py-1.5 text-xs">
+                    <option value="all">All Categories (34)</option>
+                    <option value="rag_completeness_strictness">RAG Completeness Strictness (16)</option>
+                    <option value="false_abstention_fix">False Abstention Fix (8)</option>
+                    <option value="hedged_zero_shot_ungrounded">Hedged Zero-Shot Ungrounded (6)</option>
+                    <option value="rubric_boundary_shift">Rubric Boundary Shift (4)</option>
+                  </select>
+                  <input id="discordant-search" type="search" placeholder="Filter ID, prompt, or rationale..." class="rounded-md border border-border bg-card px-2.5 py-1.5 text-xs w-60">
+                </div>
+                <div tabindex="0" role="region" aria-label="Discordant judge items table" class="table-wrapper book-scroll">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Item</th>
+                        <th>Category</th>
+                        <th>Qwen2.5-7B (C/F/Cit)</th>
+                        <th>Qwen3.5-9B (C/F/Cit)</th>
+                        <th>Prompt &amp; Judge Rationales</th>
+                      </tr>
+                    </thead>
+                    <tbody id="discordant-tbody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div role="tabpanel" id="appcpanel-method" aria-labelledby="appctab-method" hidden="until-found">
+              <div class="tabpanel-box grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                <div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-2">
+                  <h4 class="font-serif text-base font-semibold">Decision Matrix: Qwen3.5-9B vs. Qwen2.5-7B</h4>
+                  <p class="text-muted-foreground"><strong>Use <code class="font-mono">qwen3.5:9b</code> (MLX)</strong> for all final benchmark runs, QLoRA fine-tune comparisons (Issue #2), and human-audit replacement: higher accuracy (+10.0 pp exact, 0.782 QWK) AND half the median wait time (3.76 s vs 7.75 s).</p>
+                  <p class="text-muted-foreground"><strong>Keep <code class="font-mono">qwen2.5:7b</code></strong> only on &le;16 GB RAM machines where a 7.64 GB model alongside generator/embeddings pressures unified memory.</p>
+                </div>
+                <div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-2">
+                  <h4 class="font-serif text-base font-semibold">MLX <code class="font-mono">think=False</code> Token Budget Protection</h4>
+                  <p class="text-muted-foreground"><code class="font-mono">qwen3.5:9b</code> defaults to <code class="font-mono">thinking=true</code> in Ollama 0.40.18, which can exhaust <code class="font-mono">num_predict=512</code> inside hidden reasoning tokens before emitting JSON. Passing <code class="font-mono">"think": false</code> plus <code class="font-mono">&lt;think&gt;...&lt;/think&gt;</code> stripping achieved 120/120 valid structured verdicts.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <!-- Bottom Book Page Navigation Footer -->
         <footer class="mt-8 pt-5 border-t border-border flex items-center justify-between gap-4">
           <button id="btn-prev-page" type="button" class="inline-flex items-center gap-2 rounded-lg border border-border bg-secondary px-4 py-2 text-sm font-medium hover:bg-accent disabled:opacity-40 disabled:pointer-events-none">
@@ -1620,9 +1674,9 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       { idx: 5, label: "Chapter 5", title: "Rubric & Judge Calibration", desc: "48.3% -> 80.0% exact agreement lift via CoT ordering and abstention rules." },
       { idx: 6, label: "Chapter 6", title: "Baselines & Run Inspector", desc: "120 Zero-Shot vs. RAG runs, latency distributions, and prompt-level drilldown." },
       { idx: 7, label: "Chapter 7", title: "Failure Analysis & QLoRA", desc: "Master results table, 3 failure modes, and QLoRA hybrid roadmap." },
-      { idx: 8, label: "Chapter 8", title: "Stronger Judge: Qwen3.5-9B", desc: "90.0% human agreement (+10.0pp), 360-pair concordance & 34 discordant cases." },
-      { idx: 9, label: "Appendix A", title: "Compute & Orchestration", desc: "Mac mini M5 Pro user-space Ollama setup, MLX runner, and parallel subagents." },
-      { idx: 10, label: "Appendix B", title: "3 Research Continuations", desc: "Confidence-gated QLoRA routing, temporal conflict DPO, and full-paper submodular RAG." },
+      { idx: 8, label: "Appendix A", title: "Compute & Orchestration", desc: "Mac mini M5 Pro user-space Ollama setup, MLX runner, and parallel subagents." },
+      { idx: 9, label: "Appendix B", title: "3 Research Continuations", desc: "Confidence-gated QLoRA routing, temporal conflict DPO, and full-paper submodular RAG." },
+      { idx: 10, label: "Appendix C", title: "Stronger Judge (Qwen3.5-9B)", desc: "Bottom-line verdict, QWK guide, speed/token comparison, and 34 discordant cases." },
     ];
 
     let currentPage = 0;
@@ -1946,77 +2000,6 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       }
 
       if (idx === 8) {
-        const jc = DATA.judge_comparison;
-        const hb = jc.human_calibration.base;
-        const hc = jc.human_calibration.cand;
-        const dims = ["Correctness", "Faithfulness", "Citation Acc", "Pooled Exact", "Pooled ±1", "Override"];
-        const baseY = [
-          hb.dimensions.correctness.exact_match_pct,
-          hb.dimensions.faithfulness.exact_match_pct,
-          hb.dimensions.citation_accuracy.exact_match_pct,
-          hb.pooled.exact_match_pct,
-          hb.pooled.within_1_pct,
-          hb.override_exact_pct,
-        ];
-        const candY = [
-          hc.dimensions.correctness.exact_match_pct,
-          hc.dimensions.faithfulness.exact_match_pct,
-          hc.dimensions.citation_accuracy.exact_match_pct,
-          hc.pooled.exact_match_pct,
-          hc.pooled.within_1_pct,
-          hc.override_exact_pct,
-        ];
-        Plotly.newPlot("chart-p9-judge-human", [
-          { x: dims, y: baseY, name: "Qwen2.5-7B (Baseline)", type: "bar", marker: { color: t.zsColor }, text: baseY.map((v) => `${v}%`), textposition: "outside" },
-          { x: dims, y: candY, name: "Qwen3.5-9B (MLX)", type: "bar", marker: { color: t.greenColor }, text: candY.map((v) => `${v}%`), textposition: "outside" },
-        ], baseLayout({
-          barmode: "group",
-          yaxis: { title: "Human Agreement (%)", range: [0, 118], gridcolor: t.gridColor },
-          legend: { orientation: "h", y: 1.15 },
-          shapes: [{ type: "line", x0: -0.5, x1: 5.5, y0: 70, y1: 70, line: { color: t.roseColor, width: 2, dash: "dash" } }],
-          annotations: [{ x: 4.5, y: 74, text: "70% Gate", showarrow: false, font: { color: t.roseColor, size: 11 } }],
-        }), PLOT_CONFIG);
-
-        const bs = jc.benchmark_shift;
-        const buckets = [
-          ["zero_shot", "static", "ZS · Static"],
-          ["zero_shot", "live", "ZS · Live"],
-          ["zero_shot", "temporal_override", "ZS · Override"],
-          ["zero_shot", "unanswerable", "ZS · Unansw."],
-          ["rag", "static", "RAG · Static"],
-          ["rag", "live", "RAG · Live"],
-          ["rag", "temporal_override", "RAG · Override"],
-          ["rag", "unanswerable", "RAG · Unansw."],
-        ];
-        Plotly.newPlot("chart-p9-slice-deltas", [
-          { x: buckets.map((b) => b[2]), y: buckets.map(([m, s]) => bs.base.by_mode_slice[m][s].correctness), name: "Qwen2.5-7B", type: "bar", marker: { color: t.zsColor } },
-          { x: buckets.map((b) => b[2]), y: buckets.map(([m, s]) => bs.cand.by_mode_slice[m][s].correctness), name: "Qwen3.5-9B (MLX)", type: "bar", marker: { color: t.ragColor } },
-        ], baseLayout({
-          barmode: "group",
-          margin: { t: 24, r: 16, b: 68, l: 48 },
-          xaxis: { tickangle: -25 },
-          yaxis: { title: "Mean Correctness (1–5)", range: [0, 5.6], gridcolor: t.gridColor },
-          legend: { orientation: "h", y: 1.15 },
-        }), PLOT_CONFIG);
-
-        const labels = ["1", "2", "3", "4", "5"];
-        const z = jc.inter_judge.confusion_matrix;
-        Plotly.newPlot("chart-p9-interjudge-matrix", [{
-          x: labels,
-          y: labels,
-          z: z,
-          type: "heatmap",
-          colorscale: resolvedDarkMode() ? "Cividis" : "Blues",
-          text: z.map((row) => row.map((v) => String(v))),
-          texttemplate: "%{text}",
-          showscale: false,
-        }], baseLayout({
-          xaxis: { title: "Qwen3.5-9B Score (MLX)", type: "category" },
-          yaxis: { title: "Qwen2.5-7B Score (Baseline)", type: "category" },
-        }), PLOT_CONFIG);
-      }
-
-      if (idx === 9) {
         const models = DATA.env.models;
         const llamaGb = models.find((m) => m.name.includes("llama3.2"))?.size_gb ?? 2.02;
         const qwen25Gb = models.find((m) => m.name.includes("qwen2.5"))?.size_gb ?? 4.68;
@@ -2036,20 +2019,23 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           legend: { orientation: "h", y: 1.22 },
         }), PLOT_CONFIG);
 
-        const q35Tok = DATA.judge_comparison.operational.cand_tok_per_s_mean ?? 45.19;
+        const op = DATA.judge_comparison.operational;
+        const q25Med = op.base?.tok_per_s_median ?? 25.01;
+        const q35Med = op.cand?.tok_per_s_median ?? 36.86;
+        const q35Mean = op.cand?.tok_per_s_mean ?? 45.19;
         Plotly.newPlot("chart-app-throughput", [{
-          x: ["Qwen2.5 GBNF (4-slot)", "Qwen2.5 GBNF (1-slot)", 'Qwen2.5 format="json"', "Qwen3.5-9B MLX (think=False)"],
-          y: [1.08, 2.53, 59.7, q35Tok],
+          x: ["Qwen2.5 GBNF (4-slot)", "Qwen2.5 120-item Median", "Qwen3.5 MLX Median", "Qwen3.5 MLX Mean", 'Qwen2.5 format="json" Peak'],
+          y: [1.08, q25Med, q35Med, q35Mean, 59.7],
           type: "bar",
-          marker: { color: [t.roseColor, t.accentColor, t.greenColor, t.ragColor] },
-          text: ["1.08 tok/s", "2.53 tok/s", "59.7 tok/s", `${q35Tok} tok/s`],
+          marker: { color: [t.roseColor, t.zsColor, t.ragColor, t.accentColor, t.greenColor] },
+          text: ["1.08", `${q25Med}`, `${q35Med}`, `${q35Mean}`, "59.7"],
           textposition: "outside",
         }], baseLayout({
           yaxis: { title: "Tokens / sec", range: [0, 68], gridcolor: t.gridColor },
         }), PLOT_CONFIG);
       }
 
-      if (idx === 10) {
+      if (idx === 9) {
         const axes = ["Static (20)", "Live (20)", "Override (10)", "Unansw. (10)", "Deep Table QA"];
         Plotly.newPlot("chart-appb-impact", [
           { x: axes, y: [1.80, 3.85, 4.20, 5.00, 1.50], name: "Baseline RAG (Measured)", type: "bar", marker: { color: t.zsColor } },
@@ -2083,6 +2069,107 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           xaxis: { title: "Added Inference Latency (ms / query)", range: [0, 115], gridcolor: t.gridColor },
           yaxis: { title: "Projected Overall Correctness Lift (+pts)", range: [0.1, 1.05], gridcolor: t.gridColor },
           margin: { t: 24, r: 24, b: 48, l: 56 },
+        }), PLOT_CONFIG);
+      }
+
+      if (idx === 10) {
+        const jc = DATA.judge_comparison;
+        const op = jc.operational;
+        const baseOp = op.base;
+        const candOp = op.cand;
+
+        Plotly.newPlot("chart-appc-speed-tokens", [
+          {
+            x: ["Median Speed<br>(tok/s)", "Mean Speed<br>(tok/s)", "Median Time<br>(sec / item)", "Median Length<br>(tokens / 10)"],
+            y: [baseOp.tok_per_s_median, baseOp.tok_per_s_mean, Number((baseOp.latency_median_ms / 1000).toFixed(2)), Number((baseOp.eval_tokens_median / 10).toFixed(1))],
+            name: "Qwen2.5-7B (GGUF)",
+            type: "bar",
+            marker: { color: t.zsColor },
+            text: [`${baseOp.tok_per_s_median}`, `${baseOp.tok_per_s_mean}`, `${(baseOp.latency_median_ms / 1000).toFixed(2)}s`, `${baseOp.eval_tokens_median} tok`],
+            textposition: "outside",
+          },
+          {
+            x: ["Median Speed<br>(tok/s)", "Mean Speed<br>(tok/s)", "Median Time<br>(sec / item)", "Median Length<br>(tokens / 10)"],
+            y: [candOp.tok_per_s_median, candOp.tok_per_s_mean, Number((candOp.latency_median_ms / 1000).toFixed(2)), Number((candOp.eval_tokens_median / 10).toFixed(1))],
+            name: "Qwen3.5-9B (MLX)",
+            type: "bar",
+            marker: { color: t.ragColor },
+            text: [`${candOp.tok_per_s_median}`, `${candOp.tok_per_s_mean}`, `${(candOp.latency_median_ms / 1000).toFixed(2)}s`, `${candOp.eval_tokens_median} tok`],
+            textposition: "outside",
+          },
+        ], baseLayout({
+          barmode: "group",
+          margin: { t: 24, r: 16, b: 56, l: 48 },
+          yaxis: { title: "Value (tok/s, sec, or tok÷10)", range: [0, 56], gridcolor: t.gridColor },
+          legend: { orientation: "h", y: 1.15 },
+        }), PLOT_CONFIG);
+
+        const hb = jc.human_calibration.base;
+        const hc = jc.human_calibration.cand;
+        const dims = ["Correctness", "Faithfulness", "Citation Acc", "Pooled Exact", "Pooled ±1", "Override"];
+        const baseY = [
+          hb.dimensions.correctness.exact_match_pct,
+          hb.dimensions.faithfulness.exact_match_pct,
+          hb.dimensions.citation_accuracy.exact_match_pct,
+          hb.pooled.exact_match_pct,
+          hb.pooled.within_1_pct,
+          hb.override_exact_pct,
+        ];
+        const candY = [
+          hc.dimensions.correctness.exact_match_pct,
+          hc.dimensions.faithfulness.exact_match_pct,
+          hc.dimensions.citation_accuracy.exact_match_pct,
+          hc.pooled.exact_match_pct,
+          hc.pooled.within_1_pct,
+          hc.override_exact_pct,
+        ];
+        Plotly.newPlot("chart-appc-judge-human", [
+          { x: dims, y: baseY, name: "Qwen2.5-7B (Baseline)", type: "bar", marker: { color: t.zsColor }, text: baseY.map((v) => `${v}%`), textposition: "outside" },
+          { x: dims, y: candY, name: "Qwen3.5-9B (MLX)", type: "bar", marker: { color: t.greenColor }, text: candY.map((v) => `${v}%`), textposition: "outside" },
+        ], baseLayout({
+          barmode: "group",
+          yaxis: { title: "Human Agreement (%)", range: [0, 118], gridcolor: t.gridColor },
+          legend: { orientation: "h", y: 1.15 },
+          shapes: [{ type: "line", x0: -0.5, x1: 5.5, y0: 70, y1: 70, line: { color: t.roseColor, width: 2, dash: "dash" } }],
+          annotations: [{ x: 4.5, y: 74, text: "70% Gate", showarrow: false, font: { color: t.roseColor, size: 11 } }],
+        }), PLOT_CONFIG);
+
+        const bs = jc.benchmark_shift;
+        const buckets = [
+          ["zero_shot", "static", "ZS · Static"],
+          ["zero_shot", "live", "ZS · Live"],
+          ["zero_shot", "temporal_override", "ZS · Override"],
+          ["zero_shot", "unanswerable", "ZS · Unansw."],
+          ["rag", "static", "RAG · Static"],
+          ["rag", "live", "RAG · Live"],
+          ["rag", "temporal_override", "RAG · Override"],
+          ["rag", "unanswerable", "RAG · Unansw."],
+        ];
+        Plotly.newPlot("chart-appc-slice-deltas", [
+          { x: buckets.map((b) => b[2]), y: buckets.map(([m, s]) => bs.base.by_mode_slice[m][s].correctness), name: "Qwen2.5-7B", type: "bar", marker: { color: t.zsColor } },
+          { x: buckets.map((b) => b[2]), y: buckets.map(([m, s]) => bs.cand.by_mode_slice[m][s].correctness), name: "Qwen3.5-9B (MLX)", type: "bar", marker: { color: t.ragColor } },
+        ], baseLayout({
+          barmode: "group",
+          margin: { t: 24, r: 16, b: 68, l: 48 },
+          xaxis: { tickangle: -25 },
+          yaxis: { title: "Mean Correctness (1–5)", range: [0, 5.6], gridcolor: t.gridColor },
+          legend: { orientation: "h", y: 1.15 },
+        }), PLOT_CONFIG);
+
+        const labels = ["1", "2", "3", "4", "5"];
+        const z = jc.inter_judge.confusion_matrix;
+        Plotly.newPlot("chart-appc-interjudge-matrix", [{
+          x: labels,
+          y: labels,
+          z: z,
+          type: "heatmap",
+          colorscale: resolvedDarkMode() ? "Cividis" : "Blues",
+          text: z.map((row) => row.map((v) => String(v))),
+          texttemplate: "%{text}",
+          showscale: false,
+        }], baseLayout({
+          xaxis: { title: "Qwen3.5-9B Score (MLX)", type: "category" },
+          yaxis: { title: "Qwen2.5-7B Score (Baseline)", type: "category" },
         }), PLOT_CONFIG);
       }
     }
@@ -2229,17 +2316,18 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         )
         .join("");
 
-      // Page 9 KPIs (Chapter 8: Stronger Judge)
+      // Page 11 KPIs (Appendix C: Stronger Judge)
       const op = jc.operational;
-      const inter = jc.inter_judge;
-      const ci = jc.human_calibration.bootstrap_ci.delta_exact_ci95;
-      const p9Kpis = [
-        { k: "Human Pooled Exact", v: `${candPooled.exact_match_pct}%`, s: `+${jc.human_calibration.delta.pooled_exact_match_pct}pp vs ${basePooled.exact_match_pct}% (95% CI [${ci[0]}%, ${ci[1]}%])` },
-        { k: "Human Weighted Kappa", v: `${candPooled.kappa_w}`, s: `vs ${basePooled.kappa_w} Qwen2.5-7B · MAE ${candPooled.mae} vs ${basePooled.mae}` },
-        { k: "Inter-Judge Agreement", v: `${inter.pooled.exact_match_pct}%`, s: `${inter.pooled.within_1_pct}% within-±1 · QWK ${inter.pooled.kappa_w} · N=${inter.pooled.n}` },
-        { k: "M5 Pro MLX Speed", v: `${op.cand_tok_per_s_mean} tok/s`, s: `${(op.cand_latency_median_ms / 1000).toFixed(2)}s median · ${op.cand_total_eval_tokens.toLocaleString()} tokens` },
+      const baseOp = op.base;
+      const candOp = op.cand;
+      const dOp = op.delta;
+      const appcKpis = [
+        { k: "Exact Score Match vs. Human", v: `${candPooled.exact_match_pct}%`, s: `54/60 ratings exact vs ${basePooled.exact_match_pct}% (48/60) · +${jc.human_calibration.delta.pooled_exact_match_pct} pp` },
+        { k: "Severity-Weighted (QWK)", v: `${candPooled.kappa_w} Strong`, s: `vs ${basePooled.kappa_w} Moderate (0=luck, 1=human) · MAE ${candPooled.mae} vs ${basePooled.mae}` },
+        { k: "Median Judge Speed & Time", v: `${candOp.tok_per_s_median} tok/s`, s: `${(candOp.latency_median_ms / 1000).toFixed(2)}s vs ${(baseOp.latency_median_ms / 1000).toFixed(2)}s (${dOp.latency_ratio_median}× faster)` },
+        { k: "Median Verdict Length", v: `${candOp.eval_tokens_median} tok`, s: `vs ${baseOp.eval_tokens_median} tok (${dOp.eval_tokens_median > 0 ? "+" : ""}${dOp.eval_tokens_median} tokens/item)` },
       ];
-      document.getElementById("p9-kpis").innerHTML = p9Kpis
+      document.getElementById("appc-kpis").innerHTML = appcKpis
         .map(
           (item) => `<div class="rounded-xl border border-border bg-card p-4 shadow-sm"><p class="font-mono text-[11px] text-muted-foreground">${item.k}</p><p class="font-serif text-2xl font-bold mt-1">${item.v}</p><p class="text-xs text-muted-foreground mt-1">${item.s}</p></div>`
         )
@@ -2344,8 +2432,29 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         })
         .join("");
 
-      // Page 9 Tabs & Discordant Items Explorer
-      initTabs("p9-tabs-root");
+      // Page 11 Tabs: Speed Table & Discordant Items Explorer
+      initTabs("appc-tabs-root");
+      const speedRows = [
+        ["Median Throughput (tok/s)", `${baseOp.tok_per_s_median} tok/s`, `${candOp.tok_per_s_median} tok/s`, `+${dOp.tok_per_s_median} tok/s (faster)`],
+        ["Mean Throughput (tok/s)", `${baseOp.tok_per_s_mean} tok/s`, `${candOp.tok_per_s_mean} tok/s`, `+${dOp.tok_per_s_mean} tok/s (faster)`],
+        ["Median Time / Item", `${(baseOp.latency_median_ms / 1000).toFixed(2)} s (${baseOp.latency_median_ms} ms)`, `${(candOp.latency_median_ms / 1000).toFixed(2)} s (${candOp.latency_median_ms} ms)`, `${(dOp.latency_median_ms / 1000).toFixed(2)} s (${dOp.latency_ratio_median}× faster)`],
+        ["Mean Time / Item", `${(baseOp.latency_mean_ms / 1000).toFixed(2)} s`, `${(candOp.latency_mean_ms / 1000).toFixed(2)} s`, `${(dOp.latency_mean_ms / 1000).toFixed(2)} s`],
+        ["Total 120-Item Wall Time", `${baseOp.total_time_s} s`, `${candOp.total_time_s} s`, `${(candOp.total_time_s - baseOp.total_time_s).toFixed(2)} s saved`],
+        ["Median Output Tokens / Item", `${baseOp.eval_tokens_median} tokens`, `${candOp.eval_tokens_median} tokens`, `+${dOp.eval_tokens_median} tokens (1.90× richer)`],
+        ["Mean Output Tokens / Item", `${baseOp.eval_tokens_mean} tokens`, `${candOp.eval_tokens_mean} tokens`, `+${dOp.eval_tokens_mean} tokens`],
+        ["Total Output Tokens (120 Items)", `${baseOp.total_eval_tokens.toLocaleString()}`, `${candOp.total_eval_tokens.toLocaleString()}`, `+${(candOp.total_eval_tokens - baseOp.total_eval_tokens).toLocaleString()} tokens`],
+      ];
+      document.getElementById("speed-tokens-tbody").innerHTML = speedRows
+        .map(
+          ([metric, bVal, cVal, diffVal]) => `<tr>
+            <th class="font-mono text-xs">${escapeHtml(metric)}</th>
+            <td data-label="Qwen2.5-7B" class="font-mono text-xs">${escapeHtml(bVal)}</td>
+            <td data-label="Qwen3.5-9B" class="font-mono text-xs font-semibold">${escapeHtml(cVal)}</td>
+            <td data-label="Difference" class="font-mono text-xs">${escapeHtml(diffVal)}</td>
+          </tr>`
+        )
+        .join("");
+
       function renderDiscordantTable() {
         const cat = document.getElementById("discordant-filter").value;
         const q = document.getElementById("discordant-search").value.trim().toLowerCase();

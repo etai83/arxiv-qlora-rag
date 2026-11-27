@@ -1723,6 +1723,37 @@
     ]
   },
   "operational": {
+    "base": {
+      "n_measured": 120,
+      "latency_mean_ms": 16442.07,
+      "latency_median_ms": 7754.56,
+      "total_time_s": 1973.05,
+      "tok_per_s_mean": 23.44,
+      "tok_per_s_median": 25.01,
+      "eval_tokens_mean": 67.92,
+      "eval_tokens_median": 63.0,
+      "total_eval_tokens": 8150
+    },
+    "cand": {
+      "n_measured": 120,
+      "latency_mean_ms": 8820.11,
+      "latency_median_ms": 3758.85,
+      "total_time_s": 1058.41,
+      "tok_per_s_mean": 45.19,
+      "tok_per_s_median": 36.86,
+      "eval_tokens_mean": 122.83,
+      "eval_tokens_median": 119.5,
+      "total_eval_tokens": 14740
+    },
+    "delta": {
+      "tok_per_s_median": 11.85,
+      "tok_per_s_mean": 21.75,
+      "latency_median_ms": -3995.71,
+      "latency_mean_ms": -7621.96,
+      "latency_ratio_median": 0.48,
+      "eval_tokens_median": 56.5,
+      "eval_tokens_mean": 54.91
+    },
     "cand_latency_mean_ms": 8820.11,
     "cand_latency_median_ms": 3758.85,
     "cand_total_time_s": 1058.41,
@@ -1866,5 +1897,9 @@
         }
       }
     }
+  },
+  "recommendation": {
+    "winner": "qwen3.5:9b",
+    "verdict_headline": "YES — Use `qwen3.5:9b` as the default benchmark judge: it raises exact human agreement by +10.0% (QWK 0.5349 -> 0.7823, correctness +25.0%), with faster median latency (-3995.71 ms/item, +11.85 tok/s, +56.5 tokens/item) at +2.96 GB model size (7.64 GB vs 4.68 GB)."
   }
 }

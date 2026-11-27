@@ -8,7 +8,7 @@ Leakage-safe temporal RAG benchmark on arXiv `cs.CL` running locally on an **App
 
 > [!IMPORTANT]
 > **Best way to review this experiment and all results:** open **[`experiment_book.html`](experiment_book.html)**.
-> It compiles the full methodology, multi-agent orchestration, slice definitions with real positive/negative failure transcripts, all 21 interactive Plotly charts, judge-vs-human audit tables, and 3 QLoRA & RAG research continuations into a single self-contained, Tailwind + shadcn styled book.
+> It compiles the full methodology, multi-agent orchestration, slice definitions with real positive/negative failure transcripts, all 22 interactive Plotly charts, judge-vs-human audit tables, and 3 QLoRA & RAG research continuations into a single self-contained, Tailwind + shadcn styled book.
 
 ### Ways to Open
 
@@ -34,9 +34,9 @@ Leakage-safe temporal RAG benchmark on arXiv `cs.CL` running locally on an **App
 | **Page 6** | **Ch. 5: Evaluation Rubric & Calibration** | Cross-family judge schema and calibration rules for Qwen2.5-7B and Qwen3.5-9B |
 | **Page 7** | **Ch. 6: Baselines & Judge Agreement** | Zero-shot vs RAG (`k=4`) scores, latency breakdown, 20-sample blind human agreement |
 | **Page 8** | **Ch. 7: Failure Modes & QLoRA Outlook** | Citation leakage, override resistance, and QLoRA mitigation targets |
-| **Page 9** | **Ch. 8: Stronger Judge (Qwen3.5-9B)** | MLX `nvfp4` evaluation calibration, human agreement lift (`80.0% -> 90.0%`), and discordance analysis |
-| **Page 10** | **Appendix A: Hardware & Sub-Agent Trace** | Mac mini M5 Pro runtime telemetry, Ollama throughput, and 9-agent execution trace |
-| **Page 11** | **Appendix B: 3 Future Research Directions** | Temporal DPO/ORPO, Abstention-Calibrated QLoRA, and Cross-Family Judge Distillation |
+| **Page 9** | **Appendix A: Hardware & Sub-Agent Trace** | Mac mini M5 Pro runtime telemetry, Ollama throughput, and 9-agent execution trace |
+| **Page 10** | **Appendix B: 3 Future Research Directions** | Temporal DPO/ORPO, Abstention-Calibrated QLoRA, and Cross-Family Judge Distillation |
+| **Page 11** | **Appendix C: Stronger Judge (Qwen3.5-9B vs. Qwen2.5-7B)** | MLX `nvfp4` evaluation calibration, human agreement lift (`80.0% -> 90.0%`), and discordance analysis |
 
 ---
 
@@ -96,6 +96,13 @@ Leakage-safe temporal RAG benchmark on arXiv `cs.CL` running locally on an **App
 
 To test evaluation robustness, we benchmarked a stronger candidate LLM-as-a-Judge: **`qwen3.5:9b`** (`9.7B` parameters, `nvfp4`, native Apple Silicon `MLX` runner on Ollama with `think=False`, `temperature=0.0`, `num_ctx=4096`) against the baseline **`qwen2.5:7b`** (`7.6B`, `Q4_K_M` GGUF).
 
+> [!IMPORTANT]
+> **Bottom-Line Verdict**: **YES — Use `qwen3.5:9b` (MLX `nvfp4`, `think=False`) over `qwen2.5:7b` (GGUF `Q4_K_M`)** as the default benchmark judge on Apple Silicon (48 GB M5 Pro). It improves pooled exact agreement vs. humans by **+10.0 pp** (`80.0% -> 90.0%`), correctness agreement by **+25.0 pp** (`60.0% -> 85.0%`), and severity-weighted agreement (Quadratic Weighted Kappa $\kappa_w$) from **0.5349 (moderate) to 0.7823 (strong)**, **AND** runs **2.06× faster per item** (`3,758.85 ms` vs `7,754.56 ms` median, `-3,995.71 ms` saved per item; `36.86` vs `25.01` median `tok/s`) even while generating nearly `2×` longer rationales (`119.5` vs `63.0` median tokens/item, `+56.5` tokens). Keep `qwen2.5:7b` only on RAM-constrained machines (`<= 16 GB`) where `4.68 GB` fits more comfortably than `7.64 GB`.
+
+### How to Read Pooled Exact % & Weighted Kappa ($\kappa_w$)
+- **Exact Score Match vs. Human (Pooled Exact %)**: Each of the 20 blind audit items is graded on 3 ordinal 1–5 dimensions (`correctness`, `faithfulness`, `citation_accuracy`), giving `20 × 3 = 60` total human ratings. `90.0%` means `54 / 60` exact matches (`80.0%` = `48 / 60`).
+- **Severity-Weighted Agreement / Quadratic Weighted Kappa ($\kappa_w$)**: On `-1` to `+1` (`0` = random chance, `1` = perfect human match), QWK adjusts for chance agreement (since `5` is common) and penalizes large errors quadratically — mistaking a `1` for a `5` hurts **$16\times$ more** than `4 vs 5`. `0.5349` = moderate agreement; `0.7823` = strong agreement (`0.8757` on `correctness`).
+
 ### Human Calibration Comparison (`N=20` Stratified Blind Items / `60` Ordinal Pairs)
 | Dimension | Baseline (`qwen2.5:7b`) Exact % | Candidate (`qwen3.5:9b`) Exact % | Delta | Baseline $\kappa_w$ | Candidate $\kappa_w$ | Candidate MAE |
 |---|---:|---:|---:|---:|---:|---:|
@@ -114,8 +121,16 @@ To test evaluation robustness, we benchmarked a stronger candidate LLM-as-a-Judg
 - **Pooled Metrics**: Exact Match: **`86.11%`**, Within-1: **`90.0%`**, Bucket Match: **`89.72%`**, Pooled $\kappa_w$: **`0.7647`**, Mean Signed Diff: **`-0.122`**.
 - **Discordance (`34/120` items)**: `rag_completeness_strictness` (`16`), `false_abstention_fix` (`8`), `hedged_zero_shot_ungrounded` (`6`), `rubric_boundary_shift` (`4`).
 
-### Operational Throughput (Mac mini M5 Pro 48 GB)
-- `qwen3.5:9b` (MLX `nvfp4`, `think=False`): **`45.19 tok/s` mean** (`36.86 tok/s` median), `8820.11 ms` mean latency, `1058.41s` total across `14,740` eval tokens.
+### Speed, Median Latency & Token Volume Comparison (`N=120` Sequential Warm Runs)
+| Metric | Baseline (`qwen2.5:7b` GGUF `Q4_K_M`) | Candidate (`qwen3.5:9b` MLX `nvfp4`) | Delta / Comparison |
+|---|---:|---:|---:|
+| **Median Throughput (`tok/s`)** | 25.01 | **36.86** | **+11.85 tok/s** (`1.47×`) |
+| **Mean Throughput (`tok/s`)** | 23.44 | **45.19** | **+21.75 tok/s** (`1.93×`) |
+| **Median Latency / Item** | 7,754.56 ms (`7.75s`) | **3,758.85 ms** (`3.76s`) | **-3,995.71 ms** (`2.06×` faster) |
+| **Mean Latency / Item** | 16,442.07 ms (`1,973.05s` total) | **8,820.11 ms** (`1,058.41s` total) | **-7,621.96 ms** (`1.86×` faster) |
+| **Median Output Tokens / Item** | 63.0 tokens | **119.5 tokens** | **+56.5 tokens** (`1.90×` longer rationale) |
+| **Mean Output Tokens / Item** | 67.92 tokens (`8,150` total) | **122.83 tokens** (`14,740` total) | **+54.91 tokens** |
+| **Model Footprint / Size** | **4.68 GB** | 7.64 GB | +2.96 GB |
 
 ---
 
@@ -155,7 +170,7 @@ src/
 tests/
   test_pipeline.py      # Corpus, retrieval, golden-set, blind-sample, agreement tests
 main.py                 # Unified CLI entrypoint
-experiment_book.html    # Self-contained 11-page interactive book (Chapters 1-8 + Appendices A-B)
+experiment_book.html    # Self-contained 11-page interactive book (Chapters 1-7 + Appendices A-C)
 notes.md                # Error analysis & QLoRA fine-tuning expectations
 ```
 

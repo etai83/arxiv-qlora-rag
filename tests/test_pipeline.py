@@ -264,16 +264,24 @@ def test_build_experiment_book(tmp_path: Path) -> None:
     for cid in (
         "chart-p2-taxonomy",
         "chart-p2-archetypes",
-        "chart-p9-judge-human",
-        "chart-p9-slice-deltas",
-        "chart-p9-interjudge-matrix",
+        "chart-appc-judge-human",
+        "chart-appc-slice-deltas",
+        "chart-appc-speed-tokens",
+        "chart-appc-interjudge-matrix",
         "chart-app-memory",
         "chart-app-throughput",
         "chart-appb-impact",
         "chart-appb-pareto",
     ):
         assert cid in html
-    for marker in ("Positive Example", "Negative Example", "Dense Retriever Agent", "agents-roster-caption"):
+    for marker in (
+        "Positive Example",
+        "Negative Example",
+        "Dense Retriever Agent",
+        "agents-roster-caption",
+        "Bottom-Line Verdict",
+        "How to Read These Judge Metrics",
+    ):
         assert marker in html
     for page_idx in range(11):
         assert f'data-page="{page_idx}"' in html
@@ -438,6 +446,12 @@ def test_compare_judges_synthetic(tmp_path: Path) -> None:
     assert len(report["human_calibration"]["cand"]["confusion_matrix"]) == 5
     assert len(report["inter_judge"]["confusion_matrix"]) == 5
     assert "discordance_counts_by_category" in report["inter_judge"]
+    assert report["operational"]["base"]["latency_median_ms"] == 100.0
+    assert report["operational"]["cand"]["latency_median_ms"] == 90.0
+    assert report["operational"]["delta"]["latency_median_ms"] == -10.0
+    assert report["operational"]["delta"]["eval_tokens_median"] == -10.0
+    assert report["operational"]["delta"]["tok_per_s_median"] == 10.0
+    assert report["recommendation"]["winner"] == "qwen3.5:9b-mlx"
 
 
 def test_write_report_custom_names(tmp_path: Path) -> None:

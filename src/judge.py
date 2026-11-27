@@ -254,6 +254,28 @@ def run_judge(
         scored_rows: list[dict[str, Any]] = []
         total = len(records)
         with httpx.Client(timeout=180.0) as client:
+            if records:
+                effective_think = default_think_setting(model) if think is None else think
+                try:
+                    ollama_chat(
+                        client,
+                        model=model,
+                        messages=[{"role": "user", "content": "Reply ok."}],
+                        options={"num_predict": 8},
+                        think=effective_think,
+                    )
+                except httpx.HTTPStatusError as exc:
+                    if exc.response.status_code == 400 and effective_think is not None:
+                        ollama_chat(
+                            client,
+                            model=model,
+                            messages=[{"role": "user", "content": "Reply ok."}],
+                            options={"num_predict": 8},
+                            think=None,
+                        )
+                except Exception:
+                    pass
+
             for idx, rec in enumerate(records, start=1):
                 verdict, meta = judge_record_with_meta(client, rec, model=model, think=think)
                 scored_rows.append({**rec, **verdict.model_dump(), **meta})

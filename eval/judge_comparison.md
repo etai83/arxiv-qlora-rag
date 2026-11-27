@@ -3,7 +3,15 @@
 - **Base Judge**: `qwen2.5:7b`
 - **Candidate Judge**: `qwen3.5:9b`
 
+## Executive Bottom Line: Which Judge Should You Use?
+
+YES — Use `qwen3.5:9b` as the default benchmark judge: it raises exact human agreement by +10.0% (QWK 0.5349 -> 0.7823, correctness +25.0%), with faster median latency (-3995.71 ms/item, +11.85 tok/s, +56.5 tokens/item) at +2.96 GB model size (7.64 GB vs 4.68 GB).
+
 ## 1. Human Calibration Comparison (N=20)
+
+### How to Read Calibration Metrics
+- **Pooled Exact Match %**: Across 20 calibration items × 3 rubric dimensions (correctness, faithfulness, citation_accuracy = 60 total ratings), the percentage of exact agreement between the LLM judge and human gold annotations.
+- **Quadratic Weighted Kappa (QWK / $\\kappa_w$)**: Measures ordinal agreement on a `-1` to `1` scale, adjusting for chance agreement and penalizing larger rating discrepancies quadratically (e.g. a rating error of `1 vs 5` is 16x harsher than `4 vs 5`). Benchmarks: `0.40–0.60` moderate agreement, `>0.75` strong agreement.
 
 | Dimension | qwen2.5:7b Exact % | qwen3.5:9b Exact % | Delta Exact % | 95% CI (Delta Exact) | qwen2.5:7b Kappa | qwen3.5:9b Kappa | qwen2.5:7b MAE | qwen3.5:9b MAE |
 |---|---:|---:|---:|---|---:|---:|---:|---:|
@@ -45,7 +53,7 @@
 
 ## 3. Inter-Judge Agreement & Discordance (N=120)
 
-| Dimension | Exact Match % | Within-1 % | Bucket Match % | QWK ($\kappa_w$) | MAE | Mean Signed Diff (Cand - Base) |
+| Dimension | Exact Match % | Within-1 % | Bucket Match % | QWK (κ_w) | MAE | Mean Signed Diff (Cand - Base) |
 |---|---:|---:|---:|---:|---:|---:|
 | `correctness` | 76.67% | 79.17% | 78.33% | 0.6951 | 0.667 | -0.117 |
 | `faithfulness` | 85.0% | 93.33% | 93.33% | 0.1816 | 0.317 | -0.167 |
@@ -55,16 +63,20 @@
 ### Discordance Category Counts
 | Category | Count | Description |
 |---|---:|---|
-| `hedged_zero_shot_ungrounded` | 6 | Zero-shot ungrounded answers penalized by base but missed by candidate |
+| `hedged_zero_shot_ungrounded` | 6 | Zero-shot hedged answers making ungrounded claims caught by candidate (faithfulness=1) vs missed by base |
 | `false_abstention_fix` | 8 | Valid answerable questions incorrectly abstained by base, correctly resolved by candidate |
 | `rag_completeness_strictness` | 16 | RAG correctness rubric strictness variations |
 | `rubric_boundary_shift` | 4 | General rating boundary shifts (e.g. score 4 vs 5) |
 
-## 4. Operational Throughput & Latency
+## 4. Speed, Median Latency & Token Volume Comparison
 
-| Metric | Base (qwen2.5:7b) | Candidate (qwen3.5:9b) |
-|---|---:|---:|
-| **Throughput (tok/s)** | `59.7` (documented) | `45.19` (mean) / `36.86` (median) |
-| **Latency per Item (ms)** | - | `8820.11` (mean) / `3758.85` (median) |
-| **Total Evaluation Time (s)** | - | `1058.41s` |
-| **Total Evaluation Tokens** | - | `14740` |
+| Metric | Base (qwen2.5:7b) | Candidate (qwen3.5:9b) | Difference (Cand - Base) |
+|---|---:|---:|---:|
+| **Median Throughput (tok/s)** | `25.01` | `36.86` | `+11.85` tok/s |
+| **Mean Throughput (tok/s)** | `23.44` | `45.19` | `+21.75` tok/s |
+| **Median Latency / Item (ms)** | `7754.56` | `3758.85` | `-3995.71 ms` (`0.48x`) |
+| **Mean Latency / Item (ms)** | `16442.07` | `8820.11` | `-7621.96 ms` |
+| **Total Run Time (s)** | `1973.05s` | `1058.41s` | - |
+| **Median Output Tokens / Item** | `63.0` | `119.5` | `+56.5` tokens |
+| **Mean Output Tokens / Item** | `67.92` | `122.83` | `+54.91` tokens |
+| **Total Output Tokens** | `8150` | `14740` | - |

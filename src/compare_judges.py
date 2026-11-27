@@ -21,6 +21,25 @@ from src.metrics import (
 )
 
 
+def _telemetry_stats(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    """Extract telemetry stats for latency, throughput, and eval tokens from judge rows."""
+    latencies = [float(r["judge_latency_ms"]) for r in rows if r.get("judge_latency_ms") is not None]
+    tok_speeds = [float(r["judge_tok_per_s"]) for r in rows if r.get("judge_tok_per_s") is not None]
+    eval_tokens = [int(r["judge_eval_tokens"]) for r in rows if r.get("judge_eval_tokens") is not None]
+
+    return {
+        "n_measured": len(latencies),
+        "latency_mean_ms": round(statistics.fmean(latencies), 2) if latencies else None,
+        "latency_median_ms": round(statistics.median(latencies), 2) if latencies else None,
+        "total_time_s": round(sum(latencies) / 1000.0, 2) if latencies else None,
+        "tok_per_s_mean": round(statistics.fmean(tok_speeds), 2) if tok_speeds else None,
+        "tok_per_s_median": round(statistics.median(tok_speeds), 2) if tok_speeds else None,
+        "eval_tokens_mean": round(statistics.fmean(eval_tokens), 2) if eval_tokens else None,
+        "eval_tokens_median": round(statistics.median(eval_tokens), 1) if eval_tokens else None,
+        "total_eval_tokens": sum(eval_tokens) if eval_tokens else None,
+    }
+
+
 def quadratic_weighted_kappa(
     pairs: list[tuple[int, int]],
     min_rating: int = 1,
@@ -431,16 +450,29 @@ def compare_judges(
     }
 
     # 4. Operational Throughput & Latency
-    latencies = [float(r["judge_latency_ms"]) for r in cand_rows if r.get("judge_latency_ms") is not None]
-    tok_speeds = [float(r["judge_tok_per_s"]) for r in cand_rows if r.get("judge_tok_per_s") is not None]
-    eval_tokens = [int(r["judge_eval_tokens"]) for r in cand_rows if r.get("judge_eval_tokens") is not None]
+    base_stats = _telemetry_stats(base_rows)
+    cand_stats = _telemetry_stats(cand_rows)
 
-    cand_latency_mean = round(statistics.fmean(latencies), 2) if latencies else None
-    cand_latency_median = round(statistics.median(latencies), 2) if latencies else None
-    cand_total_time_s = round(sum(latencies) / 1000.0, 2) if latencies else None
-    cand_tok_mean = round(statistics.fmean(tok_speeds), 2) if tok_speeds else None
-    cand_tok_median = round(statistics.median(tok_speeds), 2) if tok_speeds else None
-    cand_total_tokens = sum(eval_tokens) if eval_tokens else None
+    def _diff(cand_val: float | int | None, base_val: float | int | None, digits: int = 2) -> float | None:
+        if cand_val is None or base_val is None:
+            return None
+        return round(float(cand_val) - float(base_val), digits)
+
+    base_lat_med = base_stats.get("latency_median_ms")
+    cand_lat_med = cand_stats.get("latency_median_ms")
+    delta_op = {
+        "tok_per_s_median": _diff(cand_stats.get("tok_per_s_median"), base_stats.get("tok_per_s_median"), 2),
+        "tok_per_s_mean": _diff(cand_stats.get("tok_per_s_mean"), base_stats.get("tok_per_s_mean"), 2),
+        "latency_median_ms": _diff(cand_lat_med, base_lat_med, 2),
+        "latency_mean_ms": _diff(cand_stats.get("latency_mean_ms"), base_stats.get("latency_mean_ms"), 2),
+        "latency_ratio_median": (
+            round(float(cand_lat_med) / float(base_lat_med), 2)
+            if cand_lat_med is not None and base_lat_med is not None and base_lat_med > 0
+            else None
+        ),
+        "eval_tokens_median": _diff(cand_stats.get("eval_tokens_median"), base_stats.get("eval_tokens_median"), 1),
+        "eval_tokens_mean": _diff(cand_stats.get("eval_tokens_mean"), base_stats.get("eval_tokens_mean"), 2),
+    }
 
     models_meta: dict[str, Any] = {}
     manifest_p = Path(env_manifest_path) if env_manifest_path else None
@@ -451,14 +483,40 @@ def compare_judges(
             pass
 
     operational = {
-        "cand_latency_mean_ms": cand_latency_mean,
-        "cand_latency_median_ms": cand_latency_median,
-        "cand_total_time_s": cand_total_time_s,
-        "cand_tok_per_s_mean": cand_tok_mean,
-        "cand_tok_per_s_median": cand_tok_median,
-        "cand_total_eval_tokens": cand_total_tokens,
+        "base": base_stats,
+        "cand": cand_stats,
+        "delta": delta_op,
+        "cand_latency_mean_ms": cand_stats.get("latency_mean_ms"),
+        "cand_latency_median_ms": cand_stats.get("latency_median_ms"),
+        "cand_total_time_s": cand_stats.get("total_time_s"),
+        "cand_tok_per_s_mean": cand_stats.get("tok_per_s_mean"),
+        "cand_tok_per_s_median": cand_stats.get("tok_per_s_median"),
+        "cand_total_eval_tokens": cand_stats.get("total_eval_tokens"),
         "base_documented_tok_per_s": 59.7,
         "models_meta": models_meta,
+    }
+
+    pooled_exact_delta = delta_hum.get("pooled_exact_match_pct", 0) or 0
+    winner = cand_label if pooled_exact_delta > 0 else base_label
+    lat_delta = delta_op.get("latency_median_ms")
+    tps_delta = delta_op.get("tok_per_s_median")
+    tok_delta = delta_op.get("eval_tokens_median")
+    speed_note = (
+        f"faster median latency ({lat_delta:+} ms/item, {tps_delta:+} tok/s, {tok_delta:+} tokens/item) "
+        if lat_delta is not None and lat_delta < 0
+        else "moderate latency trade-off "
+    )
+    verdict_headline = (
+        f"YES — Use `{cand_label}` as the default benchmark judge: it raises exact human agreement by "
+        f"{pooled_exact_delta:+}% (QWK {base_hum['pooled']['kappa_w']} -> {cand_hum['pooled']['kappa_w']}, "
+        f"correctness +{delta_hum['correctness_exact_match_pct']}%), with {speed_note}at +2.96 GB model size (7.64 GB vs 4.68 GB)."
+        if winner == cand_label
+        else f"Keep `{base_label}`: higher throughput and lower latency with comparable human calibration."
+    )
+
+    recommendation = {
+        "winner": winner,
+        "verdict_headline": verdict_headline,
     }
 
     return {
@@ -467,6 +525,7 @@ def compare_judges(
         "benchmark_shift": benchmark_shift,
         "inter_judge": inter_judge,
         "operational": operational,
+        "recommendation": recommendation,
     }
 
 
@@ -478,6 +537,9 @@ def render_comparison_markdown(report: dict[str, Any]) -> str:
     bench = report["benchmark_shift"]
     inter = report["inter_judge"]
     op = report["operational"]
+    rec = report.get("recommendation", {})
+
+    headline = rec.get("verdict_headline", "")
 
     lines = [
         "# Statistical Judge Comparison Report",
@@ -485,7 +547,15 @@ def render_comparison_markdown(report: dict[str, Any]) -> str:
         f"- **Base Judge**: `{base_lbl}`",
         f"- **Candidate Judge**: `{cand_lbl}`",
         "",
+        "## Executive Bottom Line: Which Judge Should You Use?",
+        "",
+        headline,
+        "",
         "## 1. Human Calibration Comparison (N=20)",
+        "",
+        "### How to Read Calibration Metrics",
+        "- **Pooled Exact Match %**: Across 20 calibration items × 3 rubric dimensions (correctness, faithfulness, citation_accuracy = 60 total ratings), the percentage of exact agreement between the LLM judge and human gold annotations.",
+        "- **Quadratic Weighted Kappa (QWK / $\\\\kappa_w$)**: Measures ordinal agreement on a `-1` to `1` scale, adjusting for chance agreement and penalizing larger rating discrepancies quadratically (e.g. a rating error of `1 vs 5` is 16x harsher than `4 vs 5`). Benchmarks: `0.40–0.60` moderate agreement, `>0.75` strong agreement.",
         "",
         f"| Dimension | {base_lbl} Exact % | {cand_lbl} Exact % | Delta Exact % | 95% CI (Delta Exact) | {base_lbl} Kappa | {cand_lbl} Kappa | {base_lbl} MAE | {cand_lbl} MAE |",
         "|---|---:|---:|---:|---|---:|---:|---:|---:|",
@@ -563,7 +633,7 @@ def render_comparison_markdown(report: dict[str, Any]) -> str:
         "",
         "## 3. Inter-Judge Agreement & Discordance (N=120)",
         "",
-        "| Dimension | Exact Match % | Within-1 % | Bucket Match % | QWK ($\kappa_w$) | MAE | Mean Signed Diff (Cand - Base) |",
+        "| Dimension | Exact Match % | Within-1 % | Bucket Match % | QWK (κ_w) | MAE | Mean Signed Diff (Cand - Base) |",
         "|---|---:|---:|---:|---:|---:|---:|",
     ])
 
@@ -582,19 +652,35 @@ def render_comparison_markdown(report: dict[str, Any]) -> str:
         "### Discordance Category Counts",
         "| Category | Count | Description |",
         "|---|---:|---|",
-        f"| `hedged_zero_shot_ungrounded` | {inter['discordance_counts_by_category']['hedged_zero_shot_ungrounded']} | Zero-shot ungrounded answers penalized by base but missed by candidate |",
+        f"| `hedged_zero_shot_ungrounded` | {inter['discordance_counts_by_category']['hedged_zero_shot_ungrounded']} | Zero-shot hedged answers making ungrounded claims caught by candidate (faithfulness=1) vs missed by base |",
         f"| `false_abstention_fix` | {inter['discordance_counts_by_category']['false_abstention_fix']} | Valid answerable questions incorrectly abstained by base, correctly resolved by candidate |",
         f"| `rag_completeness_strictness` | {inter['discordance_counts_by_category']['rag_completeness_strictness']} | RAG correctness rubric strictness variations |",
         f"| `rubric_boundary_shift` | {inter['discordance_counts_by_category']['rubric_boundary_shift']} | General rating boundary shifts (e.g. score 4 vs 5) |",
         "",
-        "## 4. Operational Throughput & Latency",
+        "## 4. Speed, Median Latency & Token Volume Comparison",
         "",
-        f"| Metric | Base ({base_lbl}) | Candidate ({cand_lbl}) |",
-        "|---|---:|---:|",
-        f"| **Throughput (tok/s)** | `{op['base_documented_tok_per_s']}` (documented) | `{op['cand_tok_per_s_mean']}` (mean) / `{op['cand_tok_per_s_median']}` (median) |",
-        f"| **Latency per Item (ms)** | - | `{op['cand_latency_mean_ms']}` (mean) / `{op['cand_latency_median_ms']}` (median) |",
-        f"| **Total Evaluation Time (s)** | - | `{op['cand_total_time_s']}s` |",
-        f"| **Total Evaluation Tokens** | - | `{op['cand_total_eval_tokens']}` |",
+        f"| Metric | Base ({base_lbl}) | Candidate ({cand_lbl}) | Difference (Cand - Base) |",
+        "|---|---:|---:|---:|",
+        f"| **Median Throughput (tok/s)** | `{op.get('base', {}).get('tok_per_s_median')}` | `{op.get('cand', {}).get('tok_per_s_median')}` | `{op.get('delta', {}).get('tok_per_s_median'):+}` tok/s |"
+        if op.get("delta", {}).get("tok_per_s_median") is not None
+        else f"| **Median Throughput (tok/s)** | `{op.get('base', {}).get('tok_per_s_median')}` | `{op.get('cand', {}).get('tok_per_s_median')}` | - |",
+        f"| **Mean Throughput (tok/s)** | `{op.get('base', {}).get('tok_per_s_mean')}` | `{op.get('cand', {}).get('tok_per_s_mean')}` | `{op.get('delta', {}).get('tok_per_s_mean'):+}` tok/s |"
+        if op.get("delta", {}).get("tok_per_s_mean") is not None
+        else f"| **Mean Throughput (tok/s)** | `{op.get('base', {}).get('tok_per_s_mean')}` | `{op.get('cand', {}).get('tok_per_s_mean')}` | - |",
+        f"| **Median Latency / Item (ms)** | `{op.get('base', {}).get('latency_median_ms')}` | `{op.get('cand', {}).get('latency_median_ms')}` | `{op.get('delta', {}).get('latency_median_ms'):+} ms` (`{op.get('delta', {}).get('latency_ratio_median')}x`) |"
+        if op.get("delta", {}).get("latency_median_ms") is not None
+        else f"| **Median Latency / Item (ms)** | `{op.get('base', {}).get('latency_median_ms')}` | `{op.get('cand', {}).get('latency_median_ms')}` | - |",
+        f"| **Mean Latency / Item (ms)** | `{op.get('base', {}).get('latency_mean_ms')}` | `{op.get('cand', {}).get('latency_mean_ms')}` | `{op.get('delta', {}).get('latency_mean_ms'):+} ms` |"
+        if op.get("delta", {}).get("latency_mean_ms") is not None
+        else f"| **Mean Latency / Item (ms)** | `{op.get('base', {}).get('latency_mean_ms')}` | `{op.get('cand', {}).get('latency_mean_ms')}` | - |",
+        f"| **Total Run Time (s)** | `{op.get('base', {}).get('total_time_s')}s` | `{op.get('cand', {}).get('total_time_s')}s` | - |",
+        f"| **Median Output Tokens / Item** | `{op.get('base', {}).get('eval_tokens_median')}` | `{op.get('cand', {}).get('eval_tokens_median')}` | `{op.get('delta', {}).get('eval_tokens_median'):+}` tokens |"
+        if op.get("delta", {}).get("eval_tokens_median") is not None
+        else f"| **Median Output Tokens / Item** | `{op.get('base', {}).get('eval_tokens_median')}` | `{op.get('cand', {}).get('eval_tokens_median')}` | - |",
+        f"| **Mean Output Tokens / Item** | `{op.get('base', {}).get('eval_tokens_mean')}` | `{op.get('cand', {}).get('eval_tokens_mean')}` | `{op.get('delta', {}).get('eval_tokens_mean'):+}` tokens |"
+        if op.get("delta", {}).get("eval_tokens_mean") is not None
+        else f"| **Mean Output Tokens / Item** | `{op.get('base', {}).get('eval_tokens_mean')}` | `{op.get('cand', {}).get('eval_tokens_mean')}` | - |",
+        f"| **Total Output Tokens** | `{op.get('base', {}).get('total_eval_tokens')}` | `{op.get('cand', {}).get('total_eval_tokens')}` | - |",
         "",
     ])
 
