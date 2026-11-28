@@ -249,7 +249,7 @@ def test_helpers_and_verdict_normalization() -> None:
 
 
 def test_build_experiment_book(tmp_path: Path) -> None:
-    """Verify experiment_book.html builds cleanly with all 11 book pages and embedded payload."""
+    """Verify experiment_book.html builds cleanly with all 12 book pages and embedded payload."""
     from src.build_book import build_book
 
     if not (ROOT / "eval" / "judge_scores.jsonl").exists():
@@ -264,6 +264,10 @@ def test_build_experiment_book(tmp_path: Path) -> None:
     for cid in (
         "chart-p2-taxonomy",
         "chart-p2-archetypes",
+        "chart-p9-loss-curve",
+        "chart-p9-slice-comparison",
+        "chart-p9-win-loss",
+        "chart-p9-hybrid-routing",
         "chart-appc-judge-human",
         "chart-appc-slice-deltas",
         "chart-appc-speed-tokens",
@@ -283,7 +287,7 @@ def test_build_experiment_book(tmp_path: Path) -> None:
         "How to Read These Judge Metrics",
     ):
         assert marker in html
-    for page_idx in range(11):
+    for page_idx in range(12):
         assert f'data-page="{page_idx}"' in html
         page_num = page_idx + 1
         assert f'id="page-{page_num}"' in html
@@ -300,6 +304,8 @@ def test_build_experiment_book(tmp_path: Path) -> None:
     assert payload["judge_comparison"]["inter_judge"]["n_items"] == 120
     assert "qwen35" in payload["runs"][0]["rag"]
     assert "judge_qwen35" in payload["calibration"]["audit_items"][0]
+    assert "model_comparison" in payload
+    assert payload["model_comparison"]["win_loss"]["overall"]["n"] == 120
 
 
 def test_judge_comparison_artifacts() -> None:
@@ -486,3 +492,89 @@ def test_write_report_custom_names(tmp_path: Path) -> None:
     assert json_p.exists()
     assert md_p.exists()
     assert not (out_dir / "results_summary.json").exists()
+
+
+def test_qlora_dataset_leakage_invariants() -> None:
+    """Verify QLoRA train/valid chat schema, counts, manifest cutoff, and zero temporal/eval leakage."""
+    train_path = ROOT / "data" / "qlora" / "train.jsonl"
+    valid_path = ROOT / "data" / "qlora" / "valid.jsonl"
+    if not train_path.exists() or not valid_path.exists():
+        pytest.skip("data/qlora/train.jsonl or data/qlora/valid.jsonl not generated yet")
+
+    train_rows = read_jsonl(train_path)
+    valid_rows = read_jsonl(valid_path)
+    assert len(train_rows) == 1060
+    assert len(valid_rows) == 120
+
+    all_rows = train_rows + valid_rows
+    live_ids: set[str] = set()
+    if LIVE_CORPUS.exists():
+        live_ids = {r["id"] for r in read_jsonl(LIVE_CORPUS)}
+
+    row_texts: list[str] = []
+    for row in all_rows:
+        messages = row.get("messages")
+        assert isinstance(messages, list)
+        assert [msg.get("role") for msg in messages] == ["system", "user", "assistant"]
+        contents: list[str] = []
+        for msg in messages:
+            content = msg.get("content")
+            assert isinstance(content, str) and content.strip() != ""
+            contents.append(content)
+        joined = "\n".join(contents)
+        row_texts.append(joined)
+        if live_ids:
+            assert live_ids.isdisjoint(extract_arxiv_ids(joined))
+
+    if GOLDEN_PATH.exists():
+        golden_rows = read_jsonl(GOLDEN_PATH)
+        combined_text = "\n".join(row_texts)
+        for item in golden_rows:
+            assert item["prompt"] not in combined_text
+            ref = item["reference_answer"]
+            if item["slice"] != "unanswerable" and "not in the sources" not in ref.lower():
+                assert ref not in combined_text
+
+    manifest_path = ROOT / "data" / "qlora" / "dataset_manifest.json"
+    assert manifest_path.exists()
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    assert manifest["cutoff_date"] == "2025-01-01"
+    assert manifest["static_date_max"] < "2025-01-01"
+
+
+def test_qlora_experiment_artifacts() -> None:
+    """Verify QLoRA fine-tuned outputs, judge scores, model comparison JSON, and frozen baselines."""
+    comp_path = ROOT / "eval" / "model_comparison.json"
+    if not comp_path.exists():
+        pytest.skip("eval/model_comparison.json not generated yet")
+
+    assert len(read_jsonl(ROOT / "eval" / "outputs_zero_shot_ft.jsonl")) == 60
+    assert len(read_jsonl(ROOT / "eval" / "outputs_rag_ft.jsonl")) == 60
+
+    ft_q35 = read_jsonl(ROOT / "eval" / "judge_scores_ft_qwen35_9b.jsonl")
+    assert len(ft_q35) == 120
+    assert all(r.get("judge_model") == "qwen3.5:9b" for r in ft_q35)
+
+    ft_q25 = read_jsonl(ROOT / "eval" / "judge_scores_ft_qwen25_7b.jsonl")
+    assert len(ft_q25) == 120
+    assert all(r.get("judge_model") == "qwen2.5:7b" for r in ft_q25)
+
+    comp = json.loads(comp_path.read_text(encoding="utf-8"))
+    for key in (
+        "score_comparison",
+        "bootstrap_cis",
+        "win_loss",
+        "behavior_shift",
+        "cross_judge_check",
+        "hybrid_routing",
+        "training",
+        "recommendation",
+    ):
+        assert key in comp
+    assert len(comp["paired_items"]) == 120
+
+    assert len(read_jsonl(ROOT / "eval" / "outputs_zero_shot.jsonl")) == 60
+    assert len(read_jsonl(ROOT / "eval" / "outputs_rag.jsonl")) == 60
+    assert len(read_jsonl(ROOT / "eval" / "judge_scores.jsonl")) == 120
+    assert len(read_jsonl(ROOT / "eval" / "judge_scores_qwen35_9b.jsonl")) == 120
+

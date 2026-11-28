@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import time
 from pathlib import Path
 from typing import Any
@@ -41,6 +42,16 @@ def format_chunks(chunks: list[dict[str, Any]]) -> str:
     )
 
 
+def _openai_compat_endpoint(base_url: str) -> str:
+    """Resolve an OpenAI-compatible `/v1/chat/completions` endpoint URL."""
+    stripped = base_url.rstrip("/")
+    if stripped.endswith("/v1/chat/completions"):
+        return stripped
+    if stripped.endswith("/v1"):
+        return f"{stripped}/chat/completions"
+    return f"{stripped}/v1/chat/completions"
+
+
 def _generate_answer(
     client: httpx.Client,
     *,
@@ -48,15 +59,33 @@ def _generate_answer(
     user_prompt: str,
     model: str = MODEL_NAME,
 ) -> tuple[str, float]:
-    """Call Ollama `/api/chat` and return `(answer_text, generation_ms)`."""
+    """Call Ollama `/api/chat` (or `OPENAI_COMPAT_URL`) and return `(answer_text, generation_ms)`."""
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_prompt},
+    ]
+    openai_compat_url = os.environ.get("OPENAI_COMPAT_URL")
+
     t0 = time.perf_counter()
+    if openai_compat_url:
+        payload = {
+            "model": model,
+            "messages": messages,
+            "temperature": GENERATION_OPTIONS["temperature"],
+            "max_tokens": GENERATION_OPTIONS["num_predict"],
+        }
+        response = client.post(_openai_compat_endpoint(openai_compat_url), json=payload)
+        response.raise_for_status()
+        data = response.json()
+        elapsed_ms = (time.perf_counter() - t0) * 1000.0
+        choices = data.get("choices") or [{}]
+        content = str(choices[0].get("message", {}).get("content") or "").strip()
+        return content, round(elapsed_ms, 2)
+
     data = ollama_chat(
         client,
         model=model,
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt},
-        ],
+        messages=messages,
         options=GENERATION_OPTIONS,
     )
     elapsed_ms = (time.perf_counter() - t0) * 1000.0
@@ -104,14 +133,16 @@ def run_baselines(
     *,
     k: int = 4,
     model: str = MODEL_NAME,
+    zs_out: str | Path | None = None,
+    rag_out: str | Path | None = None,
 ) -> tuple[Path, Path]:
     """Execute zero-shot and RAG baselines sequentially and write output JSONL files."""
     golden_items = read_jsonl(golden_path)
     retriever = Retriever(index_dir=index_dir)
 
     out_root = Path(out_dir)
-    zs_out = out_root / "outputs_zero_shot.jsonl"
-    rag_out = out_root / "outputs_rag.jsonl"
+    zs_path = Path(zs_out) if zs_out is not None else out_root / "outputs_zero_shot.jsonl"
+    rag_path = Path(rag_out) if rag_out is not None else out_root / "outputs_rag.jsonl"
 
     zs_rows: list[dict[str, Any]] = []
     rag_rows: list[dict[str, Any]] = []
@@ -173,9 +204,9 @@ def run_baselines(
                 )
             )
 
-    write_jsonl(zs_out, zs_rows)
-    write_jsonl(rag_out, rag_rows)
-    return zs_out, rag_out
+    write_jsonl(zs_path, zs_rows)
+    write_jsonl(rag_path, rag_rows)
+    return zs_path, rag_path
 
 
 def main() -> None:
@@ -186,6 +217,8 @@ def main() -> None:
     parser.add_argument("--out-dir", default="eval")
     parser.add_argument("--k", type=int, default=4)
     parser.add_argument("--model", default=MODEL_NAME)
+    parser.add_argument("--zs-out", default=None)
+    parser.add_argument("--rag-out", default=None)
     args = parser.parse_args()
 
     zs_out, rag_out = run_baselines(
@@ -194,6 +227,8 @@ def main() -> None:
         out_dir=args.out_dir,
         k=args.k,
         model=args.model,
+        zs_out=args.zs_out,
+        rag_out=args.rag_out,
     )
     print(f"Wrote {zs_out} and {rag_out}")
 

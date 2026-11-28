@@ -97,6 +97,18 @@ def collect_book_payload(root: Path) -> dict[str, Any]:
     human_rows = read_jsonl(root / "eval/human_scores_20.jsonl")
     results_summary = json.loads((root / "eval/results_summary.json").read_text(encoding="utf-8"))
     judge_comparison = json.loads((root / "eval/judge_comparison.json").read_text(encoding="utf-8"))
+    model_comparison = json.loads((root / "eval/model_comparison.json").read_text(encoding="utf-8"))
+    qlora_dataset = json.loads((root / "data/qlora/dataset_manifest.json").read_text(encoding="utf-8"))
+    qlora_train_manifest = json.loads((root / "data/qlora/train_manifest.json").read_text(encoding="utf-8"))
+    qlora_training_log = read_jsonl(root / "data/qlora/training_log.jsonl")
+    ft_zs_outputs = {r["id"]: r for r in read_jsonl(root / "eval/outputs_zero_shot_ft.jsonl")}
+    ft_rag_outputs = {r["id"]: r for r in read_jsonl(root / "eval/outputs_rag_ft.jsonl")}
+    ft_judge35_by_key = {
+        (r["id"], r["mode"]): r for r in read_jsonl(root / "eval/judge_scores_ft_qwen35_9b.jsonl")
+    }
+    ft_judge25_by_key = {
+        (r["id"], r["mode"]): r for r in read_jsonl(root / "eval/judge_scores_ft_qwen25_7b.jsonl")
+    }
     rubric_md = (root / "eval/rubric.md").read_text(encoding="utf-8")
     notes_md = (root / "notes.md").read_text(encoding="utf-8")
 
@@ -147,7 +159,7 @@ def collect_book_payload(root: Path) -> dict[str, Any]:
             }
         )
 
-    # Compact per-prompt paired runs (60 prompts x 2 modes) for Page 7 Run Inspector & latency charts.
+    # Compact per-prompt paired runs (60 prompts x 4 model-mode variants) for Page 7 Run Inspector & latency charts.
     paired_runs: list[dict[str, Any]] = []
     for g in golden_rows:
         gid = g["id"]
@@ -155,9 +167,19 @@ def collect_book_payload(root: Path) -> dict[str, Any]:
         rg = judge_by_key[(gid, "rag")]
         zs35 = judge35_by_key[(gid, "zero_shot")]
         rg35 = judge35_by_key[(gid, "rag")]
+        ft_zs_out = ft_zs_outputs[gid]
+        ft_rag_out = ft_rag_outputs[gid]
+        ft_zs25 = ft_judge25_by_key[(gid, "zero_shot")]
+        ft_rg25 = ft_judge25_by_key[(gid, "rag")]
+        ft_zs35 = ft_judge35_by_key[(gid, "zero_shot")]
+        ft_rg35 = ft_judge35_by_key[(gid, "rag")]
         ctx_preview = (rg.get("retrieved_context") or "")[:1400]
         if len(rg.get("retrieved_context") or "") > 1400:
             ctx_preview += "\n... [truncated]"
+        ft_ctx_raw = ft_rag_out.get("retrieved_context") or ""
+        ft_ctx_preview = ft_ctx_raw[:1400]
+        if len(ft_ctx_raw) > 1400:
+            ft_ctx_preview += "\n... [truncated]"
         paired_runs.append(
             {
                 "id": gid,
@@ -208,6 +230,48 @@ def collect_book_payload(root: Path) -> dict[str, Any]:
                         "judge_tok_per_s": rg35.get("judge_tok_per_s"),
                     },
                 },
+                "zero_shot_ft": {
+                    "answer": ft_zs_out["model_answer"],
+                    "cited": ft_zs_out.get("extracted_cited_ids", []),
+                    "latency_ms": ft_zs_out["latency_ms"],
+                    "correctness": ft_zs25["correctness"],
+                    "faithfulness": ft_zs25["faithfulness"],
+                    "citation_accuracy": ft_zs25["citation_accuracy"],
+                    "override_obedience": ft_zs25["override_obedience"],
+                    "rationale": ft_zs25["rationale"],
+                    "qwen35": {
+                        "correctness": ft_zs35["correctness"],
+                        "faithfulness": ft_zs35["faithfulness"],
+                        "citation_accuracy": ft_zs35["citation_accuracy"],
+                        "override_obedience": ft_zs35["override_obedience"],
+                        "rationale": ft_zs35["rationale"],
+                        "judge_latency_ms": ft_zs35.get("judge_latency_ms"),
+                        "judge_tok_per_s": ft_zs35.get("judge_tok_per_s"),
+                    },
+                },
+                "rag_ft": {
+                    "answer": ft_rag_out["model_answer"],
+                    "cited": ft_rag_out.get("extracted_cited_ids", []),
+                    "valid_context_ids": ft_rag_out.get("valid_context_ids", []),
+                    "context_preview": ft_ctx_preview,
+                    "latency_ms": ft_rag_out["latency_ms"],
+                    "retrieval_ms": ft_rag_out.get("retrieval_ms"),
+                    "generation_ms": ft_rag_out.get("generation_ms"),
+                    "correctness": ft_rg25["correctness"],
+                    "faithfulness": ft_rg25["faithfulness"],
+                    "citation_accuracy": ft_rg25["citation_accuracy"],
+                    "override_obedience": ft_rg25["override_obedience"],
+                    "rationale": ft_rg25["rationale"],
+                    "qwen35": {
+                        "correctness": ft_rg35["correctness"],
+                        "faithfulness": ft_rg35["faithfulness"],
+                        "citation_accuracy": ft_rg35["citation_accuracy"],
+                        "override_obedience": ft_rg35["override_obedience"],
+                        "rationale": ft_rg35["rationale"],
+                        "judge_latency_ms": ft_rg35.get("judge_latency_ms"),
+                        "judge_tok_per_s": ft_rg35.get("judge_tok_per_s"),
+                    },
+                },
             }
         )
 
@@ -231,9 +295,13 @@ def collect_book_payload(root: Path) -> dict[str, Any]:
                 {
                     "name": m["name"],
                     "size_gb": round(m["size"] / 1e9, 2),
-                    "params": m["details"].get("parameter_size") or ("9.7B" if "qwen3.5:9b" in m["name"] else ""),
-                    "quant": m["details"].get("quantization_level") or ("nvfp4 (MLX)" if m["details"].get("runner") == "mlx" else m["details"].get("format", "")),
-                    "ctx": m["details"].get("context_length") or (262144 if "qwen3.5:9b" in m["name"] else None),
+                    "params": m["details"].get("parameter_size") or ("9.7B" if "qwen3.5:9b" in m["name"] else ("3.2B" if "llama3.2-qlora" in m["name"] else "")),
+                    "quant": (
+                        f"{m['details'].get('quantization_level')} (MLX)"
+                        if m["details"].get("quantization_level") and m["details"].get("runner") == "mlx"
+                        else (m["details"].get("quantization_level") or ("nvfp4 (MLX)" if m["details"].get("runner") == "mlx" else m["details"].get("format", "")))
+                    ),
+                    "ctx": m["details"].get("context_length") or (262144 if "qwen3.5:9b" in m["name"] else (131072 if "llama3.2-qlora" in m["name"] else None)),
                     "digest": m["digest"][:16],
                 }
                 for m in env_manifest["models"]
@@ -246,6 +314,12 @@ def collect_book_payload(root: Path) -> dict[str, Any]:
         },
         "results": results_summary,
         "judge_comparison": judge_comparison,
+        "model_comparison": model_comparison,
+        "qlora_dataset": qlora_dataset,
+        "qlora_training": {
+            "manifest": qlora_train_manifest,
+            "log": qlora_training_log,
+        },
         "behavior": _build_behavior_counts(judge_rows),
         "rag_latency_split": rag_ret_by_slice,
         "calibration": {
@@ -592,7 +666,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
       <div class="flex items-center gap-3">
         <a href="#page-1" data-nav-link="0" class="rounded-md border border-border bg-secondary px-2 py-1 font-mono text-xs hover:bg-accent transition-colors">↑ Agenda</a>
-        <span id="header-folio" class="font-mono text-xs text-muted-foreground hidden sm:inline">Page 1 / 11</span>
+        <span id="header-folio" class="font-mono text-xs text-muted-foreground hidden sm:inline">Page 1 / 12</span>
         <!-- Appearance Settings Disclosure (tri-state System / Light / Dark) -->
         <details id="appearance-popover" class="relative">
           <summary class="list-none cursor-pointer inline-flex items-center gap-1.5 rounded-md border border-border bg-secondary px-2.5 py-1.5 text-xs font-medium hover:bg-accent">
@@ -612,7 +686,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       </div>
     </div>
     <div class="h-0.5 bg-muted w-full">
-      <div id="reading-progress" class="h-full bg-primary transition-all duration-300" style="width: 10%"></div>
+      <div id="reading-progress" class="h-full bg-primary transition-all duration-300" style="width: 8.33%"></div>
     </div>
   </header>
 
@@ -632,15 +706,16 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         <a href="#page-5" data-nav-link="4" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 4</div><div class="truncate">60-Prompt Golden Set</div></a>
         <a href="#page-6" data-nav-link="5" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 5</div><div class="truncate">Rubric &amp; Judge Calibration</div></a>
         <a href="#page-7" data-nav-link="6" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 6</div><div class="truncate">Baselines &amp; Run Inspector</div></a>
-        <a href="#page-8" data-nav-link="7" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 7</div><div class="truncate">Failure Analysis &amp; QLoRA</div></a>
+        <a href="#page-8" data-nav-link="7" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 7</div><div class="truncate">QLoRA Fine-Tuning</div></a>
+        <a href="#page-9" data-nav-link="8" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Chapter 8</div><div class="truncate">Failure Analysis &amp; Roadmap</div></a>
         <div class="pt-2 mt-2 border-t border-border"></div>
-        <a href="#page-9" data-nav-link="8" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Appendix A</div><div class="truncate">Compute &amp; Orchestration</div></a>
-        <a href="#page-10" data-nav-link="9" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Appendix B</div><div class="truncate">3 Research Continuations</div></a>
-        <a href="#page-11" data-nav-link="10" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Appendix C</div><div class="truncate">Stronger Judge (Qwen3.5-9B)</div></a>
+        <a href="#page-10" data-nav-link="9" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Appendix A</div><div class="truncate">Compute &amp; Orchestration</div></a>
+        <a href="#page-11" data-nav-link="10" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Appendix B</div><div class="truncate">3 Research Continuations</div></a>
+        <a href="#page-12" data-nav-link="11" aria-current="false" class="block w-full text-left rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"><div class="font-mono text-[10px] opacity-75">Appendix C</div><div class="truncate">Stronger Judge (Qwen3.5-9B)</div></a>
       </nav>
       <div class="mt-4 pt-3 border-t border-border text-xs text-muted-foreground space-y-1">
         <div class="flex justify-between"><span>Cutoff T</span><span class="font-mono text-foreground">2025-01-01</span></div>
-        <div class="flex justify-between"><span>Base LLM</span><span class="font-mono text-foreground">llama3.2:3b</span></div>
+        <div class="flex justify-between gap-2"><span>Base / FT LLMs</span><span class="font-mono text-foreground text-right">llama3.2:3b · llama3.2-qlora:3b</span></div>
         <div class="flex justify-between"><span>Judges</span><span class="font-mono text-foreground">qwen2.5:7b · qwen3.5:9b</span></div>
         <div class="flex justify-between"><span>Shortcut</span><span class="font-mono text-foreground">← / → keys</span></div>
       </div>
@@ -653,15 +728,15 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         <section id="page-1" data-page="0" class="book-page space-y-8">
           <div class="border-b border-border pb-6 space-y-4">
             <div class="flex flex-wrap items-center gap-2">
-              <span class="inline-flex items-center rounded-full border border-border bg-secondary px-3 py-0.5 font-mono text-xs">Baseline Monograph</span>
+              <span class="inline-flex items-center rounded-full border border-border bg-secondary px-3 py-0.5 font-mono text-xs">Base + QLoRA Monograph</span>
               <span class="inline-flex items-center rounded-full border border-border bg-muted px-3 py-0.5 font-mono text-xs">Mac mini M5 Pro · 48 GB</span>
-              <span class="inline-flex items-center rounded-full border border-border bg-muted px-3 py-0.5 font-mono text-xs">Ollama 0.40.18 + FAISS</span>
+              <span class="inline-flex items-center rounded-full border border-border bg-muted px-3 py-0.5 font-mono text-xs">Ollama 0.40.18 + MLX QLoRA + FAISS</span>
             </div>
             <h1 class="font-serif text-3xl sm:text-5xl font-bold tracking-tight leading-tight">
-              Leakage-Safe Temporal RAG on arXiv <span class="font-mono text-2xl sm:text-4xl">cs.CL</span>
+              Leakage-Safe Temporal RAG &amp; QLoRA on arXiv <span class="font-mono text-2xl sm:text-4xl">cs.CL</span>
             </h1>
             <p class="text-base sm:text-lg text-muted-foreground max-w-3xl">
-              Date-Split Corpus Construction, <code class="font-mono text-sm">bge-small-en-v1.5</code> Vector Ingestion, 60-Prompt 4-Slice Golden Benchmark, Calibrated Cross-Family Judging, and Zero-Shot vs. RAG Baselines.
+              Date-Split Corpus Construction, <code class="font-mono text-sm">bge-small-en-v1.5</code> Vector Ingestion, 60-Prompt 4-Slice Golden Benchmark, Calibrated Cross-Family Judging, Zero-Shot vs. RAG Baselines, and Pre-T QLoRA Fine-Tuning (<code class="font-mono text-sm">llama3.2-qlora:3b</code>).
             </p>
           </div>
 
@@ -669,10 +744,10 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           <div class="rounded-xl border border-border bg-secondary/60 p-6 space-y-3">
             <div class="flex items-center justify-between">
               <h2 class="font-serif text-xl font-semibold">Abstract</h2>
-              <span class="font-mono text-xs text-muted-foreground">T = 2025-01-01 · 500 Abstracts</span>
+              <span class="font-mono text-xs text-muted-foreground">T = 2025-01-01 · 500 Abstracts · 240 Eval Runs</span>
             </div>
             <p class="drop-cap text-sm sm:text-base leading-relaxed text-foreground/90">
-              Evaluating Retrieval-Augmented Generation (RAG) and future QLoRA hybrids requires strict separation between parametric pretraining knowledge and post-cutoff evidence. We select cutoff date <code class="font-mono text-xs">T = 2025-01-01</code>—strictly after <code class="font-mono text-xs">Llama-3.2-3B-Instruct</code>'s published December 2023 training cutoff—and curate 300 pre-T (<code class="font-mono text-xs">static</code>) and 200 post-T (<code class="font-mono text-xs">live</code>) arXiv <code class="font-mono text-xs">cs.CL</code> abstracts with zero ID overlap. Indexing only the 200 post-T abstracts in FAISS (<code class="font-mono text-xs">BAAI/bge-small-en-v1.5</code>) and benchmarking 60 hand-verified prompts across four slices reveals a sharp hybrid trade-off: RAG (<code class="font-mono text-xs">k=4</code>) lifts <code class="font-mono text-xs">live</code> correctness from <strong>1.00 to 3.85</strong> (<strong>4.85</strong> under <code class="font-mono text-xs">Qwen3.5-9B</code>) while maintaining <strong>5.00/5.00</strong> abstention on adversarial <code class="font-mono text-xs">unanswerable</code> prompts, yet drops <code class="font-mono text-xs">static</code> correctness to <strong>1.80</strong> (20/20 forced abstentions). Upgrading the cross-family judge from <code class="font-mono text-xs">Qwen2.5-7B-Instruct</code> (<strong>80.0%</strong> human exact match, $\kappa_w = 0.535$) to <code class="font-mono text-xs">Qwen3.5-9B</code> MLX (<code class="font-mono text-xs">think=False</code>) further lifts blind human agreement to <strong>90.0% exact match</strong> (<strong>+10.0 pp</strong>, 95% CI [1.67%, 20.0%], $\kappa_w = 0.782$).
+              Evaluating Retrieval-Augmented Generation (RAG) and QLoRA adaptation requires strict separation between parametric pretraining knowledge and post-cutoff evidence. We select cutoff date <code class="font-mono text-xs">T = 2025-01-01</code>—strictly after <code class="font-mono text-xs">Llama-3.2-3B-Instruct</code>'s December 2023 training cutoff—and curate 300 pre-T (<code class="font-mono text-xs">static</code>) and 200 post-T (<code class="font-mono text-xs">live</code>) arXiv <code class="font-mono text-xs">cs.CL</code> abstracts with zero ID overlap. Under calibrated <code class="font-mono text-xs">Qwen3.5-9B</code> MLX judging (<strong>90.0%</strong> human exact match, $\kappa_w = 0.782$), Base RAG (<code class="font-mono text-xs">k=4</code>) lifts <code class="font-mono text-xs">live</code> correctness from <strong>1.00 to 4.85</strong> while maintaining <strong>5.00/5.00</strong> abstention on <code class="font-mono text-xs">unanswerable</code>, yet drops <code class="font-mono text-xs">static</code> to <strong>1.80</strong>. Fine-tuning a leakage-safe 4-bit MLX QLoRA adapter (<code class="font-mono text-xs">llama3.2-qlora:3b</code>, 1,060 pre-T train examples, checkpoint iter 400) yields <strong>+0.133</strong> pooled correctness (<strong>2.692 &rarr; 2.825</strong>, 95% CI <code class="font-mono text-xs">[-0.092, +0.358]</code>), surges on RAG <code class="font-mono text-xs">temporal_override</code> (<strong>3.60 &rarr; 4.80</strong>, override obedience <strong>0.50 &rarr; 0.80</strong>) and Zero-Shot <code class="font-mono text-xs">static</code> (<strong>1.15 &rarr; 1.60</strong>), and cuts latency <strong>2.5&times;</strong> (<strong>-1,078.9 ms</strong>), while exposing zero-shot overconfidence on unseen <code class="font-mono text-xs">live</code>/<code class="font-mono text-xs">unanswerable</code> prompts and terse <code class="font-mono text-xs">live</code> RAG omissions.
             </p>
           </div>
 
@@ -688,11 +763,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
             <div id="p1-agenda-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <a href="#page-1" data-nav-link="0" class="group cursor-pointer text-left rounded-xl border border-border bg-card p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
                 <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Prologue</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 1 →</span></div>
-                <div><p class="font-serif text-base font-semibold group-hover:underline">Abstract &amp; Agenda</p><p class="text-xs text-muted-foreground mt-0.5">Motivation, temporal cutoff T=2025-01-01, executive KPIs, and full comparison.</p></div>
+                <div><p class="font-serif text-base font-semibold group-hover:underline">Abstract &amp; Agenda</p><p class="text-xs text-muted-foreground mt-0.5">Motivation, temporal cutoff T=2025-01-01, executive KPIs, and Base vs. QLoRA overview.</p></div>
               </a>
               <a href="#page-2" data-nav-link="1" class="group cursor-pointer text-left rounded-xl border border-border bg-card p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
                 <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Chapter 1</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 2 →</span></div>
-                <div><p class="font-serif text-base font-semibold group-hover:underline">Slices, Metrics &amp; Agents</p><p class="text-xs text-muted-foreground mt-0.5">4 golden slices (+/- examples), 1–5 metrics, runtime agents &amp; 9 orchestration subagents.</p></div>
+                <div><p class="font-serif text-base font-semibold group-hover:underline">Slices, Metrics &amp; Agents</p><p class="text-xs text-muted-foreground mt-0.5">4 golden slices (+/- examples), 1–5 metrics, runtime agents &amp; orchestration subagents.</p></div>
               </a>
               <a href="#page-3" data-nav-link="2" class="group cursor-pointer text-left rounded-xl border border-border bg-card p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
                 <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Chapter 2</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 3 →</span></div>
@@ -708,26 +783,30 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
               </a>
               <a href="#page-6" data-nav-link="5" class="group cursor-pointer text-left rounded-xl border border-border bg-card p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
                 <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Chapter 5</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 6 →</span></div>
-                <div><p class="font-serif text-base font-semibold group-hover:underline">Rubric &amp; Judge Calibration</p><p class="text-xs text-muted-foreground mt-0.5">48.3% -&gt; 80.0% exact agreement lift via CoT ordering and abstention rules.</p></div>
+                <div><p class="font-serif text-base font-semibold group-hover:underline">Rubric &amp; Judge Calibration</p><p class="text-xs text-muted-foreground mt-0.5">48.3% -&gt; 80.0% -&gt; 90.0% exact agreement lift via CoT ordering &amp; MLX judge.</p></div>
               </a>
               <a href="#page-7" data-nav-link="6" class="group cursor-pointer text-left rounded-xl border border-border bg-card p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
                 <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Chapter 6</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 7 →</span></div>
-                <div><p class="font-serif text-base font-semibold group-hover:underline">Baselines &amp; Run Inspector</p><p class="text-xs text-muted-foreground mt-0.5">120 Zero-Shot vs. RAG runs, latency distributions, and prompt-level drilldown.</p></div>
+                <div><p class="font-serif text-base font-semibold group-hover:underline">Baselines &amp; Run Inspector</p><p class="text-xs text-muted-foreground mt-0.5">240 Base vs. QLoRA runs, latency distributions, and 4-card prompt drilldown.</p></div>
               </a>
-              <a href="#page-8" data-nav-link="7" class="group cursor-pointer text-left rounded-xl border border-border bg-card p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
-                <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Chapter 7</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 8 →</span></div>
-                <div><p class="font-serif text-base font-semibold group-hover:underline">Failure Analysis &amp; QLoRA</p><p class="text-xs text-muted-foreground mt-0.5">Master results table, 3 failure modes, and QLoRA hybrid roadmap.</p></div>
+              <a href="#page-8" data-nav-link="7" class="group cursor-pointer text-left rounded-xl border border-primary/40 bg-card p-4 hover:bg-accent/60 hover:border-primary transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
+                <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-primary font-semibold">Chapter 7</span><span class="font-mono text-xs rounded-md bg-primary/10 px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 8 →</span></div>
+                <div><p class="font-serif text-base font-semibold group-hover:underline">QLoRA Fine-Tuning</p><p class="text-xs text-muted-foreground mt-0.5">llama3.2-qlora:3b vs. llama3.2:3b: loss curves, 95% CIs, hybrid routing &amp; 120-item diff explorer.</p></div>
               </a>
-              <a href="#page-9" data-nav-link="8" class="group cursor-pointer text-left rounded-xl border border-dashed border-border bg-secondary/40 p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
-                <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Appendix A</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 9 →</span></div>
-                <div><p class="font-serif text-base font-semibold group-hover:underline">Compute &amp; Subagent Orchestration</p><p class="text-xs text-muted-foreground mt-0.5">Mac mini M5 Pro (48 GB) user-space Ollama setup, MLX runner, and parallel subagent waves.</p></div>
+              <a href="#page-9" data-nav-link="8" class="group cursor-pointer text-left rounded-xl border border-border bg-card p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
+                <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Chapter 8</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 9 →</span></div>
+                <div><p class="font-serif text-base font-semibold group-hover:underline">Failure Analysis &amp; Roadmap</p><p class="text-xs text-muted-foreground mt-0.5">Master results table, 3 failure modes, and expected vs. measured QLoRA target.</p></div>
               </a>
               <a href="#page-10" data-nav-link="9" class="group cursor-pointer text-left rounded-xl border border-dashed border-border bg-secondary/40 p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
-                <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Appendix B</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 10 →</span></div>
-                <div><p class="font-serif text-base font-semibold group-hover:underline">Three Research Continuations</p><p class="text-xs text-muted-foreground mt-0.5">Confidence-gated QLoRA routing, temporal conflict DPO, and full-paper submodular RAG.</p></div>
+                <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Appendix A</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 10 →</span></div>
+                <div><p class="font-serif text-base font-semibold group-hover:underline">Compute &amp; Subagent Orchestration</p><p class="text-xs text-muted-foreground mt-0.5">Mac mini M5 Pro (48 GB) Ollama + MLX QLoRA training setup and parallel subagent waves.</p></div>
               </a>
               <a href="#page-11" data-nav-link="10" class="group cursor-pointer text-left rounded-xl border border-dashed border-border bg-secondary/40 p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
-                <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Appendix C</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 11 →</span></div>
+                <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Appendix B</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 11 →</span></div>
+                <div><p class="font-serif text-base font-semibold group-hover:underline">Three Research Continuations</p><p class="text-xs text-muted-foreground mt-0.5">Post-QLoRA roadmap: DPO abstention calibration, cross-encoder gating &amp; full-paper packing.</p></div>
+              </a>
+              <a href="#page-12" data-nav-link="11" class="group cursor-pointer text-left rounded-xl border border-dashed border-border bg-secondary/40 p-4 hover:bg-accent/60 hover:border-primary/40 transition-colors flex flex-col justify-between gap-2 no-underline text-foreground">
+                <div class="flex items-center justify-between w-full"><span class="font-mono text-xs text-muted-foreground">Appendix C</span><span class="font-mono text-xs rounded-md bg-secondary px-2 py-0.5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">Page 12 →</span></div>
                 <div><p class="font-serif text-base font-semibold group-hover:underline">Stronger Judge: Qwen3.5-9B vs. Qwen2.5-7B</p><p class="text-xs text-muted-foreground mt-0.5">Bottom-line verdict, QWK guide, speed/token telemetry (2.06× faster), and 34 discordant cases.</p></div>
               </a>
             </div>
@@ -735,8 +814,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
           <!-- Prologue Summary Chart -->
           <div class="rounded-xl border border-border bg-card p-5 space-y-2">
-            <h3 class="font-serif text-lg font-semibold">Executive Comparison: Zero-Shot vs. RAG (<code class="font-mono text-sm">k=4</code>)</h3>
-            <p class="text-xs text-muted-foreground">Correctness (1–5) across all 4 slices plus Override Obedience scaled to 5 points (0.70 × 5 = 3.50).</p>
+            <h3 class="font-serif text-lg font-semibold">Executive Comparison: Base vs. QLoRA (<code class="font-mono text-sm">Qwen3.5-9B</code> Judge)</h3>
+            <p class="text-xs text-muted-foreground">Correctness (1–5) across all 4 slices plus Override Obedience scaled to 5 points (e.g., 0.80 &times; 5 = 4.00) for Base vs. QLoRA.</p>
             <div id="chart-p1-overview" class="w-full h-80"></div>
           </div>
         </section>
@@ -1254,9 +1333,9 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         <!-- Page 7: Step 5 - Baselines Showdown & Run Inspector -->
         <section id="page-7" data-page="6" class="book-page hidden space-y-6">
           <div class="border-b border-border pb-4">
-            <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Chapter 6 · Empirical Baselines</p>
+            <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Chapter 6 · Empirical Baselines &amp; Run Inspector</p>
             <h1 class="font-serif text-3xl font-bold mt-1">Zero-Shot vs. RAG (<code class="font-mono text-2xl">k=4</code>) Performance &amp; Run Inspector</h1>
-            <p class="text-sm text-muted-foreground mt-1">120 sequential runs on <code class="font-mono text-xs">llama3.2:3b</code>: slice correctness, abstention/citation behavior, latency distributions, and side-by-side prompt inspection.</p>
+            <p class="text-sm text-muted-foreground mt-1">120 sequential runs on Base (<code class="font-mono text-xs">llama3.2:3b</code>) paired with 120 QLoRA (<code class="font-mono text-xs">llama3.2-qlora:3b</code>) runs: slice correctness, abstention/citation behavior, latency distributions, and 4-way prompt drilldown.</p>
           </div>
 
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -1282,8 +1361,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           <div class="rounded-xl border border-border bg-secondary/40 p-5 space-y-4">
             <div class="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h3 class="font-serif text-xl font-semibold">Interactive Run Inspector (<code class="font-mono text-sm">g01–g60</code>)</h3>
-                <p class="text-xs text-muted-foreground">Compare Zero-Shot vs. RAG answers, citations, latencies, and judge rationales on any prompt.</p>
+                <h3 class="font-serif text-xl font-semibold">Interactive 4-Way Run Inspector (<code class="font-mono text-sm">g01–g60</code>)</h3>
+                <p class="text-xs text-muted-foreground">Compare Base vs. QLoRA Zero-Shot and RAG answers, citations, latencies, and dual-judge rationales on any prompt.</p>
               </div>
               <div class="flex items-center gap-2">
                 <button id="inspector-prev" type="button" class="rounded-md border border-border bg-card px-2.5 py-1.5 text-xs font-medium hover:bg-accent">← Prev</button>
@@ -1295,21 +1374,214 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           </div>
         </section>
 
-        <!-- Page 8: Chapter 7 - Failure Analysis & QLoRA Roadmap -->
+        <!-- Page 8: Chapter 7 - QLoRA Fine-Tuning Experiment -->
         <section id="page-8" data-page="7" class="book-page hidden space-y-6">
           <div class="border-b border-border pb-4">
-            <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Chapter 7 · Synthesis &amp; Hybrid Roadmap</p>
-            <h1 class="font-serif text-3xl font-bold mt-1">Failure Analysis &amp; QLoRA Fine-Tuning Outlook</h1>
-            <p class="text-sm text-muted-foreground mt-1">Master comparison table, empirical failure modes, and concrete hypotheses for QLoRA fine-tuning on pre-T weights + live RAG.</p>
+            <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Chapter 7 · QLoRA Fine-Tuning Experiment</p>
+            <h1 class="font-serif text-3xl font-bold mt-1">QLoRA Fine-Tuning: <code class="font-mono text-2xl">llama3.2-qlora:3b</code> vs. <code class="font-mono text-2xl">llama3.2:3b</code></h1>
+            <p class="text-sm text-muted-foreground mt-1">4-bit MLX QLoRA (<code class="font-mono text-xs">rank=16</code>, 1,060 leakage-safe pre-T samples, checkpoint <code class="font-mono text-xs">iter 400</code>, <code class="font-mono text-xs">nvfp4</code>) evaluated across all 120 paired runs under <code class="font-mono text-xs">qwen3.5:9b</code> and <code class="font-mono text-xs">qwen2.5:7b</code>.</p>
+          </div>
+
+          <!-- Bottom-Line Verdict Banner -->
+          <div class="rounded-xl border-2 border-primary/40 bg-secondary/70 p-5 space-y-2">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="font-mono text-xs font-semibold uppercase tracking-wider text-primary">Bottom-Line Verdict</span>
+              <span class="rounded-full bg-primary text-primary-foreground px-3 py-0.5 font-mono text-xs font-semibold">Conditional Win: +0.133 Pooled · 2.3× Faster RAG</span>
+            </div>
+            <p class="font-serif text-lg font-semibold">QLoRA improves pooled correctness (<code class="font-mono text-base">2.692 &rarr; 2.825</code>, <code class="font-mono text-base">+0.133</code>, 95% CI <code class="font-mono text-base">[-0.092, +0.358]</code>; <code class="font-mono text-base">+0.225</code> under <code class="font-mono text-base">qwen2.5:7b</code>) and cuts latency <code class="font-mono text-base">-1,078.9 ms</code>, with decisive RAG override gains alongside clear calibration trade-offs.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-muted-foreground pt-1">
+              <div class="rounded-lg border border-border bg-card/80 p-3 space-y-1">
+                <p class="font-semibold text-foreground">Measured Wins</p>
+                <p>&bull; <strong>RAG <code class="font-mono">temporal_override</code>:</strong> Correctness <code class="font-mono">3.60 &rarr; 4.80</code> (<code class="font-mono">+1.20</code>), override obedience <code class="font-mono">0.50 &rarr; 0.80</code>, <code class="font-mono">10/10</code> cited, <code class="font-mono">0/10</code> abstentions.<br>&bull; <strong>Zero-Shot <code class="font-mono">static</code>:</strong> Correctness <code class="font-mono">1.15 &rarr; 1.60</code> (<code class="font-mono">+0.45</code>), abstentions <code class="font-mono">18/20 &rarr; 0/20</code>.<br>&bull; <strong>Speed &amp; Fluency:</strong> <code class="font-mono">2.3&times;</code> faster RAG (<code class="font-mono">1,880.2 &rarr; 834.9 ms</code>) and <code class="font-mono">2.5&times;</code> faster pooled (<code class="font-mono">-1,078.9 ms</code>); spurious trailing abstentions <code class="font-mono">1 &rarr; 0</code>.</p>
+              </div>
+              <div class="rounded-lg border border-border bg-card/80 p-3 space-y-1">
+                <p class="font-semibold text-foreground">Honest Calibration Trade-Offs</p>
+                <p>&bull; <strong>Zero-Shot Overconfidence:</strong> Abstentions drop to <code class="font-mono">0/20</code> on unseen <code class="font-mono">live</code> (faithfulness <code class="font-mono">4.80 &rarr; 1.40</code>) and <code class="font-mono">9/10</code> on <code class="font-mono">unanswerable</code> (<code class="font-mono">5.00 &rarr; 4.60</code>, 1 ungrounded guess).<br>&bull; <strong>Terse <code class="font-mono">live</code> RAG Synthesis:</strong> Shorter 1–2 sentence answers omit minor details under <code class="font-mono">qwen3.5:9b</code> (<code class="font-mono">4.85 &rarr; 4.45</code>, 1 win / 7 regressions; <code class="font-mono">+0.05</code> under <code class="font-mono">qwen2.5:7b</code>) and drop explicit bracket citations on <code class="font-mono">live</code> RAG (<code class="font-mono">18/20 &rarr; 2/20</code>).</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4 KPI Cards -->
+          <div id="p9-qlora-kpis" class="grid grid-cols-2 lg:grid-cols-4 gap-4"></div>
+
+          <!-- 4 Lazy-Rendered Plotly Charts -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="rounded-xl border border-border bg-card p-4 space-y-2">
+              <h3 class="font-serif text-lg font-semibold">MLX QLoRA Training &amp; Validation Loss</h3>
+              <p class="text-xs text-muted-foreground">600 cosine-decayed steps (<code class="font-mono">batch_size=4</code>, <code class="font-mono">mask_prompt=true</code>); selected <code class="font-mono">iter 400</code> (<code class="font-mono">val_loss=0.831</code>) before late overfitting.</p>
+              <div id="chart-p9-loss-curve" class="w-full h-72"></div>
+            </div>
+            <div class="rounded-xl border border-border bg-card p-4 space-y-2">
+              <h3 class="font-serif text-lg font-semibold">Base vs. QLoRA Correctness Across All 8 Buckets</h3>
+              <p class="text-xs text-muted-foreground">Primary <code class="font-mono">qwen3.5:9b</code> judge scores across every <code class="font-mono">(mode, slice)</code> cell (<code class="font-mono">N=120</code> paired runs).</p>
+              <div id="chart-p9-slice-comparison" class="w-full h-72"></div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="rounded-xl border border-border bg-card p-4 space-y-2">
+              <h3 class="font-serif text-lg font-semibold">Prompt-Level Win / Tie / Loss Counts</h3>
+              <p class="text-xs text-muted-foreground">Pooled <code class="font-mono">14 improved / 95 tied / 11 regressed</code> (net <code class="font-mono">+3</code>; Zero-Shot <code class="font-mono">+5</code>, RAG <code class="font-mono">-2</code>).</p>
+              <div id="chart-p9-win-loss" class="w-full h-72"></div>
+            </div>
+            <div class="rounded-xl border border-border bg-card p-4 space-y-2">
+              <h3 class="font-serif text-lg font-semibold">Zero-Shot vs. RAG vs. Post-Hoc Hybrid (<code class="font-mono text-sm">tau=0.68</code>)</h3>
+              <p class="text-xs text-muted-foreground">Cosine-gated routing over measured outputs (<code class="font-mono">Base Hybrid 3.70 &rarr; QLoRA Hybrid 3.78</code> overall).</p>
+              <div id="chart-p9-hybrid-routing" class="w-full h-72"></div>
+            </div>
+          </div>
+
+          <!-- Accessible Tabbed Diagnostics -->
+          <div id="p9-tabs-root" class="space-y-3">
+            <div class="tablist" role="tablist" aria-label="QLoRA experiment diagnostics">
+              <button type="button" role="tab" id="p9tab-metrics" aria-selected="true" data-panel="p9panel-metrics">Head-to-Head Metrics, 95% CIs &amp; Dual-Judge Check</button>
+              <button type="button" role="tab" id="p9tab-diffs" aria-selected="false" data-panel="p9panel-diffs">120-Item Paired Diff Explorer</button>
+              <button type="button" role="tab" id="p9tab-recipe" aria-selected="false" data-panel="p9panel-recipe">QLoRA Recipe, Leakage-Safe Dataset &amp; Hybrid Sweep</button>
+            </div>
+
+            <div role="tabpanel" id="p9panel-metrics" aria-labelledby="p9tab-metrics" tabindex="0">
+              <div class="tabpanel-box space-y-5">
+                <div class="space-y-2">
+                  <h4 class="font-serif text-base font-semibold">Paired Bootstrap 95% Confidence Intervals (<code class="font-mono text-xs">qwen3.5:9b</code>)</h4>
+                  <div tabindex="0" role="region" aria-label="Bootstrap confidence intervals" class="table-wrapper book-scroll">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Bucket</th>
+                          <th>N</th>
+                          <th>Base Mean</th>
+                          <th>QLoRA Mean</th>
+                          <th>Delta (FT - Base)</th>
+                          <th>95% Bootstrap CI</th>
+                          <th>Significant</th>
+                        </tr>
+                      </thead>
+                      <tbody id="p9-ci-tbody"></tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="space-y-2">
+                  <h4 class="font-serif text-base font-semibold">Dual-Judge Cross-Check (<code class="font-mono text-xs">qwen3.5:9b</code> vs. <code class="font-mono text-xs">qwen2.5:7b</code>)</h4>
+                  <div class="rounded-xl border border-border bg-secondary/40 p-4 space-y-2 text-xs">
+                    <p><strong>What Data Is Compared:</strong> All <code class="font-mono">240</code> generator outputs (<code class="font-mono">120</code> Base <code class="font-mono">llama3.2:3b</code> + <code class="font-mono">120</code> QLoRA <code class="font-mono">llama3.2-qlora:3b</code> across <code class="font-mono">60</code> Zero-Shot and <code class="font-mono">60</code> RAG prompts) were independently scored on <code class="font-mono">1–5</code> <code class="font-mono">correctness</code> by primary judge <code class="font-mono">qwen3.5:9b</code> (<code class="font-mono">MLX nvfp4</code>, <code class="font-mono">90.0%</code> human exact match, <code class="font-mono">QWK = 0.782</code>) and baseline judge <code class="font-mono">qwen2.5:7b</code> (<code class="font-mono">GGUF Q4_K_M</code>, <code class="font-mono">80.0%</code> human exact match, <code class="font-mono">QWK = 0.535</code>). Each row compares mean <code class="font-mono">FT - Base</code> correctness delta; <code class="font-mono">Direction Agrees</code> checks whether both judges share the same sign whenever <code class="font-mono">|Qwen3.5-9B Delta| &gt;= 0.10</code> (<code class="font-mono">&mdash;</code> when <code class="font-mono">&lt; 0.10</code>, e.g. <code class="font-mono">rag_unanswerable = 0.000</code>).</p>
+                    <p><strong>Why 7/10 Active Buckets Agree (<code class="font-mono">True</code>):</strong> Both judges confirm positive lifts on <code class="font-mono">pooled_all</code> (<code class="font-mono">+0.133</code> vs <code class="font-mono">+0.225</code>), <code class="font-mono">zero_shot</code> (<code class="font-mono">+0.133</code> vs <code class="font-mono">+0.367</code>), <code class="font-mono">rag</code> (<code class="font-mono">+0.133</code> vs <code class="font-mono">+0.083</code>), <code class="font-mono">zero_shot_static</code> (<code class="font-mono">+0.450</code> vs <code class="font-mono">+0.250</code>), <code class="font-mono">zero_shot_live</code> (<code class="font-mono">+0.200</code> vs <code class="font-mono">+1.100</code>, where <code class="font-mono">qwen2.5:7b</code> over-credits fluent ungrounded guesses), and <code class="font-mono">rag_temporal_override</code> (<code class="font-mono">+1.200</code> vs <code class="font-mono">+0.400</code>), plus the slight dip on <code class="font-mono">zero_shot_temporal_override</code> (<code class="font-mono">-0.100</code> vs <code class="font-mono">-0.500</code>). Headline QLoRA gains are real behavioral shifts, not single-judge noise.</p>
+                    <p><strong>What the 3 Divergent Buckets (<code class="font-mono">False</code>) Reveal:</strong></p>
+                    <ul class="list-disc pl-4 space-y-1 text-muted-foreground">
+                      <li><code class="font-mono text-foreground">rag_live</code> (<code class="font-mono">-0.400</code> vs <code class="font-mono">+0.050</code>): <code class="font-mono">qwen3.5:9b</code> penalizes terse 1–2 sentence QLoRA answers for omitting secondary benchmark numbers on 7 items; <code class="font-mono">qwen2.5:7b</code> credits the core mechanism (<code class="font-mono">+0.050</code>).</li>
+                      <li><code class="font-mono text-foreground">zero_shot_unanswerable</code> (<code class="font-mono">-0.400</code> vs <code class="font-mono">0.000</code>): <code class="font-mono">qwen3.5:9b</code> catches QLoRA's single fabrication on <code class="font-mono">g54</code> (<code class="font-mono">5 &rarr; 1</code>); <code class="font-mono">qwen2.5:7b</code> had an offsetting baseline variance (<code class="font-mono">0.000</code> net).</li>
+                      <li><code class="font-mono text-foreground">rag_static</code> (<code class="font-mono">+0.200</code> vs <code class="font-mono">0.000</code>): Both models abstain cleanly <code class="font-mono">20/20</code> (<code class="font-mono">Not in the sources.</code>), giving <code class="font-mono">0.000</code> on <code class="font-mono">qwen2.5:7b</code> vs a 1-item boundary flip (<code class="font-mono">+0.200</code>) on <code class="font-mono">qwen3.5:9b</code>.</li>
+                    </ul>
+                  </div>
+                  <div tabindex="0" role="region" aria-label="Dual judge cross check" class="table-wrapper book-scroll">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Bucket</th>
+                          <th>Qwen3.5-9B Delta</th>
+                          <th>Qwen2.5-7B Delta</th>
+                          <th>Direction Agrees</th>
+                        </tr>
+                      </thead>
+                      <tbody id="p9-dualjudge-tbody"></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div role="tabpanel" id="p9panel-diffs" aria-labelledby="p9tab-diffs" hidden="until-found">
+              <div class="tabpanel-box space-y-3">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <select id="p9-diff-outcome" aria-label="Filter outcome" class="rounded-md border border-border bg-card px-2.5 py-1.5 text-xs">
+                      <option value="all">All Outcomes (120)</option>
+                      <option value="improved">Improved (14)</option>
+                      <option value="regressed">Regressed (11)</option>
+                      <option value="tied">Tied (95)</option>
+                    </select>
+                    <select id="p9-diff-mode" aria-label="Filter mode" class="rounded-md border border-border bg-card px-2.5 py-1.5 text-xs">
+                      <option value="all">All Modes (120)</option>
+                      <option value="zero_shot">Zero-Shot (60)</option>
+                      <option value="rag">RAG (60)</option>
+                    </select>
+                  </div>
+                  <input id="p9-diff-search" type="search" placeholder="Filter ID, prompt, answer, or rationale..." class="rounded-md border border-border bg-card px-2.5 py-1.5 text-xs w-64">
+                </div>
+                <div tabindex="0" role="region" aria-label="120 paired diff explorer" class="table-wrapper book-scroll">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Item</th>
+                        <th>Base (C/F/Cit)</th>
+                        <th>QLoRA (C/F/Cit)</th>
+                        <th>Delta</th>
+                        <th>Prompt, Answers &amp; Judge Rationales</th>
+                      </tr>
+                    </thead>
+                    <tbody id="p9-diff-tbody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div role="tabpanel" id="p9panel-recipe" aria-labelledby="p9tab-recipe" hidden="until-found">
+              <div class="tabpanel-box space-y-5">
+                <div id="p9-recipe-grid" class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs"></div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <div class="space-y-2">
+                    <h4 class="font-serif text-base font-semibold">Leakage-Safe Training Dataset (<code class="font-mono text-xs">data/qlora/dataset_manifest.json</code>)</h4>
+                    <div tabindex="0" role="region" aria-label="QLoRA dataset breakdown" class="table-wrapper book-scroll">
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Category</th>
+                            <th>Train</th>
+                            <th>Valid</th>
+                            <th>Total</th>
+                          </tr>
+                        </thead>
+                        <tbody id="p9-dataset-tbody"></tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="space-y-2">
+                    <h4 class="font-serif text-base font-semibold">Post-Hoc Cosine Threshold Sweep (<code class="font-mono text-xs">tau = 0.55..0.75</code>)</h4>
+                    <div tabindex="0" role="region" aria-label="Hybrid routing tau sweep" class="table-wrapper book-scroll">
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>tau</th>
+                            <th>RAG Routed %</th>
+                            <th>Base Hybrid</th>
+                            <th>QLoRA Hybrid</th>
+                            <th>Delta</th>
+                          </tr>
+                        </thead>
+                        <tbody id="p9-tau-tbody"></tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Page 9: Chapter 8 - Failure Analysis & QLoRA Roadmap -->
+        <section id="page-9" data-page="8" class="book-page hidden space-y-6">
+          <div class="border-b border-border pb-4">
+            <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Chapter 8 · Synthesis &amp; Expected vs. Measured QLoRA</p>
+            <h1 class="font-serif text-3xl font-bold mt-1">Failure Analysis &amp; Expected vs. Measured QLoRA Impact</h1>
+            <p class="text-sm text-muted-foreground mt-1">Master comparison table across Base (<code class="font-mono text-xs">llama3.2:3b</code>) and QLoRA (<code class="font-mono text-xs">llama3.2-qlora:3b</code>), baseline failure modes, and what QLoRA actually changed in Chapter 7.</p>
           </div>
 
           <div class="space-y-2">
-            <h3 id="master-table-caption" class="font-serif text-lg font-semibold">Master Evaluation Results Table</h3>
+            <h3 id="master-table-caption" class="font-serif text-lg font-semibold">Master Evaluation Results Table (Base vs. QLoRA)</h3>
             <div tabindex="0" role="region" aria-labelledby="master-table-caption" class="table-wrapper book-scroll">
               <table>
                 <thead>
                   <tr>
-                    <th>Mode</th>
+                    <th>Model / Mode</th>
                     <th>Slice</th>
                     <th>N</th>
                     <th>Corr (Qwen2.5)</th>
@@ -1328,32 +1600,32 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
             <div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-1.5">
               <span class="font-mono font-semibold text-primary">Failure 1 · Live-Only Blindspot</span>
-              <p class="font-semibold">Static RAG collapses to 1.80 (20/20 abstentions)</p>
-              <p class="text-muted-foreground">Pre-T papers (LoRA, DPO, RAG) are absent from <code class="font-mono">live.jsonl</code>, so strict RAG grounding blocks parametric recall.</p>
+              <p class="font-semibold">Static RAG collapses to 1.80 (Base) / 2.00 (QLoRA)</p>
+              <p class="text-muted-foreground">Pre-T papers (LoRA, DPO, RAG) are absent from <code class="font-mono">live.jsonl</code>, so strict RAG grounding blocks parametric recall without threshold routing; Zero-Shot QLoRA lifts <code class="font-mono">static</code> <code class="font-mono">1.15 &rarr; 1.60</code>.</p>
             </div>
             <div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-1.5">
-              <span class="font-mono font-semibold text-primary">Failure 2 · 3B Omissions</span>
-              <p class="font-semibold">Partial answers + spurious abstentions</p>
-              <p class="text-muted-foreground">On multi-part live abstracts (e.g. <code class="font-mono">g27</code> NIRANTAR), 3B captures scenarios/languages yet drops hour counts or appends <em>"Not in the sources."</em></p>
+              <span class="font-mono font-semibold text-primary">Failure 2 · 3B Omissions &amp; Terse FT Style</span>
+              <p class="font-semibold">Spurious abstentions fixed (1 &rarr; 0), brevity trade-off</p>
+              <p class="text-muted-foreground">QLoRA eliminates trailing abstentions and cuts latency 2.5&times;, but 1–2 sentence answers drop minor <code class="font-mono">live</code> RAG details (<code class="font-mono">4.85 &rarr; 4.45</code> under <code class="font-mono">Qwen3.5-9B</code>).</p>
             </div>
             <div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-1.5">
-              <span class="font-mono font-semibold text-primary">Failure 3 · Override Hedging</span>
-              <p class="font-semibold">3/10 temporal_override misses</p>
-              <p class="text-muted-foreground">On <code class="font-mono">g44</code>, <code class="font-mono">g46</code>, and <code class="font-mono">g48</code>, RAG abstained despite rank-1 retrieval of the newer paper instead of synthesizing the empirical contradiction.</p>
+              <span class="font-mono font-semibold text-primary">Failure 3 · Override Hedging (Solved in RAG)</span>
+              <p class="font-semibold">Base 3/10 misses &rarr; QLoRA 0/10 abstentions</p>
+              <p class="text-muted-foreground">QLoRA RAG lifts <code class="font-mono">temporal_override</code> correctness <code class="font-mono">3.60 &rarr; 4.80</code> (+1.20) and obedience <code class="font-mono">0.50 &rarr; 0.80</code> with <code class="font-mono">10/10</code> cited answers.</p>
             </div>
           </div>
 
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
             <div class="rounded-xl border border-border bg-card p-4 space-y-2">
-              <h3 class="font-serif text-lg font-semibold">Measured Baselines vs. QLoRA Hybrid Target</h3>
-              <p class="text-xs text-muted-foreground">What QLoRA fine-tuning changes (static recall + routing + formatting) vs. what stays dependent on RAG (live freshness).</p>
+              <h3 class="font-serif text-lg font-semibold">Measured Base &amp; QLoRA vs. Hybrid Target</h3>
+              <p class="text-xs text-muted-foreground">Measured <code class="font-mono">Qwen3.5-9B</code> profiles for Base vs. QLoRA Zero-Shot and RAG against the gated hybrid target.</p>
               <div id="chart-p8-roadmap" class="w-full h-72"></div>
             </div>
             <div class="rounded-xl border border-border bg-secondary/40 p-5 space-y-3 text-sm">
-              <h3 class="font-serif text-lg font-semibold">What QLoRA Will (and Will Not) Change</h3>
+              <h3 class="font-serif text-lg font-semibold">Expected vs. Measured QLoRA Findings</h3>
               <div class="space-y-2 text-xs leading-relaxed">
-                <p><strong>Will Change (Weights + Hybrid Routing):</strong> Fine-tuning <code class="font-mono">Llama-3.2-3B-Instruct</code> on pre-T <code class="font-mono">static.jsonl</code> internalizes foundational <code class="font-mono">cs.CL</code> mechanisms and metrics, trains calibrated confidence fallback when live FAISS similarity is low, sharpens <code class="font-mono">[arxiv_id]</code> citation discipline, and removes spurious trailing abstentions.</p>
-                <p><strong>Will NOT Change (Live Retrieval Dependency):</strong> Post-T knowledge (<code class="font-mono">&gt;= 2025-01-01</code>) cannot be memorized in static weights without continual retraining; fresh papers and <code class="font-mono">temporal_override</code> updates will always require <code class="font-mono">retrieve(query, k, after=T)</code>.</p>
+                <p><strong>What QLoRA Improved (Measured):</strong> Pooled correctness rose <code class="font-mono">+0.133</code> (<code class="font-mono">2.692 &rarr; 2.825</code>), RAG <code class="font-mono">temporal_override</code> surged <code class="font-mono">3.60 &rarr; 4.80</code> (obedience <code class="font-mono">0.50 &rarr; 0.80</code>, <code class="font-mono">10/10</code> cited), Zero-Shot <code class="font-mono">static</code> rose <code class="font-mono">1.15 &rarr; 1.60</code> (abstentions <code class="font-mono">18/20 &rarr; 0/20</code>), and mean latency dropped <strong>2.5&times;</strong> (<code class="font-mono">-1,078.9 ms</code>).</p>
+                <p><strong>What Still Needs Calibration:</strong> Unweighted pre-T QA training pushed Zero-Shot QLoRA toward always-answering (<code class="font-mono">live</code> faithfulness <code class="font-mono">4.80 &rarr; 1.40</code>, <code class="font-mono">unanswerable</code> <code class="font-mono">5.00 &rarr; 4.60</code>), and raw cosine routing (<code class="font-mono">tau=0.68</code>) only routed 1/20 <code class="font-mono">static</code> prompts to Zero-Shot. See Chapter 7 for full QLoRA diagnostics.</p>
               </div>
               <div class="pt-2 border-t border-border font-mono text-[11px] text-muted-foreground">
                 Reproduce: <code class="text-foreground">uv run python main.py book &amp;&amp; uv run pytest -v</code>
@@ -1362,19 +1634,19 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           </div>
         </section>
 
-        <!-- Page 9: Appendix A - Compute & Subagent Orchestration -->
-        <section id="page-9" data-page="8" class="book-page hidden space-y-6">
+        <!-- Page 10: Appendix A - Compute & Subagent Orchestration -->
+        <section id="page-10" data-page="9" class="book-page hidden space-y-6">
           <div class="border-b border-border pb-4">
             <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Appendix A · Compute &amp; Orchestration</p>
             <h1 class="font-serif text-3xl font-bold mt-1">Mac mini M5 Pro Setup &amp; Parallel Subagent Fan-Out</h1>
-            <p class="text-sm text-muted-foreground mt-1">Zero-sudo user-space provisioning of <code class="font-mono text-xs">uv</code>, Python 3.13, and <code class="font-mono text-xs">Ollama 0.40.18</code> over SSH, plus multi-wave subagent parallelization.</p>
+            <p class="text-sm text-muted-foreground mt-1">Zero-sudo user-space provisioning of <code class="font-mono text-xs">uv</code>, Python 3.13, <code class="font-mono text-xs">Ollama 0.40.18</code>, and Apple Silicon <code class="font-mono text-xs">MLX</code> QLoRA training over SSH, plus 4-wave subagent parallelization.</p>
           </div>
 
           <div id="app-hw-cards" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
 
           <div class="rounded-xl border border-border bg-secondary/50 p-5 space-y-3">
-            <h2 class="font-serif text-xl font-semibold">3-Wave Subagent Fan-Out Architecture</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+            <h2 class="font-serif text-xl font-semibold">4-Wave Subagent Fan-Out Architecture</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
               <div class="rounded-lg border border-border bg-card p-4 space-y-1.5">
                 <span class="font-mono font-semibold text-primary">Wave 1 · 3 Agents (Parallel)</span>
                 <p class="text-muted-foreground">1A: Mac mini user-space uv + Ollama.app Metal setup &amp; model pulls.</p>
@@ -1389,10 +1661,16 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                 <p class="text-muted-foreground">2D: 10 <code class="font-mono">unanswerable</code> prompts (6 OOC + 4 near-miss distractors).</p>
               </div>
               <div class="rounded-lg border border-border bg-card p-4 space-y-1.5">
-                <span class="font-mono font-semibold text-primary">Wave 3 · Sequential + 2 Parallel</span>
+                <span class="font-mono font-semibold text-primary">Wave 3 · Baselines &amp; Judges</span>
                 <p class="text-muted-foreground">Sequential <code class="font-mono">llama3.2:3b</code> baselines for clean uncontended latency.</p>
-                <p class="text-muted-foreground">3A: <code class="font-mono">qwen2.5:7b</code> judge runner on Mac mini.</p>
+                <p class="text-muted-foreground">3A/4: <code class="font-mono">qwen2.5:7b</code> &amp; <code class="font-mono">qwen3.5:9b</code> MLX judge scoring.</p>
                 <p class="text-muted-foreground">3B: Blinded Human Grader on 20 stratified samples (zero judge leakage).</p>
+              </div>
+              <div class="rounded-lg border border-border bg-card p-4 space-y-1.5">
+                <span class="font-mono font-semibold text-primary">Wave 4 · Pre-T QLoRA</span>
+                <p class="text-muted-foreground">Dataset builder (<code class="font-mono">1,060 / 120</code> leakage-checked pre-T pairs).</p>
+                <p class="text-muted-foreground">MLX 4-bit QLoRA training (<code class="font-mono">4,171.9 s</code>, peak <code class="font-mono">11.5 GB</code>) + <code class="font-mono">nvfp4</code> Ollama import.</p>
+                <p class="text-muted-foreground">Sequential FT eval + dual-judge scoring + bootstrap comparison.</p>
               </div>
             </div>
           </div>
@@ -1400,7 +1678,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div class="rounded-xl border border-border bg-card p-4 space-y-2">
               <h3 class="font-serif text-lg font-semibold">48 GB Unified Memory Footprint</h3>
-              <p class="text-xs text-muted-foreground">Model weights + embeddings vs. available Metal headroom on M5 Pro.</p>
+              <p class="text-xs text-muted-foreground">Base, QLoRA (<code class="font-mono">2.80 GB nvfp4 MLX</code>), dual judges, and <code class="font-mono">bge-small</code> vs. M5 Pro headroom.</p>
               <div id="chart-app-memory" class="w-full h-72"></div>
             </div>
             <div class="rounded-xl border border-border bg-card p-4 space-y-2">
@@ -1411,52 +1689,52 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           </div>
         </section>
 
-        <!-- Page 10: Appendix B - Three Research Continuations -->
-        <section id="page-10" data-page="9" class="book-page hidden space-y-6">
+        <!-- Page 11: Appendix B - Three Research Continuations -->
+        <section id="page-11" data-page="10" class="book-page hidden space-y-6">
           <div class="border-b border-border pb-4">
             <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Appendix B · Future Research Agenda</p>
-            <h1 class="font-serif text-3xl font-bold mt-1">Three Research Continuations Beyond Baselines</h1>
-            <p class="text-sm text-muted-foreground mt-1">Concrete experimental extensions targeting the three empirical bottlenecks measured in baseline evaluation: live-only static collapse (<code class="font-mono text-xs">1.80</code>), residual temporal override misses (<code class="font-mono text-xs">3/10</code>), and abstract-only truncation (<code class="font-mono text-xs">3.85</code> live).</p>
+            <h1 class="font-serif text-3xl font-bold mt-1">Three Research Continuations Beyond Baselines &amp; QLoRA v1</h1>
+            <p class="text-sm text-muted-foreground mt-1">Continuation 1's pre-T QLoRA weights are now empirically evaluated in Chapter 7 (<code class="font-mono text-xs">llama3.2-qlora:3b</code>); below is how its findings sharpen DPO abstention calibration, cross-encoder gating, and full-paper packing.</p>
           </div>
 
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 text-xs">
             <div class="rounded-xl border border-border bg-secondary/50 p-5 space-y-2.5 flex flex-col justify-between">
               <div class="space-y-2">
                 <div class="flex items-center justify-between">
-                  <span class="font-mono font-semibold text-primary">Continuation 1</span>
+                  <span class="font-mono font-semibold text-primary">Continuation 1 · Tested in Ch. 7</span>
                   <span class="rounded bg-muted px-2 py-0.5 font-mono text-[10px]">Static 1.80 &rarr; &ge;4.20</span>
                 </div>
-                <h2 class="font-serif text-lg font-semibold">Confidence-Gated Hybrid Routing + Pre-T QLoRA</h2>
-                <p class="text-muted-foreground"><strong>Baseline Bottleneck:</strong> Live-only RAG abstained 20/20 on <code class="font-mono">static</code> (<code class="font-mono">1.80</code>), while Zero-Shot refused 18/20 (<code class="font-mono">1.45</code>).</p>
-                <p><strong>Proposed Method:</strong> Train 4-bit <code class="font-mono">NF4</code> QLoRA adapters on <code class="font-mono">corpus/static.jsonl</code> QA pairs, then gate inference via a calibrated <code class="font-mono">bge-reranker-v2-m3</code> score <code class="font-mono">&tau;</code>: high <code class="font-mono">&tau;</code> enforces grounded post-T RAG; mid-band near-miss distractors (<code class="font-mono">u07–u10</code>) abstain; low <code class="font-mono">&tau;</code> routes to <code class="font-mono">[parametric &lt; T]</code> QLoRA weights.</p>
+                <h2 class="font-serif text-lg font-semibold">Cross-Encoder Gated Routing + Calibrated QLoRA</h2>
+                <p class="text-muted-foreground"><strong>Ch. 7 Status:</strong> <code class="font-mono">llama3.2-qlora:3b</code> weights are built &amp; tested (<code class="font-mono">ZS static 1.15 &rarr; 1.60</code>), but cosine <code class="font-mono">tau=0.68</code> alone routed 19/20 static queries to RAG and unweighted QA caused Zero-Shot overconfidence.</p>
+                <p><strong>Next Step:</strong> Replace raw cosine <code class="font-mono">tau</code> with a calibrated <code class="font-mono">bge-reranker-v2-m3</code> gate and re-balance Cat B abstention pairs (<code class="font-mono">&gt;25%</code> share) so low-confidence queries cleanly route to <code class="font-mono">[parametric &lt; T]</code> without hurting <code class="font-mono">unanswerable</code>.</p>
               </div>
-              <div class="pt-2 border-t border-border font-mono text-[11px] text-muted-foreground">Hypothesis: Eliminates live-only blindspot without breaking unanswerable precision.</div>
+              <div class="pt-2 border-t border-border font-mono text-[11px] text-muted-foreground">Hypothesis: Cross-encoder gating unlocks the full static recall lift safely.</div>
             </div>
 
             <div class="rounded-xl border border-border bg-secondary/50 p-5 space-y-2.5 flex flex-col justify-between">
               <div class="space-y-2">
                 <div class="flex items-center justify-between">
                   <span class="font-mono font-semibold text-primary">Continuation 2</span>
-                  <span class="rounded bg-muted px-2 py-0.5 font-mono text-[10px]">Override 70% &rarr; &ge;95%</span>
+                  <span class="rounded bg-muted px-2 py-0.5 font-mono text-[10px]">Override 80% &rarr; &ge;95%</span>
                 </div>
-                <h2 class="font-serif text-lg font-semibold">Temporal Reranking &amp; Counterfactual Conflict DPO</h2>
-                <p class="text-muted-foreground"><strong>Baseline Bottleneck:</strong> 3/10 <code class="font-mono">temporal_override</code> misses (<code class="font-mono">g44</code>, <code class="font-mono">g46</code>, <code class="font-mono">g48</code>) even at 10/10 rank-1 FAISS recall; static + live mixed indices lack date-aware ranking.</p>
-                <p><strong>Proposed Method:</strong> Pair hybrid BM25+dense RRF and date-decay reranking (<code class="font-mono">exp(&lambda; &middot; &Delta;t)</code> on current-state queries) with Direct Preference Optimization on synthetic conflict pairs (<code class="font-mono">pre-T chunk + post-T chunk</code>), preferring explicit post-T updates over hedging or abstention.</p>
+                <h2 class="font-serif text-lg font-semibold">Abstention Calibration &amp; Counterfactual Conflict DPO</h2>
+                <p class="text-muted-foreground"><strong>Ch. 7 Bottleneck:</strong> QLoRA already lifted RAG <code class="font-mono">temporal_override</code> (<code class="font-mono">3.60 &rarr; 4.80</code>, obedience <code class="font-mono">0.50 &rarr; 0.80</code>), yet Zero-Shot QLoRA over-answered <code class="font-mono">live</code>/<code class="font-mono">unanswerable</code> and 2/10 override queries still hedged.</p>
+                <p><strong>Proposed Method:</strong> Pair time-decay RRF reranking (<code class="font-mono">exp(&lambda; &middot; &Delta;t)</code>) with DPO preference pairs covering (a) <code class="font-mono">pre-T + post-T</code> conflict updates and (b) explicit abstention vs. ungrounded speculation on unseen post-T facts.</p>
               </div>
-              <div class="pt-2 border-t border-border font-mono text-[11px] text-muted-foreground">Hypothesis: Resolves contradictory multi-era evidence deterministically.</div>
+              <div class="pt-2 border-t border-border font-mono text-[11px] text-muted-foreground">Hypothesis: Fixes zero-shot overconfidence while closing remaining override misses.</div>
             </div>
 
             <div class="rounded-xl border border-border bg-secondary/50 p-5 space-y-2.5 flex flex-col justify-between">
               <div class="space-y-2">
                 <div class="flex items-center justify-between">
                   <span class="font-mono font-semibold text-primary">Continuation 3</span>
-                  <span class="rounded bg-muted px-2 py-0.5 font-mono text-[10px]">Live 3.85 &rarr; &ge;4.50</span>
+                  <span class="rounded bg-muted px-2 py-0.5 font-mono text-[10px]">Live 4.45/4.85 &rarr; &ge;4.90</span>
                 </div>
                 <h2 class="font-serif text-lg font-semibold">Section-Aware Full-Paper Ingestion &amp; Submodular Packing</h2>
-                <p class="text-muted-foreground"><strong>Baseline Bottleneck:</strong> Abstract-only chunks (175-word median) omit hyperparameter &amp; ablation tables probed by near-miss prompts (<code class="font-mono">u07–u10</code>) and cause partial omissions (<code class="font-mono">g27</code>).</p>
-                <p><strong>Proposed Method:</strong> Parse <code class="font-mono">ar5iv</code> HTML/LaTeX full papers into hierarchical section + table chunks, retrieve via <code class="font-mono">bge-m3</code> multi-vector scoring, and pack context via budgeted submodular maximization (cf. <code class="font-mono">2607.00725</code>) at fixed 1,500-token reader budgets.</p>
+                <p class="text-muted-foreground"><strong>Ch. 7 Bottleneck:</strong> Abstract-only chunks (175-word median) omit hyperparameter &amp; ablation tables probed by near-miss prompts (<code class="font-mono">u07–u10</code>) and terse QLoRA RAG outputs drop secondary details (<code class="font-mono">live 4.85 &rarr; 4.45</code>).</p>
+                <p><strong>Proposed Method:</strong> Parse <code class="font-mono">ar5iv</code> HTML/LaTeX full papers into hierarchical section + table chunks, retrieve via <code class="font-mono">bge-m3</code> multi-vector scoring, and pack context via budgeted submodular maximization with explicit <code class="font-mono">[arxiv_id]</code> citation constraints.</p>
               </div>
-              <div class="pt-2 border-t border-border font-mono text-[11px] text-muted-foreground">Hypothesis: Unlocks table/ablation QA while curbing token-budget truncation.</div>
+              <div class="pt-2 border-t border-border font-mono text-[11px] text-muted-foreground">Hypothesis: Unlocks table/ablation QA while restoring citation completeness.</div>
             </div>
           </div>
 
@@ -1475,24 +1753,24 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
                 </thead>
                 <tbody>
                   <tr>
-                    <th class="font-mono text-xs">1 · QLoRA + Router</th>
-                    <td data-label="Bottleneck" class="text-xs">20/20 <code class="font-mono">static</code> RAG abstentions (<code class="font-mono">1.80</code>)</td>
-                    <td data-label="Intervention" class="text-xs">4-bit QLoRA on pre-T corpus + <code class="font-mono">bge-reranker</code> threshold gate</td>
-                    <td data-label="Target" class="font-mono text-xs">Static &ge; 4.20 · Unansw. &ge; 4.80</td>
-                    <td data-label="Compute" class="font-mono text-xs">~1.5h train · +25 ms/query</td>
+                    <th class="font-mono text-xs">1 · QLoRA + Cross-Encoder Gate</th>
+                    <td data-label="Bottleneck" class="text-xs">Raw cosine <code class="font-mono">tau=0.68</code> leaves 19/20 <code class="font-mono">static</code> on RAG (<code class="font-mono">2.00</code>)</td>
+                    <td data-label="Intervention" class="text-xs">Chapter 7 QLoRA weights + <code class="font-mono">bge-reranker-v2-m3</code> threshold gate</td>
+                    <td data-label="Target" class="font-mono text-xs">Static &ge; 4.20 · Unansw. &ge; 4.90</td>
+                    <td data-label="Compute" class="font-mono text-xs">Done (1.16h MLX) + +25 ms/query</td>
                   </tr>
                   <tr>
-                    <th class="font-mono text-xs">2 · Conflict DPO</th>
-                    <td data-label="Bottleneck" class="text-xs">3/10 <code class="font-mono">temporal_override</code> misses (<code class="font-mono">0.70</code>)</td>
-                    <td data-label="Intervention" class="text-xs">Time-decay RRF rerank + counterfactual DPO on mixed-date pairs</td>
-                    <td data-label="Target" class="font-mono text-xs">Override Obed &ge; 0.95 · Corr &ge; 4.60</td>
+                    <th class="font-mono text-xs">2 · Abstention &amp; Conflict DPO</th>
+                    <td data-label="Bottleneck" class="text-xs">ZS overconfidence (<code class="font-mono">live</code> faith 1.40) + 2/10 override misses</td>
+                    <td data-label="Intervention" class="text-xs">Time-decay RRF rerank + DPO on abstention &amp; mixed-date conflict pairs</td>
+                    <td data-label="Target" class="font-mono text-xs">Override Obed &ge; 0.95 · ZS Unansw = 5.0</td>
                     <td data-label="Compute" class="font-mono text-xs">~2.0h DPO · +15 ms/query</td>
                   </tr>
                   <tr>
                     <th class="font-mono text-xs">3 · Full-Paper Packing</th>
-                    <td data-label="Bottleneck" class="text-xs">Abstract-only depth limits (<code class="font-mono">3.85</code> live)</td>
+                    <td data-label="Bottleneck" class="text-xs">Abstract depth limits &amp; terse FT <code class="font-mono">live</code> omissions (<code class="font-mono">4.45</code>)</td>
                     <td data-label="Intervention" class="text-xs"><code class="font-mono">ar5iv</code> section/table chunks + <code class="font-mono">bge-m3</code> + submodular packing</td>
-                    <td data-label="Target" class="font-mono text-xs">Live &ge; 4.50 · Deep Table QA &ge; 4.00</td>
+                    <td data-label="Target" class="font-mono text-xs">Live &ge; 4.90 · Deep Table QA &ge; 4.00</td>
                     <td data-label="Compute" class="font-mono text-xs">~0.5h ingest · +90 ms/query</td>
                   </tr>
                 </tbody>
@@ -1514,8 +1792,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           </div>
         </section>
 
-        <!-- Page 11: Appendix C - Stronger Judge Experiment (Qwen3.5-9B MLX vs. Qwen2.5-7B) -->
-        <section id="page-11" data-page="10" class="book-page hidden space-y-6">
+        <!-- Page 12: Appendix C - Stronger Judge Experiment (Qwen3.5-9B MLX vs. Qwen2.5-7B) -->
+        <section id="page-12" data-page="11" class="book-page hidden space-y-6">
           <div class="border-b border-border pb-4">
             <p class="font-mono text-xs uppercase tracking-wider text-muted-foreground">Appendix C · Stronger Cross-Family Judge Ablation</p>
             <h1 class="font-serif text-3xl font-bold mt-1">Qwen3.5-9B (MLX) vs. Qwen2.5-7B Judge Comparison</h1>
@@ -1635,7 +1913,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
               <div class="tabpanel-box grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                 <div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-2">
                   <h4 class="font-serif text-base font-semibold">Decision Matrix: Qwen3.5-9B vs. Qwen2.5-7B</h4>
-                  <p class="text-muted-foreground"><strong>Use <code class="font-mono">qwen3.5:9b</code> (MLX)</strong> for all final benchmark runs, QLoRA fine-tune comparisons (Issue #2), and human-audit replacement: higher accuracy (+10.0 pp exact, 0.782 QWK) AND half the median wait time (3.76 s vs 7.75 s).</p>
+                  <p class="text-muted-foreground"><strong>Use <code class="font-mono">qwen3.5:9b</code> (MLX)</strong> for all final benchmark runs, QLoRA fine-tune comparisons, and human-audit replacement: higher accuracy (+10.0 pp exact, 0.782 QWK) AND half the median wait time (3.76 s vs 7.75 s).</p>
                   <p class="text-muted-foreground"><strong>Keep <code class="font-mono">qwen2.5:7b</code></strong> only on &le;16 GB RAM machines where a 7.64 GB model alongside generator/embeddings pressures unified memory.</p>
                 </div>
                 <div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-2">
@@ -1652,7 +1930,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           <button id="btn-prev-page" type="button" class="inline-flex items-center gap-2 rounded-lg border border-border bg-secondary px-4 py-2 text-sm font-medium hover:bg-accent disabled:opacity-40 disabled:pointer-events-none">
             ← Previous Page
           </button>
-          <span id="footer-folio" class="font-serif italic text-sm text-muted-foreground">Page 1 of 11</span>
+          <span id="footer-folio" class="font-serif italic text-sm text-muted-foreground">Page 1 of 12</span>
           <button id="btn-next-page" type="button" class="inline-flex items-center gap-2 rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:opacity-90 disabled:opacity-40 disabled:pointer-events-none">
             Next Page →
           </button>
@@ -1666,17 +1944,18 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     const DATA = JSON.parse(document.getElementById("experiment-data").textContent);
 
     const CHAPTERS = [
-      { idx: 0, label: "Prologue", title: "Abstract & Agenda", desc: "Motivation, temporal cutoff T=2025-01-01, executive KPIs, and full comparison." },
-      { idx: 1, label: "Chapter 1", title: "Slices, Metrics & Agents", desc: "4 golden slices (+/- examples), 1–5 metrics, runtime agents & 9 orchestration subagents." },
+      { idx: 0, label: "Prologue", title: "Abstract & Agenda", desc: "Motivation, temporal cutoff T=2025-01-01, executive KPIs, and Base vs. QLoRA overview." },
+      { idx: 1, label: "Chapter 1", title: "Slices, Metrics & Agents", desc: "4 golden slices (+/- examples), 1–5 metrics, runtime agents & orchestration subagents." },
       { idx: 2, label: "Chapter 2", title: "Leakage-Safe Date Split", desc: "300 static (<T) vs. 200 live (>=T) cs.CL abstracts with 0 ID overlap." },
       { idx: 3, label: "Chapter 3", title: "Ingestion & FAISS Retrieval", desc: "bge-small-en-v1.5 384-d embeddings, IndexFlatIP, and after=T filtering." },
       { idx: 4, label: "Chapter 4", title: "60-Prompt Golden Set", desc: "Interactive explorer across Static, Live, Temporal Override, and Unanswerable." },
-      { idx: 5, label: "Chapter 5", title: "Rubric & Judge Calibration", desc: "48.3% -> 80.0% exact agreement lift via CoT ordering and abstention rules." },
-      { idx: 6, label: "Chapter 6", title: "Baselines & Run Inspector", desc: "120 Zero-Shot vs. RAG runs, latency distributions, and prompt-level drilldown." },
-      { idx: 7, label: "Chapter 7", title: "Failure Analysis & QLoRA", desc: "Master results table, 3 failure modes, and QLoRA hybrid roadmap." },
-      { idx: 8, label: "Appendix A", title: "Compute & Orchestration", desc: "Mac mini M5 Pro user-space Ollama setup, MLX runner, and parallel subagents." },
-      { idx: 9, label: "Appendix B", title: "3 Research Continuations", desc: "Confidence-gated QLoRA routing, temporal conflict DPO, and full-paper submodular RAG." },
-      { idx: 10, label: "Appendix C", title: "Stronger Judge (Qwen3.5-9B)", desc: "Bottom-line verdict, QWK guide, speed/token comparison, and 34 discordant cases." },
+      { idx: 5, label: "Chapter 5", title: "Rubric & Judge Calibration", desc: "48.3% -> 80.0% -> 90.0% exact agreement lift via CoT ordering & MLX judge." },
+      { idx: 6, label: "Chapter 6", title: "Baselines & Run Inspector", desc: "240 Base vs. QLoRA runs, latency distributions, and 4-card prompt drilldown." },
+      { idx: 7, label: "Chapter 7", title: "QLoRA Fine-Tuning", desc: "llama3.2-qlora:3b vs. llama3.2:3b: loss curves, 95% CIs, hybrid routing & 120-item diff explorer." },
+      { idx: 8, label: "Chapter 8", title: "Failure Analysis & Roadmap", desc: "Master results table, 3 failure modes, and expected vs. measured QLoRA target." },
+      { idx: 9, label: "Appendix A", title: "Compute & Orchestration", desc: "Mac mini M5 Pro user-space Ollama setup, MLX QLoRA training, and parallel subagents." },
+      { idx: 10, label: "Appendix B", title: "3 Research Continuations", desc: "Cross-encoder QLoRA gating, abstention/conflict DPO, and full-paper submodular RAG." },
+      { idx: 11, label: "Appendix C", title: "Stronger Judge (Qwen3.5-9B)", desc: "Bottom-line verdict, QWK guide, speed/token comparison, and 34 discordant cases." },
     ];
 
     let currentPage = 0;
@@ -1743,30 +2022,32 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       const t = plotlyTheme();
 
       if (idx === 0) {
-        const bms = DATA.results.by_mode_slice;
+        const sc = DATA.model_comparison.score_comparison;
+        const bBase = sc.base.by_mode_slice;
+        const bFt = sc.ft.by_mode_slice;
         const cats = ["Static", "Live", "Temporal Override", "Unanswerable", "Override Obed (×5)"];
-        const zsVals = [
-          bms.zero_shot.static.correctness,
-          bms.zero_shot.live.correctness,
-          bms.zero_shot.temporal_override.correctness,
-          bms.zero_shot.unanswerable.correctness,
-          bms.zero_shot.temporal_override.override_obedience * 5,
+        const extract = (bms, mode) => [
+          bms[mode].static.correctness,
+          bms[mode].live.correctness,
+          bms[mode].temporal_override.correctness,
+          bms[mode].unanswerable.correctness,
+          (bms[mode].temporal_override.override_obedience ?? 0) * 5,
         ];
-        const ragVals = [
-          bms.rag.static.correctness,
-          bms.rag.live.correctness,
-          bms.rag.temporal_override.correctness,
-          bms.rag.unanswerable.correctness,
-          bms.rag.temporal_override.override_obedience * 5,
-        ];
+        const baseZs = extract(bBase, "zero_shot");
+        const ftZs = extract(bFt, "zero_shot");
+        const baseRag = extract(bBase, "rag");
+        const ftRag = extract(bFt, "rag");
         Plotly.newPlot("chart-p1-overview", [
-          { x: cats, y: zsVals, name: "Zero-Shot (llama3.2:3b)", type: "bar", marker: { color: t.zsColor }, text: zsVals.map((v) => v.toFixed(2)), textposition: "outside" },
-          { x: cats, y: ragVals, name: "RAG k=4 (bge-small)", type: "bar", marker: { color: t.ragColor }, text: ragVals.map((v) => v.toFixed(2)), textposition: "outside" },
+          { x: cats, y: baseZs, name: "Base Zero-Shot (llama3.2:3b)", type: "bar", marker: { color: t.zsColor }, text: baseZs.map((v) => v.toFixed(2)), textposition: "outside" },
+          { x: cats, y: ftZs, name: "QLoRA Zero-Shot (llama3.2-qlora:3b)", type: "bar", marker: { color: t.accentColor }, text: ftZs.map((v) => v.toFixed(2)), textposition: "outside" },
+          { x: cats, y: baseRag, name: "Base RAG k=4", type: "bar", marker: { color: t.ragColor }, text: baseRag.map((v) => v.toFixed(2)), textposition: "outside" },
+          { x: cats, y: ftRag, name: "QLoRA RAG k=4", type: "bar", marker: { color: t.greenColor }, text: ftRag.map((v) => v.toFixed(2)), textposition: "outside" },
         ], baseLayout({
           barmode: "group",
-          yaxis: { range: [0, 5.8], title: "Score (0–5)", gridcolor: t.gridColor },
+          margin: { t: 44, r: 18, b: 44, l: 48 },
+          yaxis: { range: [0, 5.9], title: "Score (0–5, Qwen3.5-9B)", gridcolor: t.gridColor },
           xaxis: { gridcolor: t.gridColor },
-          legend: { orientation: "h", y: 1.12 },
+          legend: { orientation: "h", y: 1.18 },
         }), PLOT_CONFIG);
       }
 
@@ -1986,28 +2267,120 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       }
 
       if (idx === 7) {
-        const axes = ["Static Recall", "Live Freshness", "Temporal Override", "Abstention Safety", "Citation Discipline"];
-        Plotly.newPlot("chart-p8-roadmap", [
-          { x: axes, y: [1.45, 1.00, 0.0, 5.00, 1.00], name: "Zero-Shot (Baseline)", type: "scatter", mode: "lines+markers", line: { color: t.zsColor, width: 2.5 } },
-          { x: axes, y: [1.80, 3.85, 3.50, 5.00, 4.98], name: "RAG Live-Only (Baseline)", type: "scatter", mode: "lines+markers", line: { color: t.ragColor, width: 2.5 } },
-          { x: axes, y: [4.30, 4.30, 4.50, 4.90, 4.98], name: "Target: QLoRA + Live RAG", type: "scatter", mode: "lines+markers", line: { color: t.greenColor, width: 3, dash: "dot" } },
+        const mc = DATA.model_comparison;
+        const trainLog = DATA.qlora_training.log;
+        const trPts = trainLog.filter((r) => r.event === "train");
+        const valPts = trainLog.filter((r) => r.event === "val");
+        const selIter = DATA.qlora_training.manifest.selected_checkpoint_iter;
+        const selVal = DATA.qlora_training.manifest.selected_checkpoint_val_loss;
+        Plotly.newPlot("chart-p9-loss-curve", [
+          { x: trPts.map((r) => r.iter), y: trPts.map((r) => r.train_loss), name: "Train Loss", type: "scatter", mode: "lines+markers", line: { color: t.ragColor, width: 2 }, marker: { size: 4 } },
+          { x: valPts.map((r) => r.iter), y: valPts.map((r) => r.val_loss), name: "Validation Loss", type: "scatter", mode: "lines+markers", line: { color: t.roseColor, width: 2.5 }, marker: { size: 7 } },
         ], baseLayout({
-          yaxis: { title: "Capability (0–5)", range: [0, 5.5], gridcolor: t.gridColor },
-          margin: { t: 24, r: 18, b: 64, l: 48 },
-          xaxis: { tickangle: -15, gridcolor: t.gridColor },
-          legend: { orientation: "h", y: 1.16 },
+          xaxis: { title: "Training Iteration", gridcolor: t.gridColor },
+          yaxis: { title: "Cross-Entropy Loss", gridcolor: t.gridColor },
+          legend: { orientation: "h", y: 1.14 },
+          shapes: [{ type: "line", x0: selIter, x1: selIter, y0: 0, y1: 2.6, line: { color: t.greenColor, width: 2, dash: "dash" } }],
+          annotations: [{ x: selIter, y: selVal + 0.35, text: `Selected iter ${selIter} (val=${selVal})`, showarrow: true, arrowhead: 2, ax: 35, ay: -30, font: { color: t.greenColor, size: 11 } }],
+        }), PLOT_CONFIG);
+
+        const sc = mc.score_comparison;
+        const buckets = [
+          ["zero_shot", "static", "ZS · Static"],
+          ["zero_shot", "live", "ZS · Live"],
+          ["zero_shot", "temporal_override", "ZS · Override"],
+          ["zero_shot", "unanswerable", "ZS · Unansw."],
+          ["rag", "static", "RAG · Static"],
+          ["rag", "live", "RAG · Live"],
+          ["rag", "temporal_override", "RAG · Override"],
+          ["rag", "unanswerable", "RAG · Unansw."],
+        ];
+        const baseY = buckets.map(([m, s]) => sc.base.by_mode_slice[m][s].correctness);
+        const ftY = buckets.map(([m, s]) => sc.ft.by_mode_slice[m][s].correctness);
+        Plotly.newPlot("chart-p9-slice-comparison", [
+          { x: buckets.map((b) => b[2]), y: baseY, name: "Base (llama3.2:3b)", type: "bar", marker: { color: t.zsColor }, text: baseY.map((v) => v.toFixed(2)), textposition: "outside" },
+          { x: buckets.map((b) => b[2]), y: ftY, name: "QLoRA (llama3.2-qlora:3b)", type: "bar", marker: { color: t.greenColor }, text: ftY.map((v) => v.toFixed(2)), textposition: "outside" },
+        ], baseLayout({
+          barmode: "group",
+          margin: { t: 24, r: 16, b: 68, l: 48 },
+          xaxis: { tickangle: -25 },
+          yaxis: { title: "Mean Correctness (1–5)", range: [0, 5.8], gridcolor: t.gridColor },
+          legend: { orientation: "h", y: 1.15 },
+        }), PLOT_CONFIG);
+
+        const wl = mc.win_loss.by_mode_slice;
+        Plotly.newPlot("chart-p9-win-loss", [
+          { x: buckets.map((b) => b[2]), y: buckets.map(([m, s]) => wl[m][s].improved), name: "Improved (FT > Base)", type: "bar", marker: { color: t.greenColor } },
+          { x: buckets.map((b) => b[2]), y: buckets.map(([m, s]) => wl[m][s].tied), name: "Tied", type: "bar", marker: { color: t.zsColor } },
+          { x: buckets.map((b) => b[2]), y: buckets.map(([m, s]) => wl[m][s].regressed), name: "Regressed (FT < Base)", type: "bar", marker: { color: t.roseColor } },
+        ], baseLayout({
+          barmode: "stack",
+          margin: { t: 24, r: 16, b: 68, l: 48 },
+          xaxis: { tickangle: -25 },
+          yaxis: { title: "Prompt Count", gridcolor: t.gridColor },
+          legend: { orientation: "h", y: 1.15 },
+        }), PLOT_CONFIG);
+
+        const hy = mc.hybrid_routing.by_tau[String(mc.hybrid_routing.default_tau)] || mc.hybrid_routing.by_tau["0.68"];
+        const hySlices = [
+          ["static", "Static (20)"],
+          ["live", "Live (20)"],
+          ["temporal_override", "Override (10)"],
+          ["unanswerable", "Unansw. (10)"],
+          ["overall", "Overall (60)"],
+        ];
+        const getVal = (root, mode, sl) => sl === "overall" ? root.overall[mode].correctness : root.by_mode_slice[mode][sl].correctness;
+        const getHyVal = (side, sl) => sl === "overall" ? side.overall.correctness : side.by_slice[sl].correctness;
+        Plotly.newPlot("chart-p9-hybrid-routing", [
+          { x: hySlices.map((s) => s[1]), y: hySlices.map(([s]) => getVal(sc.base, "zero_shot", s)), name: "Base Zero-Shot", type: "bar", marker: { color: t.zsColor } },
+          { x: hySlices.map((s) => s[1]), y: hySlices.map(([s]) => getVal(sc.ft, "zero_shot", s)), name: "QLoRA Zero-Shot", type: "bar", marker: { color: t.accentColor } },
+          { x: hySlices.map((s) => s[1]), y: hySlices.map(([s]) => getVal(sc.base, "rag", s)), name: "Base RAG", type: "bar", marker: { color: t.ragColor } },
+          { x: hySlices.map((s) => s[1]), y: hySlices.map(([s]) => getVal(sc.ft, "rag", s)), name: "QLoRA RAG", type: "bar", marker: { color: t.greenColor } },
+          { x: hySlices.map((s) => s[1]), y: hySlices.map(([s]) => getHyVal(hy.base, s)), name: "Base Hybrid (tau=0.68)", type: "bar", marker: { color: "#818cf8" } },
+          { x: hySlices.map((s) => s[1]), y: hySlices.map(([s]) => getHyVal(hy.ft, s)), name: "QLoRA Hybrid (tau=0.68)", type: "bar", marker: { color: "#14b8a6" } },
+        ], baseLayout({
+          barmode: "group",
+          margin: { t: 54, r: 16, b: 54, l: 48 },
+          yaxis: { title: "Correctness (1–5)", range: [0, 5.8], gridcolor: t.gridColor },
+          legend: { orientation: "h", y: 1.24 },
         }), PLOT_CONFIG);
       }
 
       if (idx === 8) {
+        const sc = DATA.model_comparison.score_comparison;
+        const axes = ["Static Recall", "Live Freshness", "Override Obed (×5)", "Abstention Safety", "Citation Discipline"];
+        const profile = (block, mode) => [
+          block.by_mode_slice[mode].static.correctness,
+          block.by_mode_slice[mode].live.correctness,
+          (block.by_mode_slice[mode].temporal_override.override_obedience ?? 0) * 5,
+          block.by_mode_slice[mode].unanswerable.correctness,
+          block.overall[mode].citation_accuracy,
+        ];
+        Plotly.newPlot("chart-p8-roadmap", [
+          { x: axes, y: profile(sc.base, "zero_shot"), name: "Base Zero-Shot", type: "scatter", mode: "lines+markers", line: { color: t.zsColor, width: 2 } },
+          { x: axes, y: profile(sc.ft, "zero_shot"), name: "QLoRA Zero-Shot (Measured)", type: "scatter", mode: "lines+markers", line: { color: t.accentColor, width: 2.5 } },
+          { x: axes, y: profile(sc.base, "rag"), name: "Base RAG Live-Only", type: "scatter", mode: "lines+markers", line: { color: t.ragColor, width: 2 } },
+          { x: axes, y: profile(sc.ft, "rag"), name: "QLoRA RAG Live-Only (Measured)", type: "scatter", mode: "lines+markers", line: { color: t.greenColor, width: 2.5 } },
+          { x: axes, y: [4.30, 4.90, 4.75, 4.95, 4.98], name: "Target: QLoRA + Gated Hybrid", type: "scatter", mode: "lines+markers", line: { color: t.roseColor, width: 2.5, dash: "dot" } },
+        ], baseLayout({
+          yaxis: { title: "Capability (0–5, Qwen3.5-9B)", range: [0, 5.6], gridcolor: t.gridColor },
+          margin: { t: 24, r: 18, b: 68, l: 48 },
+          xaxis: { tickangle: -15, gridcolor: t.gridColor },
+          legend: { orientation: "h", y: 1.22 },
+        }), PLOT_CONFIG);
+      }
+
+      if (idx === 9) {
         const models = DATA.env.models;
-        const llamaGb = models.find((m) => m.name.includes("llama3.2"))?.size_gb ?? 2.02;
+        const llamaGb = models.find((m) => m.name === "llama3.2:3b")?.size_gb ?? 2.02;
+        const qloraGb = models.find((m) => m.name.includes("qlora"))?.size_gb ?? 2.80;
         const qwen25Gb = models.find((m) => m.name.includes("qwen2.5"))?.size_gb ?? 4.68;
         const qwen35Gb = models.find((m) => m.name.includes("qwen3.5"))?.size_gb ?? 7.64;
         const bgeGb = 0.13;
-        const freeGb = Number((48 - llamaGb - qwen25Gb - qwen35Gb - bgeGb).toFixed(2));
+        const freeGb = Number((48 - llamaGb - qloraGb - qwen25Gb - qwen35Gb - bgeGb).toFixed(2));
         Plotly.newPlot("chart-app-memory", [
           { y: ["48 GB Unified"], x: [llamaGb], name: `llama3.2:3b (${llamaGb} GB)`, type: "bar", orientation: "h", marker: { color: t.ragColor } },
+          { y: ["48 GB Unified"], x: [qloraGb], name: `llama3.2-qlora:3b nvfp4 (${qloraGb} GB)`, type: "bar", orientation: "h", marker: { color: "#14b8a6" } },
           { y: ["48 GB Unified"], x: [qwen25Gb], name: `qwen2.5:7b (${qwen25Gb} GB)`, type: "bar", orientation: "h", marker: { color: t.accentColor } },
           { y: ["48 GB Unified"], x: [qwen35Gb], name: `qwen3.5:9b MLX (${qwen35Gb} GB)`, type: "bar", orientation: "h", marker: { color: t.roseColor } },
           { y: ["48 GB Unified"], x: [bgeGb], name: `bge-small (${bgeGb} GB)`, type: "bar", orientation: "h", marker: { color: t.greenColor } },
@@ -2016,7 +2389,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           barmode: "stack",
           margin: { t: 24, r: 18, b: 44, l: 110 },
           xaxis: { range: [0, 48], title: "Gigabytes (GB)", gridcolor: t.gridColor },
-          legend: { orientation: "h", y: 1.22 },
+          legend: { orientation: "h", y: 1.26 },
         }), PLOT_CONFIG);
 
         const op = DATA.judge_comparison.operational;
@@ -2035,26 +2408,26 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         }), PLOT_CONFIG);
       }
 
-      if (idx === 9) {
+      if (idx === 10) {
         const axes = ["Static (20)", "Live (20)", "Override (10)", "Unansw. (10)", "Deep Table QA"];
         Plotly.newPlot("chart-appb-impact", [
-          { x: axes, y: [1.80, 3.85, 4.20, 5.00, 1.50], name: "Baseline RAG (Measured)", type: "bar", marker: { color: t.zsColor } },
-          { x: axes, y: [4.25, 3.85, 4.20, 4.90, 1.50], name: "+Cont. 1: QLoRA Router (Target)", type: "bar", marker: { color: t.ragColor } },
-          { x: axes, y: [4.25, 3.95, 4.70, 4.90, 1.50], name: "+Cont. 2: Conflict DPO (Target)", type: "bar", marker: { color: t.accentColor } },
-          { x: axes, y: [4.30, 4.55, 4.75, 4.95, 4.20], name: "+Cont. 3: Full-Paper Pack (Target)", type: "bar", marker: { color: t.greenColor } },
+          { x: axes, y: [1.80, 4.85, 3.60, 5.00, 1.50], name: "Base RAG (Qwen3.5-9B)", type: "bar", marker: { color: t.zsColor } },
+          { x: axes, y: [2.00, 4.45, 4.80, 5.00, 1.50], name: "Ch. 7 Measured: QLoRA RAG", type: "bar", marker: { color: t.ragColor } },
+          { x: axes, y: [4.25, 4.85, 4.80, 4.95, 1.50], name: "+Cont. 1+2: Reranker Gate & Conflict DPO (Target)", type: "bar", marker: { color: t.accentColor } },
+          { x: axes, y: [4.30, 4.95, 4.90, 5.00, 4.20], name: "+Cont. 3: Full-Paper Pack (Target)", type: "bar", marker: { color: t.greenColor } },
         ], baseLayout({
           barmode: "group",
-          yaxis: { title: "Correctness / Target (1–5)", range: [0, 5.6], gridcolor: t.gridColor },
+          yaxis: { title: "Correctness / Target (1–5)", range: [0, 5.8], gridcolor: t.gridColor },
           margin: { t: 24, r: 16, b: 56, l: 48 },
-          legend: { orientation: "h", y: 1.18 },
+          legend: { orientation: "h", y: 1.22 },
         }), PLOT_CONFIG);
 
         Plotly.newPlot("chart-appb-pareto", [{
           x: [25, 15, 90],
           y: [0.82, 0.35, 0.72],
           text: [
-            "Cont. 1: QLoRA + Router (~1.5h, +25 ms)",
-            "Cont. 2: Conflict DPO (~2.0h, +15 ms)",
+            "Cont. 1: QLoRA + Cross-Encoder (~1.2h done, +25 ms)",
+            "Cont. 2: Abstention & Conflict DPO (~2.0h, +15 ms)",
             "Cont. 3: Full-Paper Pack (~0.5h, +90 ms)",
           ],
           textposition: ["top center", "bottom center", "top left"],
@@ -2072,7 +2445,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         }), PLOT_CONFIG);
       }
 
-      if (idx === 10) {
+      if (idx === 11) {
         const jc = DATA.judge_comparison;
         const op = jc.operational;
         const baseOp = op.base;
@@ -2302,12 +2675,18 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     function populateContent() {
       // Page 1 KPIs
       const jc = DATA.judge_comparison;
+      const mc = DATA.model_comparison;
+      const sc = mc.score_comparison;
       const candPooled = jc.human_calibration.cand.pooled;
       const basePooled = jc.human_calibration.base.pooled;
       const kpis = [
         { k: "Date-Split Corpus", v: "500 Abstracts", s: "300 static (<T) · 200 live (>=T) · 0 overlap" },
         { k: "Golden Benchmark", v: "60 Prompts", s: "20 static · 20 live · 10 override · 10 unansw." },
-        { k: "RAG vs. Zero-Shot", v: "3.65 vs. 1.73", s: "Qwen3.5-9B live 4.85 (+3.85 vs ZS)" },
+        {
+          k: "QLoRA vs. Base (Q3.5)",
+          v: `${sc.ft.overall.pooled_all.correctness.toFixed(2)} vs. ${sc.base.overall.pooled_all.correctness.toFixed(2)}`,
+          s: `RAG Override ${sc.ft.by_mode_slice.rag.temporal_override.correctness.toFixed(2)} vs. ${sc.base.by_mode_slice.rag.temporal_override.correctness.toFixed(2)} · 2.5× faster`,
+        },
         { k: "Judge Calibration", v: `${candPooled.exact_match_pct}% Exact`, s: `+${jc.human_calibration.delta.pooled_exact_match_pct}pp vs Qwen2.5-7B (${basePooled.exact_match_pct}%) · QWK ${candPooled.kappa_w}` },
       ];
       document.getElementById("p1-kpis").innerHTML = kpis
@@ -2316,7 +2695,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         )
         .join("");
 
-      // Page 11 KPIs (Appendix C: Stronger Judge)
+      // Page 12 KPIs (Appendix C: Stronger Judge)
       const op = jc.operational;
       const baseOp = op.base;
       const candOp = op.cand;
@@ -2333,12 +2712,15 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         )
         .join("");
 
-      // Page 2 Hardware & Model Cards
+      // Page 10 Hardware & Model Cards
       const hw = DATA.env.host;
       const hwHtml = [
         `<div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-1"><p class="font-mono text-xs text-muted-foreground">Compute Host</p><p class="font-semibold">${hw.model_name} (${hw.chip})</p><p class="text-xs text-muted-foreground">${hw.total_number_of_cores} · ${hw.memory} Unified · macOS ${DATA.env.os}</p><p class="font-mono text-[11px] text-muted-foreground">${DATA.env.uv.split(" ")[0]} + ${DATA.env.python}</p></div>`,
         ...DATA.env.models.map(
-          (m) => `<div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-1"><p class="font-mono text-xs text-muted-foreground">${m.name.includes("llama") ? "Base Model" : "Cross-Family Judge"}</p><p class="font-semibold font-mono text-sm">${m.name} (${m.params})</p><p class="text-xs text-muted-foreground">${m.quant} · ${m.size_gb} GB · ctx=${m.ctx ? m.ctx.toLocaleString() : "default"} · 100% Metal GPU</p><p class="font-mono text-[11px] text-muted-foreground">sha256:${m.digest}...</p></div>`
+          (m) => {
+            const role = m.name.includes("qlora") ? "QLoRA Fine-Tuned Model" : (m.name.includes("llama") ? "Base Model" : "Cross-Family Judge");
+            return `<div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-1"><p class="font-mono text-xs text-muted-foreground">${role}</p><p class="font-semibold font-mono text-sm">${escapeHtml(m.name)} (${escapeHtml(m.params)})</p><p class="text-xs text-muted-foreground">${escapeHtml(m.quant)} · ${m.size_gb} GB · ctx=${m.ctx ? m.ctx.toLocaleString() : "default"} · 100% Metal GPU</p><p class="font-mono text-[11px] text-muted-foreground">sha256:${escapeHtml(m.digest)}...</p></div>`;
+          }
         ),
       ];
       document.getElementById("app-hw-cards").innerHTML = hwHtml.join("");
@@ -2527,8 +2909,10 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
             <p class="text-xs text-muted-foreground"><strong>Reference Answer:</strong> ${escapeHtml(r.reference_answer)}</p>
           </div>
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            ${card("Zero-Shot (llama3.2:3b)", r.zero_shot, false)}
-            ${card("RAG k=4 (llama3.2:3b + bge-small)", r.rag, true)}
+            ${card("Base Zero-Shot (llama3.2:3b)", r.zero_shot, false)}
+            ${card("QLoRA Zero-Shot (llama3.2-qlora:3b)", r.zero_shot_ft, false)}
+            ${card("Base RAG k=4 (llama3.2:3b + bge-small)", r.rag, true)}
+            ${card("QLoRA RAG k=4 (llama3.2-qlora:3b + bge-small)", r.rag_ft, true)}
           </div>`;
       }
       sel.addEventListener("change", () => renderInspector(Number(sel.value)));
@@ -2536,20 +2920,38 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       document.getElementById("inspector-next").addEventListener("click", () => renderInspector(Math.min(DATA.runs.length - 1, Number(sel.value) + 1)));
       renderInspector(40); // Default to temporal_override g41 SOLAR
 
-      // Page 8 Master Table
+      // Page 9 (Chapter 8): Master Table (Base vs. QLoRA)
       const bms = DATA.results.by_mode_slice;
       const ov = DATA.results.overall;
       const bms35 = DATA.judge_comparison.benchmark_shift.cand.by_mode_slice;
       const ov35 = DATA.judge_comparison.benchmark_shift.cand.overall;
+      const ft25 = mc.cross_judge_check.ft;
+      const ft35 = sc.ft;
       const rows = [];
       for (const mode of ["zero_shot", "rag"]) {
-        const mLabel = mode === "zero_shot" ? "Zero-Shot" : "RAG (k=4)";
+        const modeTitle = mode === "zero_shot" ? "Zero-Shot" : "RAG (k=4)";
         for (const sl of ["static", "live", "temporal_override", "unanswerable"]) {
-          const s = bms[mode][sl];
-          const s35 = bms35[mode][sl];
-          rows.push({ mode: mLabel, slice: sl, ...s, corr35: s35.correctness, bold: false });
+          rows.push({ mode: `Base · ${modeTitle}`, slice: sl, ...bms[mode][sl], corr35: bms35[mode][sl].correctness, bold: false });
         }
-        rows.push({ mode: mLabel, slice: "ALL (mean)", ...ov[mode], corr35: ov35[mode].correctness, bold: true });
+        rows.push({ mode: `Base · ${modeTitle}`, slice: "ALL (mean)", ...ov[mode], corr35: ov35[mode].correctness, bold: true });
+        for (const sl of ["static", "live", "temporal_override", "unanswerable"]) {
+          rows.push({
+            mode: `QLoRA · ${modeTitle}`,
+            slice: sl,
+            ...ft35.by_mode_slice[mode][sl],
+            correctness: ft25.by_mode_slice[mode][sl].correctness,
+            corr35: ft35.by_mode_slice[mode][sl].correctness,
+            bold: false,
+          });
+        }
+        rows.push({
+          mode: `QLoRA · ${modeTitle}`,
+          slice: "ALL (mean)",
+          ...ft35.overall[mode],
+          correctness: ft25.overall[mode].correctness,
+          corr35: ft35.overall[mode].correctness,
+          bold: true,
+        });
       }
       document.getElementById("master-tbody").innerHTML = rows
         .map(
@@ -2565,6 +2967,164 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
             <td data-label="Mean Latency (ms)" class="font-mono text-xs">${r.latency_mean_ms.toFixed(1)}</td>
           </tr>`
         )
+        .join("");
+
+      // Page 8 (Chapter 7): QLoRA Fine-Tuning Experiment
+      const qMan = DATA.qlora_training.manifest;
+      const qDs = DATA.qlora_dataset;
+      const pooledCi = mc.bootstrap_cis.pooled_all;
+      const p9Kpis = [
+        {
+          k: "Pooled Correctness (N=120)",
+          v: `${pooledCi.ft_mean.toFixed(3)} vs. ${pooledCi.base_mean.toFixed(3)}`,
+          s: `Delta +${pooledCi.delta_mean.toFixed(3)} · 95% CI [${pooledCi.ci95[0]}, ${pooledCi.ci95[1]}] · ${mc.win_loss.overall.improved}W / ${mc.win_loss.overall.regressed}L`,
+        },
+        {
+          k: "RAG Temporal Override",
+          v: `${sc.ft.by_mode_slice.rag.temporal_override.correctness.toFixed(2)} vs. ${sc.base.by_mode_slice.rag.temporal_override.correctness.toFixed(2)}`,
+          s: `Override Obed ${sc.ft.by_mode_slice.rag.temporal_override.override_obedience.toFixed(2)} vs. ${sc.base.by_mode_slice.rag.temporal_override.override_obedience.toFixed(2)} · 10/10 cited · 0 abstentions`,
+        },
+        {
+          k: "Mean Inference Latency",
+          v: `${sc.ft.overall.pooled_all.latency_mean_ms.toFixed(1)} ms`,
+          s: `${sc.overall_delta.pooled_all.latency_mean_ms.toFixed(1)} ms vs. ${sc.base.overall.pooled_all.latency_mean_ms.toFixed(1)} ms (${(sc.base.overall.pooled_all.latency_mean_ms / sc.ft.overall.pooled_all.latency_mean_ms).toFixed(2)}× faster)`,
+        },
+        {
+          k: "MLX QLoRA Checkpoint",
+          v: `Iter ${qMan.selected_checkpoint_iter}`,
+          s: `val_loss ${qMan.selected_checkpoint_val_loss} · ${qMan.trainable_params.trainable_millions}M params (${qMan.trainable_params.percent}%) · ${(qMan.wall_time_s / 60).toFixed(1)}m`,
+        },
+      ];
+      document.getElementById("p9-qlora-kpis").innerHTML = p9Kpis
+        .map(
+          (item) => `<div class="rounded-xl border border-border bg-card p-4 shadow-sm"><p class="font-mono text-[11px] text-muted-foreground">${escapeHtml(item.k)}</p><p class="font-serif text-2xl font-bold mt-1">${escapeHtml(item.v)}</p><p class="text-xs text-muted-foreground mt-1">${escapeHtml(item.s)}</p></div>`
+        )
+        .join("");
+
+      initTabs("p9-tabs-root");
+
+      // Tab 1: Bootstrap CIs & Dual-Judge Cross-Check
+      const ciEntries = Object.entries(mc.bootstrap_cis);
+      document.getElementById("p9-ci-tbody").innerHTML = ciEntries
+        .map(([bucket, c]) => {
+          const sign = c.delta_mean > 0 ? "+" : "";
+          const ciStr = `[${c.ci95[0] >= 0 ? "+" : ""}${c.ci95[0]}, ${c.ci95[1] >= 0 ? "+" : ""}${c.ci95[1]}]`;
+          return `<tr>
+            <th class="font-mono text-xs">${escapeHtml(bucket)}</th>
+            <td data-label="N" class="font-mono text-xs">${c.n}</td>
+            <td data-label="Base Mean" class="font-mono text-xs">${c.base_mean.toFixed(3)}</td>
+            <td data-label="QLoRA Mean" class="font-mono text-xs font-semibold">${c.ft_mean.toFixed(3)}</td>
+            <td data-label="Delta" class="font-mono text-xs font-semibold">${sign}${c.delta_mean.toFixed(3)}</td>
+            <td data-label="95% CI" class="font-mono text-xs">${escapeHtml(ciStr)}</td>
+            <td data-label="Significant" class="font-mono text-xs">${c.statistically_significant ? '<span class="rounded bg-primary text-primary-foreground px-1.5 py-0.5">YES</span>' : "no"}</td>
+          </tr>`;
+        })
+        .join("");
+
+      const djEntries = Object.entries(mc.cross_judge_check.agreement_by_bucket);
+      document.getElementById("p9-dualjudge-tbody").innerHTML = djEntries
+        .map(([bucket, d]) => {
+          const fmt = (v) => `${v > 0 ? "+" : ""}${v.toFixed(3)}`;
+          const agrees = d.direction_agrees === null ? "—" : (d.direction_agrees ? "True" : "False");
+          return `<tr>
+            <th class="font-mono text-xs">${escapeHtml(bucket)}</th>
+            <td data-label="Qwen3.5-9B Delta" class="font-mono text-xs font-semibold">${fmt(d.primary_delta)}</td>
+            <td data-label="Qwen2.5-7B Delta" class="font-mono text-xs">${fmt(d.secondary_delta)}</td>
+            <td data-label="Direction Agrees" class="font-mono text-xs">${agrees}</td>
+          </tr>`;
+        })
+        .join("");
+
+      // Tab 2: 120-Item Paired Diff Explorer
+      function renderPairedDiffTable() {
+        const outFlt = document.getElementById("p9-diff-outcome").value;
+        const modeFlt = document.getElementById("p9-diff-mode").value;
+        const q = document.getElementById("p9-diff-search").value.trim().toLowerCase();
+        const items = mc.paired_items.filter((it) => {
+          if (outFlt !== "all" && it.outcome !== outFlt) return false;
+          if (modeFlt !== "all" && it.mode !== modeFlt) return false;
+          if (!q) return true;
+          return (
+            it.id.toLowerCase().includes(q) ||
+            it.slice.toLowerCase().includes(q) ||
+            it.prompt.toLowerCase().includes(q) ||
+            it.base_answer_preview.toLowerCase().includes(q) ||
+            it.ft_answer_preview.toLowerCase().includes(q) ||
+            it.base_rationale.toLowerCase().includes(q) ||
+            it.ft_rationale.toLowerCase().includes(q)
+          );
+        });
+        document.getElementById("p9-diff-tbody").innerHTML = items
+          .map((it) => {
+            const bStr = `${it.base_scores.correctness}/${it.base_scores.faithfulness}/${it.base_scores.citation_accuracy}`;
+            const fStr = `${it.ft_scores.correctness}/${it.ft_scores.faithfulness}/${it.ft_scores.citation_accuracy}`;
+            const dSign = it.correctness_delta > 0 ? "+" : "";
+            const badgeCls = it.outcome === "improved"
+              ? "bg-primary text-primary-foreground"
+              : it.outcome === "regressed"
+                ? "bg-muted text-foreground border border-border"
+                : "bg-secondary text-muted-foreground";
+            return `<tr>
+              <th class="font-mono text-xs">${escapeHtml(it.id)}<div class="text-[11px] text-muted-foreground font-normal">${escapeHtml(it.mode)} · ${escapeHtml(it.slice)}</div></th>
+              <td data-label="Base" class="font-mono text-xs">${bStr}<div class="text-[10px] text-muted-foreground">${it.base_latency_ms} ms</div></td>
+              <td data-label="QLoRA" class="font-mono text-xs font-semibold">${fStr}<div class="text-[10px] text-muted-foreground font-normal">${it.ft_latency_ms} ms</div></td>
+              <td data-label="Delta" class="font-mono text-xs"><span class="rounded px-1.5 py-0.5 ${badgeCls}">${dSign}${it.correctness_delta} ${escapeHtml(it.outcome)}</span></td>
+              <td data-label="Details" class="text-xs space-y-1">
+                <div class="font-medium">${escapeHtml(it.prompt)}</div>
+                <div class="text-muted-foreground"><strong>Base Ans:</strong> ${escapeHtml(it.base_answer_preview)}</div>
+                <div class="text-muted-foreground"><strong>QLoRA Ans:</strong> ${escapeHtml(it.ft_answer_preview)}</div>
+                <div class="text-[11px] text-muted-foreground"><strong>Q3.5 Base:</strong> ${escapeHtml(it.base_rationale)}</div>
+                <div class="text-[11px] text-muted-foreground"><strong>Q3.5 QLoRA:</strong> ${escapeHtml(it.ft_rationale)}</div>
+              </td>
+            </tr>`;
+          })
+          .join("");
+      }
+      document.getElementById("p9-diff-outcome").addEventListener("change", renderPairedDiffTable);
+      document.getElementById("p9-diff-mode").addEventListener("change", renderPairedDiffTable);
+      document.getElementById("p9-diff-search").addEventListener("input", renderPairedDiffTable);
+      renderPairedDiffTable();
+
+      // Tab 3: Recipe, Dataset & Hybrid Sweep
+      const cfg = qMan.config;
+      document.getElementById("p9-recipe-grid").innerHTML = [
+        `<div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-1"><p class="font-mono text-muted-foreground">Base &amp; LoRA Config</p><p class="font-semibold font-mono">${escapeHtml(cfg.model)}</p><p class="text-muted-foreground">rank=${cfg.lora_parameters.rank}, scale=${cfg.lora_parameters.scale}, dropout=${cfg.lora_parameters.dropout}, layers=${cfg.num_layers}, max_seq=${cfg.max_seq_length}, mask_prompt=${cfg.mask_prompt}</p></div>`,
+        `<div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-1"><p class="font-mono text-muted-foreground">Optimization &amp; Hardware</p><p class="font-semibold">${cfg.iters} iters (${cfg.lr_schedule.name}, warmup=${cfg.lr_schedule.warmup})</p><p class="text-muted-foreground">lr=${cfg.learning_rate} -> 1e-5, batch=${cfg.batch_size}, grad_ckpt=${cfg.grad_checkpoint}, wall=${qMan.wall_time_s}s, peak=${qMan.peak_mem_gb_observed_sample} GB</p></div>`,
+        `<div class="rounded-xl border border-border bg-secondary/50 p-4 space-y-1"><p class="font-mono text-muted-foreground">Artifact &amp; Leakage Gate</p><p class="font-semibold font-mono">${escapeHtml(qMan.ollama_model)} (${escapeHtml(qMan.ollama_quantization)})</p><p class="text-muted-foreground">ckpt=${escapeHtml(qMan.selected_checkpoint)} · ${qMan.adapter_size_mb} MB · static=${qDs.static_date_min}..${qDs.static_date_max} (< ${qDs.cutoff_date}) · 0 live/golden leaks</p></div>`,
+      ].join("");
+
+      const catLabels = {
+        cat_a_zero_shot_qa: "Cat A · Zero-Shot Pre-T QA",
+        cat_b_zero_shot_abstention: "Cat B · Zero-Shot Abstention",
+        cat_c_rag_synthesis: "Cat C · RAG Cited Synthesis",
+        cat_d_rag_abstention: "Cat D · RAG Grounded Abstention",
+      };
+      const catRows = Object.entries(qDs.categories).map(([k, v]) => [catLabels[k] || k, v.train, v.valid, v.train + v.valid]);
+      catRows.push(["TOTAL (Leakage-Safe Pre-T)", qDs.train_count, qDs.valid_count, qDs.total_count]);
+      document.getElementById("p9-dataset-tbody").innerHTML = catRows
+        .map(([label, tr, va, tot], idx) => `<tr class="${idx === catRows.length - 1 ? "bg-muted/60 font-semibold" : ""}">
+          <th class="text-xs">${escapeHtml(label)}</th>
+          <td data-label="Train" class="font-mono text-xs">${tr}</td>
+          <td data-label="Valid" class="font-mono text-xs">${va}</td>
+          <td data-label="Total" class="font-mono text-xs">${tot}</td>
+        </tr>`)
+        .join("");
+
+      const taus = mc.hybrid_routing.taus;
+      document.getElementById("p9-tau-tbody").innerHTML = taus
+        .map((tv) => {
+          const key = Number(tv).toFixed(2);
+          const row = mc.hybrid_routing.by_tau[key];
+          const isDef = Number(tv) === Number(mc.hybrid_routing.default_tau);
+          const dVal = row.delta.overall.correctness;
+          return `<tr class="${isDef ? "bg-muted/60 font-semibold" : ""}">
+            <th class="font-mono text-xs">${escapeHtml(key)}${isDef ? " (default)" : ""}</th>
+            <td data-label="RAG Routed %" class="font-mono text-xs">${row.base.overall.rag_routed_pct}%</td>
+            <td data-label="Base Hybrid" class="font-mono text-xs">${row.base.overall.correctness.toFixed(3)}</td>
+            <td data-label="QLoRA Hybrid" class="font-mono text-xs">${row.ft.overall.correctness.toFixed(3)}</td>
+            <td data-label="Delta" class="font-mono text-xs">${dVal >= 0 ? "+" : ""}${dVal.toFixed(3)}</td>
+          </tr>`;
+        })
         .join("");
     }
 
@@ -2594,7 +3154,6 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           else localStorage.setItem("color-scheme", choice);
         } catch {}
         syncThemeUI();
-        renderChartsForPage(currentPage, true);
         renderedPages.clear();
         renderChartsForPage(currentPage, true);
       });

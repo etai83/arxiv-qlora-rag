@@ -1,0 +1,101 @@
+{
+  "total_scored": 120,
+  "overall": {
+    "rag": {
+      "count": 60,
+      "correctness": 3.783,
+      "faithfulness": 4.933,
+      "citation_accuracy": 4.967,
+      "override_obedience": 0.8,
+      "latency_mean_ms": 834.91,
+      "latency_median_ms": 816.53
+    },
+    "zero_shot": {
+      "count": 60,
+      "correctness": 1.867,
+      "faithfulness": 2.15,
+      "citation_accuracy": 4.133,
+      "override_obedience": 0.0,
+      "latency_mean_ms": 612.85,
+      "latency_median_ms": 614.39
+    }
+  },
+  "by_mode_slice": {
+    "rag": {
+      "static": {
+        "count": 20,
+        "correctness": 2.0,
+        "faithfulness": 4.8,
+        "citation_accuracy": 5.0,
+        "override_obedience": null,
+        "latency_mean_ms": 498.76,
+        "latency_median_ms": 453.5
+      },
+      "live": {
+        "count": 20,
+        "correctness": 4.45,
+        "faithfulness": 5.0,
+        "citation_accuracy": 4.9,
+        "override_obedience": null,
+        "latency_mean_ms": 1174.34,
+        "latency_median_ms": 1126.3
+      },
+      "temporal_override": {
+        "count": 10,
+        "correctness": 4.8,
+        "faithfulness": 5.0,
+        "citation_accuracy": 5.0,
+        "override_obedience": 0.8,
+        "latency_mean_ms": 1249.45,
+        "latency_median_ms": 1167.76
+      },
+      "unanswerable": {
+        "count": 10,
+        "correctness": 5.0,
+        "faithfulness": 5.0,
+        "citation_accuracy": 5.0,
+        "override_obedience": null,
+        "latency_mean_ms": 413.8,
+        "latency_median_ms": 416.85
+      }
+    },
+    "zero_shot": {
+      "static": {
+        "count": 20,
+        "correctness": 1.6,
+        "faithfulness": 1.25,
+        "citation_accuracy": 3.6,
+        "override_obedience": null,
+        "latency_mean_ms": 735.49,
+        "latency_median_ms": 729.72
+      },
+      "live": {
+        "count": 20,
+        "correctness": 1.2,
+        "faithfulness": 1.4,
+        "citation_accuracy": 3.8,
+        "override_obedience": null,
+        "latency_mean_ms": 683.6,
+        "latency_median_ms": 694.85
+      },
+      "temporal_override": {
+        "count": 10,
+        "correctness": 1.0,
+        "faithfulness": 3.0,
+        "citation_accuracy": 5.0,
+        "override_obedience": 0.0,
+        "latency_mean_ms": 478.89,
+        "latency_median_ms": 451.32
+      },
+      "unanswerable": {
+        "count": 10,
+        "correctness": 4.6,
+        "faithfulness": 4.6,
+        "citation_accuracy": 5.0,
+        "override_obedience": null,
+        "latency_mean_ms": 360.05,
+        "latency_median_ms": 266.06
+      }
+    }
+  }
+}

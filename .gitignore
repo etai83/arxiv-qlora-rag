@@ -1,4 +1,11 @@
 .venv/
+.venv-qlora/
+models/
+*.safetensors
+*.gguf
+Modelfile.qlora
+data/qlora/raw_distilled_static.jsonl
+data/qlora/training_stdout.log
 __pycache__/
 *.py[cod]
 .pytest_cache/
