@@ -53,7 +53,7 @@ Powered by Ollama's native Apple Silicon `MLX` runner (`nvfp4`), `qwen3.5:9b` de
 
 ---
 
-## Empirical QLoRA Fine-Tuning Results (Issue #2)
+## Empirical QLoRA Fine-Tuning Results
 
 We fine-tuned `mlx-community/Llama-3.2-3B-Instruct-4bit` with `mlx_lm 0.32.2` (`rank=16`, `scale=2.0`, `dropout=0.05`, `num_layers=28`, `0.757%` trainable = `24.314M / 3212.750M` parameters) on **`1,060` train / `120` valid** examples (`570/30` zero-shot QA, `100/20` zero-shot abstention, `260/40` RAG synthesis, `130/30` RAG abstention) distilled strictly from pre-T `corpus/static.jsonl` (`300` papers, `2020-05-22` to `2024-01-06`, `0` live IDs, `0` golden prompts/non-abstention refs). Selected `iter 400` checkpoint (`val_loss 2.506 -> 0.831`, `best_val_loss 0.788` at `iter 500`), fused with `--dequantize`, and served via Ollama as `llama3.2-qlora:3b` (`nvfp4`, MLX runner, `2.80 GB`).
 

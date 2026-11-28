@@ -33,8 +33,8 @@ Leakage-safe temporal RAG benchmark on arXiv `cs.CL` running locally on an **App
 | **Page 5** | **Ch. 4: 60-Prompt Golden Benchmark** | Slice composition, temporal override pairs, unanswerable trap construction |
 | **Page 6** | **Ch. 5: Evaluation Rubric & Calibration** | Cross-family judge schema and calibration rules for Qwen2.5-7B and Qwen3.5-9B |
 | **Page 7** | **Ch. 6: Baselines & Judge Agreement** | Zero-shot vs RAG (`k=4`) scores, latency breakdown, 20-sample blind human agreement |
-| **Page 8** | **Ch. 7: Failure Modes & QLoRA Outlook** | Citation leakage, override resistance, and QLoRA mitigation targets |
-| **Page 9** | **Ch. 8: QLoRA Fine-Tuning (`llama3.2-qlora:3b` vs. `llama3.2:3b`)** | MLX 4-bit QLoRA training telemetry, head-to-head scores & bootstrap CIs, win/tie/loss matrix, behavioral shift, and post-hoc hybrid routing |
+| **Page 8** | **Ch. 7: QLoRA Fine-Tuning (`llama3.2-qlora:3b` vs. `llama3.2:3b`)** | MLX 4-bit QLoRA training telemetry, head-to-head scores & bootstrap CIs, win/tie/loss matrix, behavioral shift, and post-hoc hybrid routing |
+| **Page 9** | **Ch. 8: Failure Modes & Expected vs. Measured Roadmap** | Master comparison table, citation/omission/override failure modes, and expected vs. measured QLoRA impact |
 | **Page 10** | **Appendix A: Hardware & Sub-Agent Trace** | Mac mini M5 Pro runtime telemetry, Ollama throughput, and 9-agent execution trace |
 | **Page 11** | **Appendix B: 3 Future Research Directions** | Temporal DPO/ORPO, Abstention-Calibrated QLoRA, and Cross-Family Judge Distillation |
 | **Page 12** | **Appendix C: Stronger Judge (Qwen3.5-9B vs. Qwen2.5-7B)** | MLX `nvfp4` evaluation calibration, human agreement lift (`80.0% -> 90.0%`), and discordance analysis |
@@ -93,12 +93,12 @@ Leakage-safe temporal RAG benchmark on arXiv `cs.CL` running locally on an **App
 
 ---
 
-## QLoRA Fine-Tuning Experiment: `llama3.2-qlora:3b` vs. `llama3.2:3b` (Issue #2)
+## QLoRA Fine-Tuning Experiment: `llama3.2-qlora:3b` vs. `llama3.2:3b`
 
 To test whether domain-specific pre-cutoff fine-tuning improves static `cs.CL` recall, RAG synthesis, and temporal override handling without leaking post-T knowledge, we trained a 4-bit MLX QLoRA adapter on `mlx-community/Llama-3.2-3B-Instruct-4bit` distilled strictly from pre-T `corpus/static.jsonl` (`< 2025-01-01`), fused it into Ollama as **`llama3.2-qlora:3b`** (`nvfp4`, MLX runner), and evaluated both generators head-to-head across all `120` runs (`60` zero-shot + `60` RAG) using **`qwen3.5:9b`** as primary judge and **`qwen2.5:7b`** as secondary cross-check.
 
 > [!IMPORTANT]
-> **Bottom-Line Verdict (Issue #2)**: **`llama3.2-qlora:3b` delivers modest pooled correctness gains (`2.692 -> 2.825`, `+0.133`, 95% CI `[-0.092, +0.358]` under `qwen3.5:9b`; `+0.225` under `qwen2.5:7b`) at `2.5×` faster pooled inference (`-1,078.93 ms` mean latency: `1,802.81 ms -> 723.88 ms`), driven by major breakthroughs in RAG `temporal_override` (`3.60 -> 4.80`, `+1.20`; override obedience `0.50 -> 0.80`; `10/10` cited, `0/10` abstentions) and Zero-Shot `static` (`1.15 -> 1.60`, `+0.45`; abstentions `18/20 -> 0/20`).** However, those gains come with clear calibration trade-offs: zero-shot overconfidence reduces `zs/unanswerable` (`5.00 -> 4.60`) and `zs` faithfulness (`-2.383`), and concise 1–2 sentence distillation drops minor secondary details in `rag/live` (`4.85 -> 4.45` under `qwen3.5:9b`).
+> **Bottom-Line Verdict**: **`llama3.2-qlora:3b` delivers modest pooled correctness gains (`2.692 -> 2.825`, `+0.133`, 95% CI `[-0.092, +0.358]` under `qwen3.5:9b`; `+0.225` under `qwen2.5:7b`) at `2.5×` faster pooled inference (`-1,078.93 ms` mean latency: `1,802.81 ms -> 723.88 ms`), driven by major breakthroughs in RAG `temporal_override` (`3.60 -> 4.80`, `+1.20`; override obedience `0.50 -> 0.80`; `10/10` cited, `0/10` abstentions) and Zero-Shot `static` (`1.15 -> 1.60`, `+0.45`; abstentions `18/20 -> 0/20`).** However, those gains come with clear calibration trade-offs: zero-shot overconfidence reduces `zs/unanswerable` (`5.00 -> 4.60`) and `zs` faithfulness (`-2.383`), and concise 1–2 sentence distillation drops minor secondary details in `rag/live` (`4.85 -> 4.45` under `qwen3.5:9b`).
 
 ### Training & Leakage-Audit Summary
 
@@ -129,6 +129,26 @@ Primary judge: **`qwen3.5:9b`** (with **`qwen2.5:7b`** cross-check deltas and 2,
 | `rag / live` | 20 | **4.85** | 4.45 | -0.40 | `[-0.80, +0.00]` | +0.05 | 0.00 | -0.10 | - | -1,834.61 |
 | `rag / temporal_override` | 10 | 3.60 | **4.80** | **+1.20** | `[+0.00, +2.40]` | **+0.40** | **+0.10** | 0.00 | **+0.30** (`0.50 -> 0.80`) | -1,337.24 |
 | `rag / unanswerable` | 10 | **5.00** | **5.00** | 0.00 | `[+0.00, +0.00]` | 0.00 | 0.00 | 0.00 | - | -388.92 |
+
+### Dual-Judge Cross-Check (`qwen3.5:9b` vs. `qwen2.5:7b`)
+
+- **Data Compared**: All `240` model outputs (`120` Base + `120` Fine-Tuned) were independently scored by `qwen3.5:9b` (`90.0%` human exact match, `QWK=0.782`) and `qwen2.5:7b` (`80.0%` human exact match, `QWK=0.535`). `Direction Agrees` runs a sign-match check across the `11` buckets whenever `|Qwen3.5-9B Delta| >= 0.10`.
+- **Why Agreeing Buckets Validate Headline Wins (`7/10` Active Buckets)**: Both judges agree in direction on `pooled_all`, `zero_shot`, `rag`, `zero_shot_static`, `zero_shot_live`, `zero_shot_temporal_override`, and `rag_temporal_override`, confirming QLoRA's headline gains and zero-shot override drop reflect genuine model changes rather than judge bias.
+- **Why Divergent Buckets Differ (`False`)**: `rag_live` (`qwen3.5:9b` penalizes secondary metric omissions in concise 1–2 sentence answers, whereas `qwen2.5:7b` credits core mechanism accuracy), `zero_shot_unanswerable` (`qwen3.5:9b` catches `g54` fabrication while `qwen2.5:7b` had offsetting variance), and `rag_static` (both models cleanly abstain `20/20`, with a 1-item boundary shift on `qwen3.5:9b`).
+
+| Bucket | `qwen3.5:9b` Delta Corr | `qwen2.5:7b` Delta Corr | Direction Agrees |
+|---|---:|---:|---|
+| `pooled_all` | +0.133 | +0.225 | `True` |
+| `zero_shot` | +0.134 | +0.367 | `True` |
+| `rag` | +0.133 | +0.083 | `True` |
+| `zero_shot_static` | +0.45 | +0.25 | `True` |
+| `zero_shot_live` | +0.20 | +1.10 | `True` |
+| `zero_shot_temporal_override` | -0.10 | -0.50 | `True` |
+| `zero_shot_unanswerable` | -0.40 | +0.00 | `False` |
+| `rag_static` | +0.20 | +0.00 | `False` |
+| `rag_live` | -0.40 | +0.05 | `False` |
+| `rag_temporal_override` | +1.20 | +0.40 | `True` |
+| `rag_unanswerable` | +0.00 | +0.00 | `-` |
 
 ### Win / Tie / Loss, Behavioral Shift & Post-Hoc Hybrid Routing
 
